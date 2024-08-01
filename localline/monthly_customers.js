@@ -101,8 +101,8 @@ async function customers(today, yesterday) {
                                     const emailOptions = {
                                         from: "jdeck88@gmail.com",
                                         //to: "fullfarmcsa@deckfamilyfarm.com",
-										//cc: Margaret Hobart <mhobart@bworcpas.com> after verifying report data
                                         to: "jdeck88@gmail.com",
+										cc: "mhobart@bworcpas.com",
                                         subject: 'FFCSA Reports: Monthly Customer Balance Report for ' + yesterday,
                                         text: "Total Member Balance as of " + yesterday+ " = " + balance,
                                     };
