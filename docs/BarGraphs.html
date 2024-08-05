@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropsite Trends</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .bar {
+            stroke: #000;
+            stroke-width: 1px;
+        }
+        .axis-label {
+            font: 12px sans-serif;
+        }
+        .legend rect {
+            stroke: #000;
+            stroke-width: 1px;
+        }
+        .pie-label {
+            font: 12px sans-serif;
+            text-anchor: middle;
+            pointer-events: none; /* Prevent labels from interfering with mouse events */
+        }
+        .pie-legend {
+            font: 12px sans-serif;
+            text-anchor: start;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart2024"></div>
+    <div id="chart2024-2"></div>
+    <div id="chart2024-3"></div>
+    <div id="chart2023"></div>
+    <div id="chart2023-2"></div>
+    <div id="chart2023-3"></div>
+    <script>
+        async function fetchFulfillmentData() {
+            const response = await fetch('https://raw.githubusercontent.com/jdeck88/ffcsa_scripts/main/localline/data/weekly_kpi.json');
+            const data = await response.json();
+            return data.weeks;
+        }
+
+        fetchFulfillmentData().then(function(data) {
+            function createChart(container, parsedData, title) {
+                const margin = {top: 20, right: 160, bottom: 60, left: 60},
+                      width = 1200 - margin.left - margin.right,
+                      height = 600 - margin.top - margin.bottom,
+                      pieWidth = 300;
+
+                const svg = d3.select(container).append("svg")
+                    .attr("width", width + pieWidth + margin.left + margin.right)
+                    .attr("height", height + pieWidth + 150 + margin.top + margin.bottom) // Increased height for space
+                  .append("g")
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                const dateRanges = [...new Set(parsedData.map(d => d.dateRange))];
+                const dropsiteNames = [...new Set(parsedData.map(d => d.dropsite))];
+
+                dateRanges.sort((a, b) => new Date(`2024-${a}`) - new Date(`2024-${b}`));
+                const totalByDropsite = d3.rollup(parsedData, v => d3.sum(v, d => d.total), d => d.dropsite);
+                dropsiteNames.sort((a, b) => totalByDropsite.get(b) - totalByDropsite.get(a));
+
+                const stackData = d3.stack()
+                    .keys(dropsiteNames)
+                    .value((d, key) => {
+                        const entry = d.values.find(e => e.dropsite === key);
+                        return entry ? entry.total : 0;
+                    })(d3.groups(parsedData, d => d.dateRange).map(d => ({ dateRange: d[0], values: d[1] })));
+
+                const x = d3.scaleBand()
+                    .domain(dateRanges)
+                    .range([0, width])
+                    .padding(0.1);
+
+                const y = d3.scaleLinear()
+                    .domain([0, d3.max(stackData, d => d3.max(d, d => d[1]))])
+                    .nice()
+                    .range([height, 0]);
+
+                const color = d3.scaleOrdinal(d3.schemeCategory10)
+                    .domain(dropsiteNames);
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", `translate(0,${height})`)
+                    .call(d3.axisBottom(x))
+                  .append("text")
+                    .attr("class", "axis-label")
+                    .attr("x", width / 2)
+                    .attr("y", 40)
+                    .style("text-anchor", "middle")
+                    .text("Date Range");
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(d3.axisLeft(y))
+                  .append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", -height / 2)
+                    .attr("y", -50)
+                    .style("text-anchor", "middle")
+                    .text("Total");
+
+                svg.append("g")
+                    .selectAll("g")
+                    .data(stackData)
+                    .enter().append("g")
+                      .attr("fill", d => color(d.key))
+                    .selectAll("rect")
+                    .data(d => d)
+                    .enter().append("rect")
+                      .attr("x", d => x(d.data.dateRange))
+                      .attr("y", d => y(d[1]))
+                      .attr("height", d => y(d[0]) - y(d[1]))
+                      .attr("width", x.bandwidth());
+
+                const legend = svg.selectAll(".legend")
+                    .data(color.domain())
+                  .enter().append("g")
+                    .attr("class", "legend")
+                    .attr("transform", (d, i) => `translate(0,${i * 20})`);
+
+                legend.append("rect")
+                    .attr("x", width + 20)
+                    .attr("width", 18)
+                    .attr("height", 18)
+                    .style("fill", color);
+
+                legend.append("text")
+                    .attr("x", width + 45)
+                    .attr("y", 9)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "start")
+                    .text(d => d);
+
+                svg.append("text")
+                    .attr("x", width / 2)
+                    .attr("y", -10)
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "16px")
+                    .style("font-weight", "bold")
+                    .text(title);
+
+                // Pie chart
+                const pieData = d3.pie().value(d => d.total)(dropsiteNames.map(dropsite => ({
+                    dropsite,
+                    total: totalByDropsite.get(dropsite) || 0
+                })));
+
+                const pieRadius = Math.min(pieWidth, height) / 2;
+                const pieGroup = svg.append("g")
+                    .attr("transform", `translate(${width / 2}, ${height + 50 + pieWidth / 2})`); // Centered below the bar chart
+
+                const arc = d3.arc()
+                    .outerRadius(pieRadius)
+                    .innerRadius(0);
+
+                const labelArc = d3.arc()
+                    .outerRadius(pieRadius - 50) // Move inside for better placement
+                    .innerRadius(pieRadius - 50);
+
+                pieGroup.selectAll('path')
+                    .data(pieData)
+                    .enter()
+                    .append('path')
+                    .attr('d', arc)
+                    .attr('fill', d => color(d.data.dropsite))
+                    .attr('stroke', 'white')
+                    .style('stroke-width', '2px');
+
+                const totalSum = d3.sum(pieData, d => d.data.total);
+                const formatCurrency = d3.format(",.2f");
+
+                pieGroup.selectAll('.pie-label')
+                    .data(pieData)
+                    .enter()
+                    .append('text')
+                    .attr('transform', d => {
+                        const centroid = labelArc.centroid(d);
+                        return `translate(${centroid[0]},${centroid[1]})`;
+                    })
+                    .attr('class', 'pie-label')
+                    .style('text-anchor', 'middle')
+                    .style('font-size', '12px')
+                    .style('fill', 'black')
+                    .text(d => {
+                        const percentage = ((d.data.total / totalSum) * 100).toFixed(1);
+                        return percentage + '%';
+                    });
+
+                // Add pie chart legend
+                const legendGroup = svg.append("g")
+                    .attr("transform", `translate(${width / 2 + pieWidth / 2 + 50}, ${height + pieWidth / 2 })`); // Positioned to the right of pie chart
+
+                legendGroup.selectAll(".pie-legend")
+                    .data(pieData)
+                    .enter().append("text")
+                    .attr("class", "pie-legend")
+                    .attr("x", 0)
+                    .attr("y", (d, i) => i * 20)
+                    .style("text-anchor", "start")
+                    .text(d => {
+                        const percentage = ((d.data.total / totalSum) * 100).toFixed(1);
+                        const total = formatCurrency(d.data.total);
+                        return `${d.data.dropsite}: ${percentage}% (${total})`;
+                    });
+            }
+
+            const parsedData = [];
+            data.forEach(week => {
+                const dateRange = week.dateRange.split(" ")[0].replace(/(\d+)-(\d+)-(\d+)/, "$2/$3");
+                Object.entries(week.data.dropsite).forEach(([dropsite, total]) => {
+                    parsedData.push({
+                        dateRange,
+                        dropsite,
+                        total: +total,
+                        year: week.dateRange.split("-")[0]
+                    });
+                });
+            });
+
+            // Filter data
+            const data2024 = parsedData.filter(d => d.year === "2024" && ["Corvallis", "Farm - Tuesday", "Farm - Friday", "Friendly", "Springfield", "W 11th", "Home Delivery - Eugene/Springfield/Junction City", "Home Delivery - Corvallis"].includes(d.dropsite));
+            const data2024FarmersMarket = parsedData.filter(d => d.year === "2024" && (d.dropsite.toLowerCase().includes("farmers market") || d.dropsite === "LCFM"));
+            const data2024PDXDropsites = parsedData.filter(d => d.year === "2024" && ["Beaverton", "Cully", "Zafar Residence", "Sherwood", "Woodstock", "Irvington"].includes(d.dropsite));
+            const data2023 = parsedData.filter(d => d.year === "2023" && ["Corvallis", "Farm - Tuesday", "Farm - Friday", "Friendly", "Springfield", "W 11th", "Home Delivery - Eugene/Springfield/Junction City", "Home Delivery - Corvallis"].includes(d.dropsite));
+            const data2023FarmersMarket = parsedData.filter(d => d.year === "2023" && (d.dropsite.toLowerCase().includes("farmers market") || d.dropsite === "LCFM"));
+            const data2023PDXDropsites = parsedData.filter(d => d.year === "2023" && ["Beaverton", "Cully", "Zafar Residence", "Sherwood", "Woodstock", "Irvington"].includes(d.dropsite));
+
+            createChart("#chart2024", data2024, "Dropsite Trends 2024 - Group 1");
+            createChart("#chart2024-2", data2024FarmersMarket, "Dropsite Trends 2024 - Farmers Markets");
+            createChart("#chart2024-3", data2024PDXDropsites, "Dropsite Trends 2024 - PDX Dropsites");
+            createChart("#chart2023", data2023, "Dropsite Trends 2023 - Group 1");
+            createChart("#chart2023-2", data2023FarmersMarket, "Dropsite Trends 2023 - Farmers Markets");
+            createChart("#chart2023-3", data2023PDXDropsites, "Dropsite Trends 2023 - PDX Dropsites");
+        }).catch(error => {
+            console.error('Error loading or parsing data:', error);
+        });
+    </script>
+</body>
+</html>
