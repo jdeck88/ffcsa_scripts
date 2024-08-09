@@ -13,11 +13,7 @@ guest,Elegant Elephant Baking Co.,Box of 5 Cupcakes,Y,ea,package,each,1,6,8.58,3
 guest,Radiant Coffee Roasters,Brazil Cerrado Miniero - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Camas Country Mill,Brown Teff Flour,Y,ea,package,4 lbs,1,7.08,10.12,30,43
 guest,Lonesome Whistle,Cayenne Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
-guest,OGC,Celery,Y,bu,package,each,1,3.5,5.01,30,43
 guest,Reality Kitchen Nonprofit,Challah Sandwich Loaf,Y,ea,package,each,1,6,8.58,30,43
-guest,OGC,Champion Club Microgreens Broccoli Mix 2 oz,Y,ea,package,2 oz,1,5.5,7.87,30,43
-guest,OGC,Champion Club Microgreens Power Mix,Y,ea,package,2 oz,1,5.5,7.87,30,43
-guest,OGC,Champion Club Microgreens Rainbow Mix,Y,ea,package,2 oz,1,5.5,7.87,30,43
 guest,Graziers Garden,Chives,Y,bu,package,each,1,1.5,2.15,30,43
 guest,Creole Me Up,Creole Marinade with Sass,Y,ea,package,8oz,1,7.5,10.73,30,43
 guest,OGC,Crimini Mushrooms,Y,lb,package,1 lb,1,3.95,5.65,30,43
@@ -39,7 +35,6 @@ guest,Full Farm CSA,Deck Family Farm and Full Farm CSA T-Shirt Small,Y,ea,packag
 guest,Lonesome Whistle,Einkorn Fusilli,Y,ea,package,0.5 lb bag,1,3.33,4.76,30,43
 guest,Camas Country Mill,Emmer Farro,Y,ea,package,5 lbs,1,15.12,21.62,30,43
 guest,Lonesome Whistle,Emmer Macaroni,Y,ea,package,0.5 lb bag,1,3.33,4.76,30,43
-guest,Sweet Creek,"Enchilada Red Sauce, Medium",Y,ea,package,16 oz,1,3.9,5.58,30,43
 guest,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 100mL,Y,ea,package,3.38 oz. 100mL,1,10.95,15.66,30,43
 guest,Red Tail Growers,Fresh Bulb Candy Onion,Y,pound,package,pound,1,1.25,1.79,30,43
 guest,Lonesome Whistle,Garlic Dill Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
@@ -118,7 +113,6 @@ guest,Deck Family Farms Hyland Processing,Fresh Farm Made Hot Italian Sausage- m
 guest,Deck Family Farms Hyland Processing,Fresh Farm Made Pork Chaurice Sausage - made weekly in our farm kitchen!,Y,pk,package,14 oz pk/ 4links,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Processing,Fresh Farm Made Pork Loukaniko Sausage - made weekly in our farm kitchen!,Y,pk,package,14 oz. pk/4 links,1,11.05,16.13,31,46
 guest,Little Wings,Frisee Lettuce,Y,ea,package,each,1,2.25,3.24,31,44
-guest,Camas Swale Farm,Green Beans,Y,lb,package,1 lb,1,4,5.8,31,45
 guest,Little Wings,Green Bell Pepper,Y,lb,package,1 lb,1,2.5,3.6,31,44
 guest,Graziers Garden,Green Zucchini,Y,lb,package,1 lb,1,2.4,3.46,31,44
 guest,Deck Family Farm,Ground Beef - All Natural,Y,ea,package,1 lb,1,5.85,8.54,31,46
@@ -130,7 +124,6 @@ guest,Deck Family Farm,Lamb Neck Slices,Y,ea,package,1.1-1.5 lb,1,11.2,16.35,31,
 guest,Deck Family Farm,Lamb Shank - Whole,Y,ea,package,2 - 2.5 lbs,1,23.4,34.16,31,46
 guest,River Ranch Oregon Olive OIl,Lavender Olive Oil Sugar Scrub,Y,ea,package,ea  4oz. jar,1,5,7.2,31,44
 guest,Sweet Creek,Mango Habanero Taco Sauce - Maggie Kitchen,Y,ea,package,each,1,3.49,5.06,31,45
-guest,Graziers Garden,Mixed salad greens,Y,1/2 lb,weight,1/2 lb,1,3.33,4.8,31,44
 guest,River Ranch Oregon Olive OIl,Morning Mist Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
 guest,Sweet Creek,Mushroom Tomato Sauce,Y,ea,package,16 oz,1,3.76,5.45,31,45
 guest,Red Tail Growers,Nantes Carrots,Y,bu,package,each,1,2.5,3.63,31,45
@@ -147,8 +140,8 @@ guest,Red Tail Growers,Red Beets,Y,lb,package,1 lb,1,1,1.45,31,45
 guest,Graziers Garden,Red Norland Potatoes- Fresh dug,Y,pound,package,1 lb,1,2,2.88,31,44
 guest,Deck Family Farms Hyland Processing,Rendered Beef Tallow,Y,ea,package,16 oz,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Processing,Rendered Pork Back Fat,Y,ea,package,8 oz,1,3.9,5.69,31,46
-guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,11.23,31,44
 guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,8 oz.,1,3.9,5.62,31,44
+guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,11.23,31,44
 guest,Red Tail Growers,Salad Chicory Mix,Y,bag,package,1/2 lb bag,1,3.5,5.04,31,44
 guest,Creole Me Up,Sassy Madame Sara Creole Marinade,Y,ea,package,9.4 oz,1,7.5,10.88,31,45
 guest,Creole Me Up,Sassy in Pink Marinade,Y,ea,package,ea,1,7.5,10.88,31,45
@@ -215,7 +208,6 @@ guest,BNF Kombucha and Jun,Ginger Turmeric Jun,Y,ea,package,16 fl. oz,1,3.5,5.25
 guest,Elegant Elephant Baking Co.,Gluten Free Apple Pie,Y,ea,package,6,1,7.5,11.25,33,50
 guest,BNF Kombucha and Jun,Grape Lavender Kombucha,Y,ea,package,16 fl. oz,1,4.75,7.13,33,50
 guest,Red Tail Growers,Green Gem Lettuce,Y,ea,package,each,1,1,1.5,33,50
-guest,BNF Kombucha and Jun,Mango Marigold Kombucha,Y,ea,package,16 fl. oz,1,3.09,4.6,33,49
 guest,Red Tail Growers,Red Gem Lettuce,Y,ea,package,ea,1,1,1.5,33,50
 guest,Full Farm CSA,Wildcraft Hot Sauce,Y,ea,package,ea,1,8,12,33,50
 guest,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,Y,ea,package,bag of 4,1,6.1,9.25,34,52
