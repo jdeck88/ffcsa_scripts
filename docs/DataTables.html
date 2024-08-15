@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly KPI Data Tables</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }  
+        th:first-child, td:first-child {
+            white-space: nowrap;
+            width: 200px; /* Adjust this value as needed */
+        }
+    </style>
+</head>
+<body>
+    <h1>Weekly KPI Data Tables</h1>
+
+    <h2>Vendors</h2>
+    <table id="dataTable2">
+        <thead>
+            <tr>
+                <th>Week</th>
+                <!-- Vendors headers will be inserted dynamically -->
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Categories</h2>
+    <table id="dataTable3">
+        <thead>
+            <tr>
+                <th>Week</th>
+                <!-- Categories headers will be inserted dynamically -->
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Products</h2>
+    <table id="dataTable4">
+        <thead>
+            <tr>
+                <th>Week</th>
+                <!-- Products headers will be inserted dynamically -->
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Dropsites</h2>
+    <table id="dataTable5">
+        <thead>
+            <tr>
+                <th>Week</th>
+                <!-- Dropsites headers will be inserted dynamically -->
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Fetching the JSON data
+        fetch('https://raw.githubusercontent.com/required777/TD-Testing-ffcsa_scripts/1.1.1/localline/data/weekly_kpi.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                createTable(jsonData, 'dataTable2', 'vendors');
+                createTable(jsonData, 'dataTable3', 'category');
+                createTable(jsonData, 'dataTable4', 'product');
+                createTable(jsonData, 'dataTable5', 'dropsite');
+            })
+            .catch(error => console.error('Error fetching the JSON data:', error));
+
+        function createTable(jsonData, tableId, dataKey) {
+            const table = document.getElementById(tableId);
+            const thead = table.querySelector('thead tr');
+            const tbody = table.querySelector('tbody');
+
+            const headers = new Set();
+            jsonData.weeks.forEach(week => {
+                Object.keys(week.data[dataKey]).forEach(key => headers.add(key));
+            });
+
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                thead.appendChild(th);
+            });
+
+            jsonData.weeks.forEach(week => {
+                const tr = document.createElement('tr');
+                const weekTd = document.createElement('td');
+                weekTd.textContent = week.dateRange;
+                tr.appendChild(weekTd);
+
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = week.data[dataKey][header] || '';
+                    tr.appendChild(td);
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

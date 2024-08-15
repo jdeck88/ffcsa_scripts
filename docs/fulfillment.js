@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const apiUrl = 'https://raw.githubusercontent.com/jdeck88/ffcsa_scripts/main/localline/data/fulfillment_kpi.json';
+    const apiUrl = 'https://raw.githubusercontent.com/jdeck88/ffcsa_scripts/main/localline/data/weekly_kpi.json';
 
     fetch(apiUrl)
         .then(response => response.json())
