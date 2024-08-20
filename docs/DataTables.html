@@ -72,7 +72,7 @@
 
     <script>
         // Fetching the JSON data
-        fetch('https://raw.githubusercontent.com/required777/TD-Testing-ffcsa_scripts/1.1.1/localline/data/weekly_kpi.json')
+        fetch('https://raw.githubusercontent.com/jdeck88/ffcsa_scripts/main/localline/data/weekly_kpi.json')
             .then(response => response.json())
             .then(jsonData => {
                 createTable(jsonData, 'dataTable2', 'vendors');
