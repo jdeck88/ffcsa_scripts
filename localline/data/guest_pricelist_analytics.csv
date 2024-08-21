@@ -79,6 +79,7 @@ guest,RL Plants,Pepi Dwarf Iris Rhizome,Y,ea,package,ea,1,6,8.58,30,43
 guest,Creole Me Up,Pickleez Zonyon in Purple (Pickled Onions),Y,ea,package,16oz,1,9,12.87,30,43
 guest,Lonesome Whistle,Plain Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
 guest,Graziers Garden,Purple Shvelisi Garlic,Y,1/2 lb,package,1/2 lb,1,5,7.15,30,43
+guest,Graziers Garden,Purple Viking potatoes,Y,pound,package,pound,1,2.25,3.22,30,43
 guest,Spoiled Rotten Vinegar,Quince Vinegar,Y,ea,package,8 fl oz,1,8,11.44,30,43
 guest,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Decaf Columbia Coffee,Y,ea,package,12 oz,1,11,15.73,30,43
@@ -90,6 +91,7 @@ guest,RL Plants,Sedum Rupestre Blue Spruce,Y,ea,package,each,1,4,5.72,30,43
 guest,OGC,Shiitake Mushrooms,Y,1/2 lb,package,1/2 lb,1,4.08,5.83,30,43
 guest,Graziers Garden,Spanish Onion,Y,pound,package,pound,1,3.75,5.36,30,43
 guest,Graziers Garden,Spearmint,Y,bu,package,each,1,3,4.29,30,43
+guest,Graziers Garden,Sweet Corn,Y,ea,package,each,1,1.4,2,30,43
 guest,Jar Joy Goods,The Daily Jar Tote/Jar Bag: Organic Waxed Canvas-WFTO Certified,Y,ea,package,each,1,41.95,59.99,30,43
 guest,Jar Joy Goods,The Insulated Jar Tote/Jar Bag: Hemp + Natural Rubber (Yulex),Y,ea,package,each,1,110.5,158.02,30,43
 guest,Camas Country Mill,Three Sisters Porridge,Y,ea,package,4 lbs,1,13.25,18.95,30,43
@@ -107,6 +109,7 @@ guest,Deck Family Farm,Beef Bones,Y,bag,package,3 - 5 lbs,1,10.4,15.18,31,46
 guest,Deck Family Farm,Beef Flank Steak,Y,ea,package,1-1.4  lbs.,1,17.88,26.1,31,46
 guest,Deck Family Farm,Beef Marrow Bones,Y,pk,package,3-3.5 Lbs,1,14.79,21.59,31,46
 guest,Red Tail Growers,Braising Chicory Mix,Y,ea,package,1/2 lb,1,3.5,5.04,31,44
+guest,Graziers Garden,Brandywine Tomatoes,Y,lb,package,1 lb,1,3,4.32,31,44
 guest,Camas Swale Farm,Celery,Y,bu,package,each,1,2,2.88,31,44
 guest,Graziers Garden,Cherry Tomatoes,Y,pt,package,each,1,3.75,5.4,31,44
 guest,Deck Family Farm,Chicken Feet,Y,ea,package,1 lb.,1,4.55,6.64,31,46
