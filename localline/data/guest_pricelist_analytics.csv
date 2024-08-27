@@ -18,7 +18,6 @@ guest,Radiant Coffee Roasters,Brazil Cerrado Miniero - Dark Roast Coffee Beans,Y
 guest,Camas Country Mill,Brown Teff Flour,Y,ea,package,4 lbs,1,7.08,10.12,30,43
 guest,Camas Country Mill,Camas Pizza Blend,Y,ea,package,4 lbs,1,10.3,14.73,30,43
 guest,OGC,Cantaloupe,Y,ea,package,each,1,4.13,5.91,30,43
-guest,OGC,Cauliflower,Y,ea,package,ea,1,3.67,5.25,30,43
 guest,Lonesome Whistle,Cayenne Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
 guest,Reality Kitchen Nonprofit,Challah Sandwich Loaf,Y,ea,package,each,1,6,8.58,30,43
 guest,Graziers Garden,Chives,Y,bu,package,each,1,1.5,2.15,30,43
@@ -73,8 +72,8 @@ guest,Lonesome Whistle,Nutritional Yeast Popcorn,Y,ea,package,0.4 lb bag,1,3.33,
 guest,RL Plants,Open Your Eyes- Iris Rhizome,Y,ea,package,ea,1,9,12.87,30,43
 guest,Camas Country Mill,Organic 7-Grain Cereal,Y,ea,package,3 lbs,1,13.25,18.95,30,43
 guest,Camas Country Mill,Organic All Purpose Low Gluten Flour,Y,ea,package,4 lbs,1,9.35,13.37,30,43
-guest,Camas Country Mill,Organic Buckwheat Flour,Y,ea,package,3 lbs,1,8.9,12.73,30,43
 guest,Camas Country Mill,Organic Buckwheat Flour,Y,ea,package,4 lbs,1,9.5,13.59,30,43
+guest,Camas Country Mill,Organic Buckwheat Flour,Y,ea,package,3 lbs,1,8.9,12.73,30,43
 guest,Camas Country Mill,Organic Oat Flakes,Y,ea,package,4 lbs,1,15.25,21.81,30,43
 guest,Camas Country Mill,Organic Spelt Flour,Y,ea,package,2 lb. Bag,1,8.4,12.01,30,43
 guest,Camas Country Mill,Organic Spelt Flour,Y,ea,package,3.5 lbs,1,6.25,8.94,30,43
@@ -112,7 +111,6 @@ guest,River Ranch Oregon Olive OIl,2022 Arbequina  Olive Oil 250mL,Y,ea,package,
 guest,Sweet Creek,Apricot Fruit Spread,Y,ea,package,10 oz,1,3.8,5.51,31,45
 guest,Graziers Garden,Basil,Y,bu,package,1 bu.,1,2,2.88,31,44
 guest,Deck Family Farm,Beef Bones,Y,bag,package,3 - 5 lbs,1,10.4,15.18,31,46
-guest,Deck Family Farm,Beef Flank Steak,Y,ea,package,1-1.4  lbs.,1,17.88,26.1,31,46
 guest,Deck Family Farm,Beef Marrow Bones,Y,pk,package,3-3.5 Lbs,1,14.79,21.59,31,46
 guest,Red Tail Growers,Braising Chicory Mix,Y,ea,package,1/2 lb,1,3.5,5.04,31,44
 guest,Graziers Garden,Brandywine Tomatoes,Y,lb,package,1 lb,1,3,4.32,31,44
@@ -171,8 +169,8 @@ guest,Camas Swale Farm,Red Onion,Y,lb,package,1 lb,1,1.4,2.02,31,44
 guest,OGC,Red Radish,Y,bu,package,each,1,1.61,2.33,31,45
 guest,Deck Family Farms Hyland Processing,Rendered Beef Tallow,Y,ea,package,16 oz,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Processing,Rendered Pork Back Fat,Y,ea,package,8 oz,1,3.9,5.69,31,46
-guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,8 oz.,1,3.9,5.62,31,44
 guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,11.23,31,44
+guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,8 oz.,1,3.9,5.62,31,44
 guest,Little Wings,Romano Beans,Y,ea,package,each,1,4.5,6.48,31,44
 guest,Red Tail Growers,Salad Chicory Mix,Y,bag,package,1/2 lb bag,1,3.5,5.04,31,44
 guest,Little Wings,Salad Mix,Y,bag,package,1/2 lb,1,4.15,5.98,31,44
@@ -221,8 +219,8 @@ guest,Deck Family Farm,Ground Country Sausage,Y,ea,package,12 oz,1,8.61,12.57,32
 guest,Deck Family Farm,Ground Pork,Y,ea,package,1 lb,1,9.43,13.77,32,46
 guest,Deck Family Farm,"Honey, Bulk Raw",Y,ea,package,4 gallon,1,245,357.7,32,46
 guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1 pt,1,14.3,20.88,32,46
-guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1 qt,1,26,37.96,32,46
 guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1/2 pt,1,9.43,13.77,32,46
+guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1 qt,1,26,37.96,32,46
 guest,Deck Family Farm,Lamb Chops,Y,ea,package,4 Pack 1.6-1.9 Lbs,1,22.75,33.22,32,46
 guest,Deck Family Farm,Lamb Ribs,Y,ea,package,1.4-1.9 lb,1,16.62,24.27,32,46
 guest,Deck Family Farm,Lamb Shoulder Roast,Y,ea,package,2.3 -2.7 lbs,1,27.63,40.34,32,46
@@ -262,7 +260,6 @@ guest,Elegant Elephant Baking Co.,Gluten Free Brownie Bite with Chocolate Chips,
 guest,Elegant Elephant Baking Co.,Gluten Free Half Almond Loaf Sliced,Y,ea,package,each,1,5,8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Mini Banana Bread Loaf,Y,ea,package,each,1,5,8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Blueberry Scone,Y,ea,package,each,1,2.9,4.75,39,64
-guest,Sweet Creek,Raspberry Fruit Spread,Y,ea,package,10 oz,1,3.8,6.25,39,64
 guest,Reality Kitchen Nonprofit,Braided Challah (plain),Y,ea,package,each,1,5.25,8.93,41,70
 guest,Reality Kitchen Nonprofit,Braided Challah (seeded),Y,ea,package,each,1,5.25,8.93,41,70
 guest,Elegant Elephant Baking Co.,Chocolate Donut,Y,ea,package,each,1,2.35,4,41,70
