@@ -29,7 +29,6 @@ herdshare,Camas Country Mill,Brown Teff Flour,Y,ea,package,4 lbs,1,7.08,9.42,25,
 herdshare,Camas Country Mill,Camas Pizza Blend,Y,ea,package,4 lbs,1,10.3,13.7,25,33
 herdshare,Little Wings,Canary Melon,Y,ea,package,each,1,3.4,4.56,25,34
 herdshare,OGC,Cantaloupe,Y,ea,package,each,1,4.13,5.49,25,33
-herdshare,Little Wings,Cathay Bell Watermelon,Y,ea,package,ea.,1,6.34,8.5,25,34
 herdshare,Lonesome Whistle,Cayenne Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.43,25,33
 herdshare,Reality Kitchen Nonprofit,Challah Sandwich Loaf,Y,ea,package,each,1,6,7.98,25,33
 herdshare,Graziers Garden,Cherry Tomatoes,Y,pt,package,each,1,3.75,4.99,25,33
@@ -92,7 +91,6 @@ herdshare,River Ranch Oregon Olive OIl,Lavender Olive Oil Sugar Scrub,Y,ea,packa
 herdshare,Lonesome Whistle,Lemon Lavender Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.43,25,33
 herdshare,"Creamy Cow, LLC",Live Culture Yogurt,Y,ea,package,1 quart,1,10,13.3,25,33
 herdshare,"Creamy Cow, LLC",Live Culture Yogurt,Y,ea,package,8 oz,1,6,7.98,25,33
-herdshare,OGC,Mini Sweet Mix Bell Peppers,Y,bag,package,1 lb bag,1,4.59,6.1,25,33
 herdshare,Small is Beautiful Farm,Mixed Bartlett and Green Anjou Pears,Y,ea,package,ea,1,1,1.33,25,33
 herdshare,Graziers Garden,Mixed green beans,Y,pound,weight,pound,1,4,5.32,25,33
 herdshare,River Ranch Oregon Olive OIl,Morning Mist Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
@@ -112,7 +110,6 @@ herdshare,OGC,Oyster Mushrooms,Y,1/2 lb,package,1/2 lb,1,3.75,5.03,25,34
 herdshare,Camas Country Mill,Pardina Brown Lentils,Y,ea,package,3 lbs,1,10.6,14.1,25,33
 herdshare,Spoiled Rotten Vinegar,Pear Vinegar,Y,ea,package,8 fl. oz,1,7,9.31,25,33
 herdshare,RL Plants,Pepi Dwarf Iris Rhizome,Y,ea,package,ea,1,6,7.98,25,33
-herdshare,Little Wings,Persian Cucumber,Y,pound,package,1 lb,1,2.4,3.22,25,34
 herdshare,Creole Me Up,Pickleez Zonyon in Purple (Pickled Onions),Y,ea,package,16oz,1,9,11.97,25,33
 herdshare,Graziers Garden,Pickling Cucumber,Y,lb,package,1 lb,1,2.5,3.35,25,34
 herdshare,Lonesome Whistle,Plain Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.43,25,33
@@ -120,10 +117,11 @@ herdshare,Little Wings,Poblano Peppers,Y,lb,package,1 lb,1,3.5,4.69,25,34
 herdshare,Graziers Garden,Polish White garlic,Y,1/2 lb,weight,1/2 lb,1,5,6.65,25,33
 herdshare,Graziers Garden,Purple Shvelisi Garlic,Y,1/2 lb,package,1/2 lb,1,5,6.65,25,33
 herdshare,Graziers Garden,Purple Viking potatoes,Y,pound,package,pound,1,2.25,2.99,25,33
-herdshare,Graziers Garden,Purslane,Y,bu,package,bu,1,4,5.32,25,33
 herdshare,Spoiled Rotten Vinegar,Quince Vinegar,Y,ea,package,8 fl oz,1,8,10.64,25,33
+herdshare,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans,Y,ea,package,16 oz,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Coffee Beans,Y,ea,package,16 oz,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Radiant Decaf Columbia Coffee,Y,ea,package,12 oz,1,11,14.63,25,33
+herdshare,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,14.63,25,33
 herdshare,RL Plants,Raspberry Swirl - 2009 Tall Bearded Iris - Stunning Award Winner (Rhizome),Y,ea,package,ea,1,7.5,9.98,25,33
 herdshare,"Creamy Cow, LLC",Raw Cultured Butter,Y,ea,package,0.5 lbs,1,14,18.62,25,33
 herdshare,"Creamy Cow, LLC",Raw Fresh Whole Milk,Y,ea,package,1/4 gal,1,6,8,25,33
@@ -145,10 +143,8 @@ herdshare,OGC,Shiitake Mushrooms,Y,1/2 lb,package,1/2 lb,1,4.08,5.43,25,33
 herdshare,Graziers Garden,Shishito Frying Pepper,Y,pt,package,each,1,2.7,3.59,25,33
 herdshare,Graziers Garden,Slicing Cucumbers,Y,lb,package,each,1,2,2.66,25,33
 herdshare,"Creamy Cow, LLC",Sour Cream,Y,ea,package,12 oz,1,12,15.96,25,33
-herdshare,Graziers Garden,Spanish Onion,Y,pound,package,pound,1,3.75,4.99,25,33
 herdshare,Graziers Garden,Strawberries,Y,pt,package,each,1,3.5,4.66,25,33
 herdshare,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
-herdshare,Graziers Garden,Sungold Tomatoes,Y,pt,package,each,1,4,5.32,25,33
 herdshare,Graziers Garden,Sweet Corn,Y,ea,package,each,1,1.4,1.86,25,33
 herdshare,Red Tail Growers,Taragon,Y,bu,package,bu,1,1.5,2.01,25,34
 herdshare,Jar Joy Goods,The Daily Jar Tote/Jar Bag: Organic Waxed Canvas-WFTO Certified,Y,ea,package,each,1,41.95,55.79,25,33
@@ -162,11 +158,9 @@ herdshare,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,6.65,25,33
 herdshare,Queen of Hearts Superfood,Zesty Caesar Dressing,Y,ea,package,each,1,6.6,8.78,25,33
 herdshare,Sweet Creek,Apricot Fruit Spread,Y,ea,package,10 oz,1,3.8,5.13,26,35
 herdshare,Reality Kitchen Nonprofit,Braided Challah (seeded),Y,ea,package,each,1,5.25,7.09,26,35
-herdshare,Sweet Creek,Cinnamon Apple Sauce,Y,ea,package,23 oz,1,4.54,6.13,26,35
 herdshare,Red Tail Growers,Frisee Lettuce,Y,ea,package,each,1,1.5,2.03,26,35
 herdshare,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,Y,ea,package,bag of 4,1,6.1,8.25,26,35
 herdshare,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,Y,ea,package,each,1,6.25,8.5,26,36
-herdshare,Little Wings,Italian Eggplant,Y,lb,package,1 lb,1,2.25,3.04,26,35
 herdshare,Sweet Creek,Mango Habanero Taco Sauce - Maggie Kitchen,Y,ea,package,each,1,3.49,4.71,26,35
 herdshare,Sweet Creek,Mushroom Tomato Sauce,Y,ea,package,16 oz,1,3.76,5.08,26,35
 herdshare,Red Tail Growers,Nantes Carrots,Y,bu,package,each,1,2.5,3.38,26,35
