@@ -87,7 +87,6 @@ guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans
 guest,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Decaf Columbia Coffee,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
-guest,RL Plants,Raspberry Swirl - 2009 Tall Bearded Iris - Stunning Award Winner (Rhizome),Y,ea,package,ea,1,7.5,10.73,30,43
 guest,Lonesome Whistle,Rise & Shine Gluten Free Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.62,30,43
 guest,Graziers Garden,Russet potatoes,Y,pound,package,pound,1,2,2.86,30,43
 guest,Queen of Hearts Superfood,Sassy Italian Dressing,Y,ea,package,each,1,6.6,9.44,30,43
@@ -160,7 +159,6 @@ guest,Red Tail Growers,Red Beets,Y,lb,package,1 lb,1,1,1.45,31,45
 guest,Graziers Garden,Red Norland Potatoes- Fresh dug,Y,pound,package,1 lb,1,2,2.88,31,44
 guest,Camas Swale Farm,Red Onion,Y,lb,package,1 lb,1,1.4,2.02,31,44
 guest,OGC,Red Radish,Y,bu,package,each,1,1.61,2.33,31,45
-guest,Deck Family Farms Hyland Processing,Rendered Beef Tallow,Y,ea,package,16 oz,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Processing,Rendered Pork Back Fat,Y,ea,package,8 oz,1,3.9,5.69,31,46
 guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,11.23,31,44
 guest,Deck Family Farms Hyland Processing,Rendered Pork Leaf Lard,Y,ea,package,8 oz.,1,3.9,5.62,31,44
@@ -174,6 +172,7 @@ guest,Camas Swale Farm,Shallots,Y,lb,package,1 lb,1,3.8,5.47,31,44
 guest,Graziers Garden,Shishito Frying Pepper,Y,pt,package,each,1,2.7,3.89,31,44
 guest,Graziers Garden,Slicing Cucumbers,Y,lb,package,each,1,2,2.88,31,44
 guest,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
+guest,Graziers Garden,Sungold Tomatoes,Y,pt,package,each,1,4,5.76,31,44
 guest,Red Tail Growers,Taragon,Y,bu,package,bu,1,1.5,2.16,31,44
 guest,Deck Family Farm,Top Sirloin Steak,Y,ea,package,1.3-1.6 Lbs,1,19.79,28.89,31,46
 guest,Camas Swale Farm,Tropea onion,Y,lb,package,bu,1,1.5,2.16,31,44
