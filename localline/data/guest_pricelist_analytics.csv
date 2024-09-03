@@ -17,14 +17,12 @@ guest,Elegant Elephant Baking Co.,Box of 5 Cupcakes,Y,ea,package,each,1,6,8.58,3
 guest,Radiant Coffee Roasters,Brazil Cerrado Miniero - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Camas Country Mill,Brown Teff Flour,Y,ea,package,4 lbs,1,7.08,10.12,30,43
 guest,Camas Country Mill,Camas Pizza Blend,Y,ea,package,4 lbs,1,10.3,14.73,30,43
-guest,OGC,Cantaloupe,Y,ea,package,each,1,4.13,5.91,30,43
 guest,Lonesome Whistle,Cayenne Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
 guest,Reality Kitchen Nonprofit,Challah Sandwich Loaf,Y,ea,package,each,1,6,8.58,30,43
 guest,Graziers Garden,Chives,Y,bu,package,each,1,1.5,2.15,30,43
 guest,Creole Me Up,Creole Marinade with Sass,Y,ea,package,8oz,1,7.5,10.73,30,43
 guest,OGC,Crimini Mushrooms,Y,lb,package,1 lb,1,3.95,5.65,30,43
 guest,Small is Beautiful Farm,Cut Flower Bouquet,Y,ea,package,each,1,10,14.3,30,43
-guest,RL Plants,DOXIE DOODLES - 2011 Standard Dwarf Bearded Iris - Fragrant (rhizome),Y,ea,package,ea,1,7,10.01,30,43
 guest,OGC,Daikon Radish,Y,lb,package,1 Lb,1,1.67,2.4,30,44
 guest,Lonesome Whistle,Dakota Black Heirloom Popcorn,Y,ea,package,2 lbs,1,10,14.3,30,43
 guest,Lonesome Whistle,Dark Northern Rye Flour,Y,ea,package,3.5 lbs,1,7,10.01,30,43
@@ -64,7 +62,9 @@ guest,Spoiled Rotten Vinegar,Honey Vinegar,Y,ea,package,8 fl. oz,1,8,11.44,30,43
 guest,Lonesome Whistle,Jalapeno Cheddar Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
 guest,Camas Swale Farm,Jalapeno Pepper,Y,lb,package,lb,1,4,5.72,30,43
 guest,Little Wings,Jimmy Nardello Peppers,Y,lb,package,1 lb,1,4.25,6.08,30,43
+guest,Camas Swale Farm,Leeks,Y,lb,package,1 lb,1,2,2.86,30,43
 guest,Lonesome Whistle,Lemon Lavender Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
+guest,Little Wings,"Lunchbox Peppers, Bagged",Y,bag,package,1 pound bag,1,4.5,6.44,30,43
 guest,Small is Beautiful Farm,Mixed Bartlett and Green Anjou Pears,Y,ea,package,ea,1,1,1.43,30,43
 guest,Small is Beautiful Farm,Mixed apples,Y,ea,package,ea,1,1,1.43,30,43
 guest,Lonesome Whistle,Nutritional Yeast Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
@@ -97,6 +97,7 @@ guest,Jar Joy Goods,The Daily Jar Tote/Jar Bag: Organic Waxed Canvas-WFTO Certif
 guest,Jar Joy Goods,The Insulated Jar Tote/Jar Bag: Hemp + Natural Rubber (Yulex),Y,ea,package,each,1,110.5,158.02,30,43
 guest,Camas Country Mill,Three Sisters Porridge,Y,ea,package,4 lbs,1,13.25,18.95,30,43
 guest,Full Farm CSA,Tote Bag,Y,ea,package,ea,1,13,18.59,30,43
+guest,Little Wings,Toybox Cherry Tomatoes,Y,pt,package,1 pt,1,3.25,4.65,30,43
 guest,Lonesome Whistle,Up & At Em Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.62,30,43
 guest,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans New 12 oz Bags,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,7.15,30,43
@@ -128,7 +129,7 @@ guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Pork Chaurice Sau
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Pork Loukaniko Sausage - made weekly in our farm kitchen!,Y,pk,package,14 oz. pk/4 links,1,11.05,16.13,31,46
 guest,Red Tail Growers,Frisee Lettuce,Y,ea,package,each,1,1.5,2.18,31,45
 guest,Red Tail Growers,Green  Butterhead Lettuce,Y,ea,package,each,1,1.5,2.16,31,44
-guest,Little Wings,Green Bell Pepper,Y,lb,package,1 lb,1,2.5,3.6,31,44
+guest,Little Wings,Green Curly Kale,Y,bu,package,each,1,2,2.88,31,44
 guest,Graziers Garden,Green Zucchini,Y,lb,package,1 lb,1,2.4,3.46,31,44
 guest,Deck Family Farm,Ground Beef - All Natural,Y,ea,package,1 lb,1,5.85,8.54,31,46
 guest,Deck Family Farm,Ground Lamb,Y,ea,package,1 lb,1,11.05,16.13,31,46
@@ -153,9 +154,11 @@ guest,Little Wings,Poblano Peppers,Y,lb,package,1 lb,1,3.5,5.04,31,44
 guest,Deck Family Farm,Pork Bones,Y,ea,package,3-5 lbs.,1,5.2,7.59,31,46
 guest,Deck Family Farm,Pork Frankfurter,Y,pk,package,12 oz pk,1,11.05,16.13,31,46
 guest,Red Tail Growers,Red Beets,Y,lb,package,1 lb,1,1,1.45,31,45
+guest,Little Wings,Red Butterhead Lettuce,Y,ea,package,each,1,1.75,2.52,31,44
 guest,Graziers Garden,Red Norland Potatoes- Fresh dug,Y,pound,package,1 lb,1,2,2.88,31,44
 guest,Camas Swale Farm,Red Onion,Y,lb,package,1 lb,1,1.4,2.02,31,44
 guest,OGC,Red Radish,Y,bu,package,each,1,1.61,2.33,31,45
+guest,Little Wings,Red Russian Frills Kale,Y,bu,package,bu,1,2,2.9,31,45
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,Y,ea,package,8 oz,1,3.9,5.69,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,11.23,31,44
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard,Y,ea,package,8 oz.,1,3.9,5.62,31,44
@@ -176,7 +179,6 @@ guest,Deck Family Farm,Bacon Ends & Pieces,Y,pk,package,8 oz,1,7.8,11.39,32,46
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,"Small, 2.3-2.9 lbs",1,26.2,38.25,32,46
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,"Medium, 3-3.9",1,34.76,50.75,32,46
 guest,Deck Family Farm,"Beef Brisket, Large",Y,ea,package,"Large, 4.3-4.9",1,46.35,67.67,32,46
-guest,Deck Family Farm,Beef Flat Iron Steak,Y,ea,package,0.7 - 1.1 lbs.,1,12.87,18.79,32,46
 guest,Deck Family Farm,Beef Heart,Y,ea,package,2.2 -2.6 lb,1,12.48,18.22,32,46
 guest,Deck Family Farm,Beef Kidney,Y,pk,package,0.8 - 1 Lbs,1,12.87,18.79,32,46
 guest,Deck Family Farm,Beef Liver,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,22.97,32,46
@@ -202,8 +204,8 @@ guest,Deck Family Farm,Fresh Garlic Sausage Links,Y,pk,package,12 oz / 4 count,1
 guest,Deck Family Farm,Ground Country Sausage,Y,ea,package,12 oz,1,8.61,12.57,32,46
 guest,Deck Family Farm,Ground Pork,Y,ea,package,1 lb,1,9.43,13.77,32,46
 guest,Deck Family Farm,"Honey, Bulk Raw",Y,ea,package,4 gallon,1,245,357.7,32,46
-guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1 qt,1,26,37.96,32,46
 guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1/2 pt,1,9.43,13.77,32,46
+guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1 qt,1,26,37.96,32,46
 guest,Deck Family Farm,"Honey, Raw",Y,ea,package,1 pt,1,14.3,20.88,32,46
 guest,Deck Family Farm,Lamb Chops,Y,ea,package,4 Pack 1.6-1.9 Lbs,1,22.75,33.22,32,46
 guest,Deck Family Farm,Lamb Ribs,Y,ea,package,1.4-1.9 lb,1,16.62,24.27,32,46
@@ -241,6 +243,7 @@ guest,Full Farm CSA,Frozen Blueberries,Y,bag,package,~1.0 lbs,1,4.25,6.8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Brownie Bite with Chocolate Chips,Y,ea,package,each,1,2.5,4,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Half Almond Loaf Sliced,Y,ea,package,each,1,5,8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Mini Banana Bread Loaf,Y,ea,package,each,1,5,8,38,60
+guest,Little Wings,Orange Bell Pepper,Y,lb,package,1 lb,1,2.5,4,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Blueberry Scone,Y,ea,package,each,1,2.9,4.75,39,64
 guest,Reality Kitchen Nonprofit,Braided Challah (plain),Y,ea,package,each,1,5.25,8.93,41,70
 guest,Reality Kitchen Nonprofit,Braided Challah (seeded),Y,ea,package,each,1,5.25,8.93,41,70
