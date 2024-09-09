@@ -56,7 +56,7 @@ async function subscribers(filename, fees) {
                 // Process the sortedData array to find matches
                 sortedData.forEach(row => {
                     // Check if the row has a 'Total' of 500
-                    if (parseFloat(row.Total) === 500) {
+                    if (parseFloat(row.Total) === 500 && row.Status === "Active") {
                         // Look for a matching email in the emailToFeeMap
                         const email = row.Email;
                         if (emailToFeeMap.has(email)) {
