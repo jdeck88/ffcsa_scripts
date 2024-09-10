@@ -111,7 +111,6 @@ guest,Graziers Garden,Cherry Tomatoes,Y,pt,package,each,1,3.75,5.4,31,44
 guest,Deck Family Farm,Chicken Feet,Y,ea,package,1 lb.,1,4.55,6.64,31,46
 guest,Deck Family Farm,Chicken Wings,Y,ea,package,1.6-2  lbs,1,11.7,17.08,31,46
 guest,Red Tail Growers,Chioggia Beets,Y,pound,package,1 Lb,1,1,1.44,31,44
-guest,Sweet Creek,Cinnamon Apple Sauce,Y,ea,package,23 oz,1,4.54,6.58,31,45
 guest,Little Wings,Collard Greens,Y,bu,package,each,1,2,2.88,31,44
 guest,River Ranch Oregon Olive OIl,Colliding Rivers Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
 guest,Lonesome Whistle,Dark Northern Rye Flour,Y,ea,package,1.6 lbs,1,4,5.76,31,44
@@ -122,10 +121,12 @@ guest,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 250mL,Y,ea,p
 guest,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Rosemary and Basil 100mL,Y,ea,package,3.38oz (100mL),1,10.95,15.77,31,44
 guest,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Rosemary and Basil 250mL,Y,ea,package,250mL,1,21.95,31.61,31,44
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Bangers- made weekly in our farm kitchen!,Y,pk,package,4 links/pk,1,11.05,16.13,31,46
+guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Blueberry Maple Sausage- made weekly in our farm kitchen!,Y,pk,package,4 links/pack  14oz packages,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Chorizo- made weekly in our farm kitchen!,Y,pk,package,4 Links/pack  14oz Packages,1,11.9,17.37,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Hot Italian Sausage- made weekly in our farm kitchen!,Y,pk,package,14 oz packs 4 links/pk,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Pork Chaurice Sausage - made weekly in our farm kitchen!,Y,pk,package,14 oz pk/ 4links,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Pork Loukaniko Sausage - made weekly in our farm kitchen!,Y,pk,package,14 oz. pk/4 links,1,11.05,16.13,31,46
+guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Summer Herb Lamb Sausage- made weekly in our farm kitchen!,Y,pk,package,4 Links/pack  14oz Packages,1,12.03,17.56,31,46
 guest,Graziers Garden,German Butterball Potatoes,Y,pound,package,pound,1,3.5,5.04,31,44
 guest,Red Tail Growers,Green  Butterhead Lettuce,Y,ea,package,each,1,1.5,2.16,31,44
 guest,Little Wings,Green Curly Kale,Y,bu,package,each,1,2,2.88,31,44
@@ -155,7 +156,6 @@ guest,Red Tail Growers,Red Beets,Y,lb,package,1 lb,1,1,1.45,31,45
 guest,Little Wings,Red Butterhead Lettuce,Y,ea,package,each,1,1.75,2.52,31,44
 guest,Graziers Garden,Red Norland Potatoes- Fresh dug,Y,pound,package,1 lb,1,2,2.88,31,44
 guest,Camas Swale Farm,Red Onion,Y,lb,package,1 lb,1,1.4,2.02,31,44
-guest,OGC,Red Radish,Y,bu,package,each,1,1.61,2.33,31,45
 guest,Little Wings,Red Russian Frills Kale,Y,bu,package,bu,1,2,2.9,31,45
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,Y,ea,package,8 oz,1,3.9,5.69,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard,Y,ea,package,8 oz.,1,3.9,5.62,31,44
@@ -186,7 +186,6 @@ guest,Deck Family Farm,Beef Patties,Y,pk,package,1 lb / 3 Patties,1,8.61,12.57,3
 guest,Deck Family Farm,Beef Shank Osso Buco,Y,ea,package,2.1-2.4  lbs.,1,24.13,35.23,32,46
 guest,Deck Family Farm,Beef Stew Meat,Y,ea,package,1-1.4 lbs,1,10.08,14.72,32,46
 guest,Deck Family Farm,Beef Tongue,Y,pk,package,2.5-3 Lbs,1,14.3,20.88,32,46
-guest,Deck Family Farm,"Beef Tri-Tip,",Y,ea,package,1.9-2.2 lbs.,1,23.65,34.53,32,46
 guest,Deck Family Farm,Bone-In Chicken Breast,Y,ea,package,2-2.8 lbs,1,21.84,31.89,32,46
 guest,Deck Family Farm,Boneless Skinless Breast Chucks,Y,pk,package,6.6-7.4 Lbs pk,1,40.95,59.79,32,46
 guest,Deck Family Farm,Bratwurst Sausage,Y,ea,package,12 oz.,1,10.73,15.67,32,46
@@ -194,11 +193,9 @@ guest,Deck Family Farm,Chicken Feet,Y,ea,package,2 lb,1,7.8,11.39,32,46
 guest,Deck Family Farm,Chicken Liver,Y,ea,package,1/2 lb,1,6.5,9.49,32,46
 guest,Deck Family Farm,"Chop, Boneless",Y,pk,package,1.2-1.5 Lb pk,1,14.48,21.14,32,46
 guest,Deck Family Farm,Chorizo Sausage,Y,pk,package,12 oz 4 count,1,10.73,15.67,32,46
-guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Blueberry Maple Sausage- made weekly in our farm kitchen!,Y,pk,package,4 links/pack  14oz packages,1,17,24.82,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Chaurice Sausage ( Unlinked )- made weekly in our farm kitchen!,Y,pk,package,12 oz. pk,1,9.1,13.29,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made English Breakfast Sausage- made weekly in our farm kitchen!,Y,pk,package,12 oz pk,1,9.1,13.29,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Lamb Merguez Ground Sausage- made weekly in our farm kitchen!,Y,ea,package,"12oz , Pack",1,10.08,14.72,32,46
-guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Summer Herb Lamb Sausage- made weekly in our farm kitchen!,Y,pk,package,4 Links/pack  14oz Packages,1,18.5,27.01,32,46
 guest,Deck Family Farm,Fresh Garlic Sausage Links,Y,pk,package,12 oz / 4 count,1,10.73,15.67,32,46
 guest,Deck Family Farm,Ground Country Sausage,Y,ea,package,12 oz,1,8.61,12.57,32,46
 guest,Deck Family Farm,Ground Pork,Y,ea,package,1 lb,1,9.43,13.77,32,46
