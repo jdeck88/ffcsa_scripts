@@ -73,7 +73,6 @@ guest,Camas Country Mill,Organic Oat Flakes,Y,ea,package,4 lbs,1,15.25,21.81,30,
 guest,OGC,Oyster Mushrooms,Y,1/2 lb,package,1/2 lb,1,3.75,5.36,30,43
 guest,Camas Country Mill,Pardina Brown Lentils,Y,ea,package,3 lbs,1,10.6,15.16,30,43
 guest,Spoiled Rotten Vinegar,Pear Vinegar,Y,ea,package,8 fl. oz,1,7,10.01,30,43
-guest,RL Plants,Pepi Dwarf Iris Rhizome,Y,ea,package,ea,1,6,8.58,30,43
 guest,Lonesome Whistle,Plain Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
 guest,Graziers Garden,Purple Shvelisi Garlic,Y,1/2 lb,package,1/2 lb,1,5,7.15,30,43
 guest,Graziers Garden,Purple Viking potatoes,Y,pound,package,pound,1,2.25,3.22,30,43
@@ -97,8 +96,6 @@ guest,Lonesome Whistle,Up & At Em Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.62,3
 guest,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans New 12 oz Bags,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,7.15,30,43
 guest,Queen of Hearts Superfood,Zesty Caesar Dressing,Y,ea,package,each,1,6.6,9.44,30,43
-guest,River Ranch Oregon Olive OIl,2022 Arbequina  Olive Oil 250mL,Y,ea,package,Ea.,1,16.75,24.12,31,44
-guest,Sweet Creek,Apricot Fruit Spread,Y,ea,package,10 oz,1,3.8,5.51,31,45
 guest,Graziers Garden,Basil,Y,bu,package,1 bu.,1,2,2.88,31,44
 guest,Deck Family Farm,Beef Bones,Y,bag,package,3 - 5 lbs,1,10.4,15.18,31,46
 guest,Deck Family Farm,Beef Marrow Bones,Y,pk,package,3-3.5 Lbs,1,14.79,21.59,31,46
@@ -174,7 +171,6 @@ guest,Reality Kitchen Nonprofit,Wholewheat Multigrain Sandwich Loaf,Y,ea,package
 guest,Deck Family Farm,Bacon Ends & Pieces,Y,pk,package,8 oz,1,7.8,11.39,32,46
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,"Small, 2.3-2.9 lbs",1,26.2,38.25,32,46
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,"Medium, 3-3.9",1,34.76,50.75,32,46
-guest,Deck Family Farm,"Beef Brisket, Large",Y,ea,package,"Large, 4.3-4.9",1,46.35,67.67,32,46
 guest,Deck Family Farm,Beef Heart,Y,ea,package,2.2 -2.6 lb,1,12.48,18.22,32,46
 guest,Deck Family Farm,Beef Kidney,Y,pk,package,0.8 - 1 Lbs,1,12.87,18.79,32,46
 guest,Deck Family Farm,Beef Liver,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,22.97,32,46
