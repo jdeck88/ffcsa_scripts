@@ -81,7 +81,6 @@ guest,Lonesome Whistle,Plain Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,
 guest,Graziers Garden,Purple Shvelisi Garlic,Y,1/2 lb,package,1/2 lb,1,5,7.15,30,43
 guest,Graziers Garden,Purple Viking potatoes,Y,pound,package,pound,1,2.25,3.22,30,43
 guest,Spoiled Rotten Vinegar,Quince Vinegar,Y,ea,package,8 fl oz,1,8,11.44,30,43
-guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Decaf Columbia Coffee,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
@@ -100,7 +99,6 @@ guest,Full Farm CSA,Tote Bag,Y,ea,package,ea,1,13,18.59,30,43
 guest,Lonesome Whistle,Up & At Em Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.62,30,43
 guest,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans New 12 oz Bags,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,7.15,30,43
-guest,Queen of Hearts Superfood,Zesty Caesar Dressing,Y,ea,package,each,1,6.6,9.44,30,43
 guest,Deck Family Farm,Baby Back Ribs,Y,pk,package,0.9-1.5  Lbs,1,11.31,16.51,31,46
 guest,Little Wings,Baby Bok Choi,Y,bu,package,each,1,2,2.9,31,45
 guest,Graziers Garden,Basil,Y,bu,package,1 bu.,1,2,2.88,31,44
@@ -191,7 +189,6 @@ guest,Deck Family Farm,*SALE $1 off per lb.* CRX Roasting Chicken,Y,ea,package,3
 guest,Deck Family Farm,Bacon Ends & Pieces,Y,pk,package,8 oz,1,7.8,11.39,32,46
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,3-4,1,35.26,51.48,32,46
 guest,Deck Family Farm,Beef Chuck Roast,Y,ea,package,2.5-3 lbs.,1,27.71,40.46,32,46
-guest,Deck Family Farm,Beef Flat Iron Steak,Y,ea,package,0.6-0.9 lbs.,1,10.73,15.67,32,46
 guest,Deck Family Farm,Beef Heart,Y,ea,package,2-3 lb,1,13,18.98,32,46
 guest,Deck Family Farm,Beef Kidney,Y,pk,package,0.8 - 1 Lbs,1,12.87,18.79,32,46
 guest,Deck Family Farm,Beef Liver,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,22.97,32,46
@@ -224,8 +221,8 @@ guest,Deck Family Farm,Lamb Shoulder Roast,Y,ea,package,2.3 -2.7 lbs,1,27.63,40.
 guest,Deck Family Farm,Landgaeger Jerky,Y,pk,package,3 count / 3 oz,1,9.1,13.29,32,46
 guest,Deck Family Farm,New York Steak,Y,ea,package,0.5 - 0.9 lbs,1,14.11,20.6,32,46
 guest,Deck Family Farm,"Olympia Provisions, Dog Treats",Y,pk,package,5 oz. pk,1,9.75,14.24,32,46
-guest,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1/2 dozen,1,4.23,6.18,32,46
 guest,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1 dozen,1,7.15,10.44,32,46
+guest,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1/2 dozen,1,4.23,6.18,32,46
 guest,Deck Family Farm,"Pastrami, Sliced",Y,pk,package,8 oz,1,10.73,15.67,32,46
 guest,Deck Family Farm,Peppered Knife Cut Beef Jerky,Y,pk,package,3 oz,1,9.75,14.24,32,46
 guest,Deck Family Farm,Pet Food Organ Mix,Y,ea,package,1 lb,1,6.5,9.49,32,46
@@ -235,7 +232,6 @@ guest,Deck Family Farm,Pork Shoulder Roast,Y,ea,package,2-2.7 lbs,1,25.2,36.79,3
 guest,Deck Family Farm,"Pork Shoulder Roast, Large",Y,ea,package,2.8-3.5 lbs,1,33.78,49.32,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,Y,ea,package,16 oz,1,7.8,11.39,32,46
 guest,Deck Family Farm,Sage and Sea Salt Pork Breakfast Sausage,Y,pk,package,each,1,9.1,13.29,32,46
-guest,Deck Family Farm,"Skirt Steak, Large",Y,pk,package,1-1.2Lb,1,15.02,21.93,32,46
 guest,Deck Family Farm,Smoked Polish Kielbasa Sausage,Y,pk,package,12 oz,1,10.73,15.67,32,46
 guest,Deck Family Farm,Stewing Hen,Y,ea,package,2 - 3.8 lbs,1,10.08,14.72,32,46
 guest,Deck Family Farm,Summer Sausage,Y,ea,package,8 oz,1,7.8,11.39,32,46
