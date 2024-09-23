@@ -188,7 +188,7 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                   count++
                   doc.fontSize(12).text(fullfillmentDate, { align: 'right' });
 
-                  doc.fontSize(16).text(dropsiteName + " Checklist", { bold: true });
+                  doc.fontSize(16).text(dropsiteName + " Manifest", { bold: true });
 
                   // Convert the data into the desired format
                   const tableData = Object.entries(dropsites[dropsiteName].customers).map(([name, values]) => ({
@@ -223,7 +223,7 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                   masterdropsites[dropsiteName] = sums
                 }
                 doc.addPage();
-                doc.fontSize(16).text("Master Checklist", { bold: true });
+                doc.fontSize(16).text("Master Manifest", { bold: true });
                 const tableData = [
                   ...Object.entries(masterdropsites).map(([dropsite, values]) => [dropsite, values.tote, values.dairy, values.frozen]),
                 ];
@@ -357,7 +357,7 @@ function sendEmail(file_location, filename, subject) {
   const emailOptions = {
     from: "jdeck88@gmail.com",
     to: "fullfarmcsa@deckfamilyfarm.com",
-    cc: "jdeck88@gmail.com",
+    cc: "jdeck88@gmail.com, info@deckfamilyfarm.com",
     subject: subject,
     text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
   };
@@ -402,7 +402,7 @@ async function checklist(fullfillmentDate) {
           .then((frozen_file) => {
             writeChecklistPDF(dairy_file, frozen_file, delivery_order_file_path)
               .then((checklist_pdf) => {
-                sendEmail(checklist_pdf, 'checklists.pdf', 'FFCSA Reports: Checklists for ' + fullfillmentDate)
+                sendEmail(checklist_pdf, 'manifests.pdf', 'FFCSA Reports: Manifests for ' + fullfillmentDate)
 
 
               }).catch((error) => {
@@ -415,7 +415,7 @@ async function checklist(fullfillmentDate) {
             writeChecklistPDF(dairy_file, frozen_file, delivery_order_file_path)
               .then((checklist_pdf) => {
                 console.log('TODO write catch!')
-                sendEmail(checklist_pdf, 'checklists.pdf', 'FFCSA Reports: Checklists for ' + fullfillmentDate)
+                sendEmail(checklist_pdf, 'manifests.pdf', 'FFCSA Reports: Manifests for ' + fullfillmentDate)
               }).catch((error) => {
                 console.error("Error in writeChecklistPDF:", error);
                 utilities.sendErrorEmail(error)
