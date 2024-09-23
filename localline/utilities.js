@@ -451,6 +451,18 @@ function getOrderDayMinusFourteen() {
     const yesterdayFormatted = `${year}-${month}-${day}`;
     return yesterdayFormatted;
 }
+function getOrderDayMinusTwentyOne() {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 21);
+
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(yesterday.getDate()).padStart(2, '0');
+
+    const yesterdayFormatted = `${year}-${month}-${day}`;
+    return yesterdayFormatted;
+}
 
 function getYesterday() {
     const today = new Date();
@@ -530,6 +542,7 @@ module.exports = {
     getOrderDay,
     getOrderDayMinusSeven,
     getOrderDayMinusFourteen,
+    getOrderDayMinusTwentyOne,
     getLastMonth,
     getToday,
     getTomorrow,
