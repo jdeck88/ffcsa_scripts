@@ -126,6 +126,7 @@ members,Camas Swale Farm,Shallots,Y,lb,package,1 lb,1,3.8,5.09,25,34
 members,OGC,Shiitake Mushrooms,Y,1/2 lb,package,1/2 lb,1,4.08,5.43,25,33
 members,Graziers Garden,Shishito Frying Pepper,Y,pt,package,each,1,2.7,3.59,25,33
 members,Graziers Garden,Slicing Cucumbers,Y,lb,package,each,1,2,2.66,25,33
+members,Little Wings,Spinach  1/2 Lb.,Y,bag,package,each,1,3.75,5.03,25,34
 members,Graziers Garden,Strawberries,Y,pt,package,each,1,3.5,4.66,25,33
 members,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
 members,Graziers Garden,Sungold Tomatoes,Y,pt,package,each,1,4,5.32,25,33
@@ -139,7 +140,6 @@ members,Full Farm CSA,Tote Bag,Y,ea,package,ea,1,13,17.29,25,33
 members,Lonesome Whistle,Up & At Em Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.09,25,33
 members,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans New 12 oz Bags,Y,ea,package,12 oz,1,11,14.63,25,33
 members,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,6.65,25,33
-members,Sweet Creek,Basil Tomato Sauce,Y,ea,package,16 oz,1,3.76,5.08,26,35
 members,Red Tail Growers,Bietola,Y,ea,package,ea,1,2,2.7,26,35
 members,Red Tail Growers,Bietola/chard mix,Y,bag,package,1/2 lb bag,1,3.5,4.73,26,35
 members,Sweet Creek,Blueberry Apple Sauce,Y,ea,package,each,1,4.87,6.57,26,35
@@ -149,11 +149,9 @@ members,Sweet Creek,Cinnamon Apple Sauce,Y,ea,package,23 oz,1,4.54,6.13,26,35
 members,Camas Swale Farm,Frisee Lettuce,Y,ea,package,each,1,2,2.7,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,Y,ea,package,bag of 4,1,6.1,8.25,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,Y,ea,package,each,1,6.25,8.5,26,36
-members,Little Wings,Green Pole Beans,Y,lb,package,1 lb,1,4.5,6.08,26,35
 members,Sweet Creek,Just Apple Apple Sauce,Y,ea,package,26.5 oz,1,4.54,6.13,26,35
 members,Red Tail Growers,Kale Mix,Y,ea,package,1/2 lb,1,3.5,4.73,26,35
 members,Red Tail Growers,Mild Mustard Salad Mix,Y,bag,package,1/2 lb,1,3.5,4.73,26,35
-members,Sweet Creek,Mushroom Tomato Sauce,Y,ea,package,16 oz,1,3.76,5.08,26,35
 members,Red Tail Growers,Nantes Carrots,Y,bu,package,each,1,2.5,3.38,26,35
 members,Sweet Creek,Pauls Dill Pickles,Y,ea,package,24 oz,1,5.7,7.7,26,35
 members,Creole Me Up,Pickleez Anana/ Pickled Pineapple,Y,ea,package,ea,1,9,12.15,26,35

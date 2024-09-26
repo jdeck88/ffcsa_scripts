@@ -108,7 +108,6 @@ guest,Lonesome Whistle,Up & At Em Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.62,3
 guest,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans New 12 oz Bags,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,7.15,30,43
 guest,Graziers Garden,Basil,Y,bu,package,1 bu.,1,2,2.88,31,44
-guest,Sweet Creek,Basil Tomato Sauce,Y,ea,package,16 oz,1,3.76,5.45,31,45
 guest,Deck Family Farm,Beef Bones,Y,bag,package,3 - 5 lbs,1,10.4,15.18,31,46
 guest,Deck Family Farm,Beef Flank Steak,Y,ea,package,1-1.5  lbs.,1,17.88,26.1,31,46
 guest,Deck Family Farm,Beef Marrow Bones,Y,pk,package,3-3.5 Lbs,1,14.79,21.59,31,46
@@ -140,7 +139,6 @@ guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Pork Loukaniko Sa
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Summer Herb Lamb Sausage- made weekly in our farm kitchen!,Y,pk,package,4 Links/pack  14oz Packages,1,12.03,17.56,31,46
 guest,Camas Swale Farm,Frisee Lettuce,Y,ea,package,each,1,2,2.9,31,45
 guest,Little Wings,Green Curly Kale,Y,bu,package,each,1,2,2.88,31,44
-guest,Little Wings,Green Pole Beans,Y,lb,package,1 lb,1,4.5,6.53,31,45
 guest,Graziers Garden,Green Zucchini,Y,lb,package,1 lb,1,2.4,3.46,31,44
 guest,Deck Family Farm,Ground Beef,Y,ea,package,1 lb,1,5.85,8.54,31,46
 guest,Deck Family Farm,Ground Lamb,Y,ea,package,1 lb,1,11.05,16.13,31,46
@@ -156,7 +154,6 @@ guest,Deck Family Farm,Lamb Stew Meat,Y,ea,package,0.91.1 lbs,1,11.7,17.08,31,46
 guest,River Ranch Oregon Olive OIl,Lavender Olive Oil Sugar Scrub,Y,ea,package,ea  4oz. jar,1,5,7.2,31,44
 guest,Red Tail Growers,Mild Mustard Salad Mix,Y,bag,package,1/2 lb,1,3.5,5.08,31,45
 guest,River Ranch Oregon Olive OIl,Morning Mist Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
-guest,Sweet Creek,Mushroom Tomato Sauce,Y,ea,package,16 oz,1,3.76,5.45,31,45
 guest,Red Tail Growers,Nantes Carrots,Y,bu,package,each,1,2.5,3.63,31,45
 guest,Deck Family Farm,Olympia Provisions Saucisson DArles Salami,Y,ea,package,ea,1,11.7,17.08,31,46
 guest,Graziers Garden,Oregano,Y,bu,package,each,1,3.5,5.04,31,44
@@ -190,6 +187,7 @@ guest,Camas Swale Farm,Serrano pepper,Y,lb,package,1 lb,1,4,5.76,31,44
 guest,Camas Swale Farm,Shallots,Y,lb,package,1 lb,1,3.8,5.47,31,44
 guest,Graziers Garden,Shishito Frying Pepper,Y,pt,package,each,1,2.7,3.89,31,44
 guest,Graziers Garden,Slicing Cucumbers,Y,lb,package,each,1,2,2.88,31,44
+guest,Little Wings,Spinach  1/2 Lb.,Y,bag,package,each,1,3.75,5.4,31,44
 guest,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
 guest,Graziers Garden,Sungold Tomatoes,Y,pt,package,each,1,4,5.76,31,44
 guest,Red Tail Growers,Taragon,Y,bu,package,bu,1,1.5,2.16,31,44
