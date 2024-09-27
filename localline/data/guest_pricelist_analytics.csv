@@ -58,6 +58,7 @@ guest,Elegant Elephant Baking Co.,Gluten Free Mixed Berry Pie,Y,ea,package,9,1,1
 guest,Elegant Elephant Baking Co.,Gluten Free Sourdough Baguette,Y,ea,package,each,1,5,7.15,30,43
 guest,Graziers Garden,Green Cabbage,Y,ea,package,each,1,4,5.72,30,43
 guest,Sweet Creek,Green Enchalada Sauce,Y,ea,package,each,1,3.9,5.58,30,43
+guest,Graziers Garden,Hakurei Turnips,Y,lb,package,1 Lb,1,2.25,3.22,30,43
 guest,Kiko Denzer,Handcrafted Egg Pushers,Y,ea,package,each,1,8,11.44,30,43
 guest,Kiko Denzer,Handcrafted Fancy Wooden Eating Spoons,Y,ea,package,each,1,20,28.6,30,43
 guest,Kiko Denzer,Handcrafted Wooden Fancy Egg Pushers,Y,ea,package,ea,1,12,17.04,30,42
@@ -193,7 +194,6 @@ guest,Graziers Garden,Sungold Tomatoes,Y,pt,package,each,1,4,5.76,31,44
 guest,Red Tail Growers,Taragon,Y,bu,package,bu,1,1.5,2.16,31,44
 guest,Sweet Creek,Tomatillo Salsa,Y,ea,package,16 oz,1,4.4,6.38,31,45
 guest,Reality Kitchen Nonprofit,Wholewheat Multigrain Sandwich Loaf,Y,ea,package,each,1,5.25,7.61,31,45
-guest,Deck Family Farm,*SALE $1 off per lb.* CRX Roasting Chicken,Y,ea,package,3.2-4.2 Lbs.,1,16.84,24.59,32,46
 guest,Deck Family Farm,Bacon Ends & Pieces,Y,pk,package,8 oz,1,7.8,11.39,32,46
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,3-4,1,35.26,51.48,32,46
 guest,Deck Family Farm,Beef Chuck Roast,Y,ea,package,2.5-3 lbs.,1,27.71,40.46,32,46
@@ -206,7 +206,6 @@ guest,Deck Family Farm,Beef Stew Meat,Y,ea,package,1-1.4 lbs,1,10.08,14.72,32,46
 guest,Deck Family Farm,Beef Tenderloin,Y,pk,package,0.4 - 0.7 lbs.,1,12.87,18.79,32,46
 guest,Deck Family Farm,Beef Tongue,Y,pk,package,2.5-3 Lbs,1,14.3,20.88,32,46
 guest,Deck Family Farm,Bone-In Chicken Breast,Y,ea,package,2-2.8 lbs,1,21.84,31.89,32,46
-guest,Deck Family Farm,Bratwurst Sausage,Y,ea,package,12 oz.,1,10.73,15.67,32,46
 guest,Deck Family Farm,Chicken Feet,Y,ea,package,2 lb,1,7.8,11.39,32,46
 guest,Deck Family Farm,Chicken Hindquarter,Y,ea,package,1.3 - 2 lbs,1,12.87,18.79,32,46
 guest,Deck Family Farm,Chicken Liver,Y,ea,package,1/2 lb,1,6.5,9.49,32,46
@@ -230,8 +229,8 @@ guest,Deck Family Farm,Lamb Shoulder Roast,Y,ea,package,2.3 -2.7 lbs,1,27.63,40.
 guest,Deck Family Farm,Landgaeger Jerky,Y,pk,package,3 count / 3 oz,1,9.1,13.29,32,46
 guest,Deck Family Farm,New York Steak,Y,ea,package,0.5 - 0.9 lbs,1,14.11,20.6,32,46
 guest,Deck Family Farm,"Olympia Provisions, Dog Treats",Y,pk,package,5 oz. pk,1,9.75,14.24,32,46
-guest,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1 dozen,1,7.15,10.44,32,46
 guest,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1/2 dozen,1,4.23,6.18,32,46
+guest,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1 dozen,1,7.15,10.44,32,46
 guest,Deck Family Farm,"Pastrami, Sliced",Y,pk,package,8 oz,1,10.73,15.67,32,46
 guest,Deck Family Farm,Peppered Knife Cut Beef Jerky,Y,pk,package,3 oz,1,9.75,14.24,32,46
 guest,Deck Family Farm,Pet Food Organ Mix,Y,ea,package,1 lb,1,6.5,9.49,32,46
@@ -241,8 +240,9 @@ guest,Deck Family Farm,Pork Shoulder Roast,Y,ea,package,2-2.7 lbs,1,25.2,36.79,3
 guest,Deck Family Farm,"Pork Shoulder Roast, Large",Y,ea,package,2.8-3.5 lbs,1,33.78,49.32,32,46
 guest,Red Tail Growers,Red Tail Salad  Mix,Y,bag,package,1/2 lb. bag,1,3.5,5.11,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,Y,ea,package,16 oz,1,7.8,11.39,32,46
+guest,Deck Family Farm,SALE 10% OFF* Bratwurst Sausage,Y,ea,package,12 oz.,1,10.19,14.88,32,46
+guest,Deck Family Farm,SALE 10% OFF* Smoked Kielbasa Sausage,Y,pk,package,12 oz,1,10.19,14.88,32,46
 guest,Deck Family Farm,Sage and Sea Salt Pork Breakfast Sausage,Y,pk,package,each,1,9.1,13.29,32,46
-guest,Deck Family Farm,Smoked Polish Kielbasa Sausage,Y,pk,package,12 oz,1,10.73,15.67,32,46
 guest,Deck Family Farm,Stewing Hen,Y,ea,package,2 - 3.8 lbs,1,10.08,14.72,32,46
 guest,Deck Family Farm,Summer Sausage,Y,ea,package,8 oz,1,7.8,11.39,32,46
 guest,Deck Family Farm,Sweet Italian Sausage Links,Y,pk,package,12 oz 4 count,1,10.73,15.67,32,46
@@ -251,12 +251,13 @@ guest,Deck Family Farm,Top Sirloin Steak,Y,ea,package,1.1-1.7 Lbs,1,19.11,27.9,3
 guest,Deck Family Farm,Turkey Feet,Y,ea,package,1 Lb.,1,7.8,11.39,32,46
 guest,Deck Family Farm,Western Beef Short Ribs,Y,ea,package,1.3-2.1 lbs,1,18.23,26.62,32,46
 guest,Elegant Elephant Baking Co.,Gluten Free Apple Pie,Y,ea,package,6,1,7.5,11.25,33,50
-guest,Little Wings,Rainbow Chard,Y,bu,package,each,1,2,2.98,33,49
+guest,Graziers Garden,Rainbow Chard,Y,bu,package,each,1,2,2.98,33,49
 guest,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,Y,ea,package,bag of 4,1,6.1,9.25,34,52
 guest,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,Y,ea,package,each,1,6.25,9.5,34,52
 guest,Barrett Baking,Organic Artisan Sourdough Loaf,Y,ea,package,ea,1,8,12.4,35,55
 guest,Elegant Elephant Baking Co.,Gluten Free Cinnamon Roll Pan,Y,ea,package,6,1,6,9.5,37,58
 guest,Sweet Creek,Strawberry Fruit Spread,Y,ea,package,10 oz,1,3.8,6,37,58
+guest,Graziers Garden,Eggplant,Y,pound,package,pound,1,2.5,4,38,60
 guest,Graziers Garden,Fresh Thyme,Y,bu,package,each,1,2.5,4,38,60
 guest,Full Farm CSA,Frozen Blueberries,Y,bag,package,~1.0 lbs,1,4.25,6.8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Brownie Bite with Chocolate Chips,Y,ea,package,each,1,2.5,4,38,60
