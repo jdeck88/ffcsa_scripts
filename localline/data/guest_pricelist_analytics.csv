@@ -56,7 +56,6 @@ guest,Lonesome Whistle,Garlic Dill Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.76,3
 guest,Elegant Elephant Baking Co.,Gluten Free Dinner Rolls,Y,ea,package,bag of 6,1,5.35,7.65,30,43
 guest,Elegant Elephant Baking Co.,Gluten Free Mixed Berry Pie,Y,ea,package,9,1,17,24.31,30,43
 guest,Elegant Elephant Baking Co.,Gluten Free Sourdough Baguette,Y,ea,package,each,1,5,7.15,30,43
-guest,Graziers Garden,Green Cabbage,Y,ea,package,each,1,4,5.72,30,43
 guest,Sweet Creek,Green Enchalada Sauce,Y,ea,package,each,1,3.9,5.58,30,43
 guest,Graziers Garden,Hakurei Turnips,Y,lb,package,1 Lb,1,2.25,3.22,30,43
 guest,Kiko Denzer,Handcrafted Egg Pushers,Y,ea,package,each,1,8,11.44,30,43
@@ -87,7 +86,6 @@ guest,Lonesome Whistle,Plain Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,
 guest,Graziers Garden,Purple Shvelisi Garlic,Y,1/2 lb,package,1/2 lb,1,5,7.15,30,43
 guest,Graziers Garden,Purple Viking potatoes,Y,pound,package,pound,1,2.25,3.22,30,43
 guest,Spoiled Rotten Vinegar,Quince Vinegar,Y,ea,package,8 fl oz,1,8,11.44,30,43
-guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Decaf Columbia Coffee,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,15.73,30,43
@@ -188,7 +186,6 @@ guest,Camas Swale Farm,Serrano pepper,Y,lb,package,1 lb,1,4,5.76,31,44
 guest,Camas Swale Farm,Shallots,Y,lb,package,1 lb,1,3.8,5.47,31,44
 guest,Graziers Garden,Shishito Frying Pepper,Y,pt,package,each,1,2.7,3.89,31,44
 guest,Graziers Garden,Slicing Cucumbers,Y,lb,package,each,1,2,2.88,31,44
-guest,Little Wings,Spinach  1/2 Lb.,Y,bag,package,each,1,3.75,5.4,31,44
 guest,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
 guest,Graziers Garden,Sungold Tomatoes,Y,pt,package,each,1,4,5.76,31,44
 guest,Red Tail Growers,Taragon,Y,bu,package,bu,1,1.5,2.16,31,44
