@@ -75,6 +75,101 @@ function sortItemsByLocationVendorAndProduct(items, vendorOrder, vendorLocations
     });
 }
 
+async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
+    const vendorOrder = await readVendorOrder('vendor_order.csv');
+    return new Promise((resolve, reject) => {
+        const pdf_file = 'data/customer_notes.pdf';
+
+        // Create a new PDF document
+        const doc = new PDFDocument();
+        doc.pipe(fs.createWriteStream(pdf_file));
+
+        // Initialize variables to group items by "Customer Name"
+        const customers = {}; // Store customer data including attributes
+        let currentCustomerName = null;
+
+        const sortedData = [];
+
+        // Read the CSV file and sort by "Customer Name" before processing
+        fs.createReadStream(filename)
+            .pipe(fastcsv.parse({ headers: true }))
+            .on('data', (row) => {
+                sortedData.push(row);
+            })
+            .on('end', () => {
+                // Sort the data by "Customer Name"
+                sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+
+                // Process the sorted data
+                sortedData.forEach((row) => {
+                    const customerName = row['Customer'];
+                    const customerNote = row['Customer Note'];
+
+                    // Only include customers with non-blank customer notes
+                    if (customerNote && customerNote.trim() !== '') {
+                        if (customerName !== currentCustomerName) {
+                            currentCustomerName = customerName;
+                            customers[customerName] = {
+                                customerNote: customerNote,
+                            };
+                        }
+                    }
+                });
+
+                // Add the fulfillment date at the top, only once
+                doc.font('Helvetica-Bold')
+                    .fontSize(16)
+                    .text(`Customer Notes for Fulfillment Date: ${fullfillmentDateEnd}`, { align: 'center', underline: true });
+                doc.moveDown(1.5);
+
+                // Iterate through customers and generate the PDF content
+                for (const customerName in customers) {
+                    const customerData = customers[customerName];
+
+                    if (customerData.customerNote) {
+                        // Customer Name
+                        doc.font('Helvetica-Bold')
+                            .fontSize(14)
+                            .text(`Customer Name: ${customerName}`, { underline: true });
+                        doc.moveDown(0.5);
+
+                        // Customer Notes
+                        doc.font('Helvetica')
+                            .fontSize(12)
+                            .text(`Customer Notes: ${customerData.customerNote}`);
+                        doc.moveDown(1.5);
+
+                        // Add a line after each customer
+                        doc.moveTo(doc.page.margins.left, doc.y)
+                            .lineTo(doc.page.width - doc.page.margins.right, doc.y)
+                            .stroke();
+                        doc.moveDown(0.5);
+                    }
+                }
+
+                doc.end();
+
+                // Wait for the stream to finish and then resolve with the file path
+                doc.on('finish', () => {
+                    console.log('PDF with customer notes created successfully.');
+                    resolve(pdf_file);
+                });
+
+                doc.on('error', (error) => {
+                    console.error('PDF creation error:', error);
+                    reject(error);
+                });
+
+                // Temporary async method for finishing PDF creation
+                setTimeout(() => {
+                    resolve(pdf_file); // Promise is resolved with the generated file path
+                }, 1000);
+            });
+    });
+}
+
+
+
 
 async function writeSetupPDF(filename, fullfillmentDateEnd) {
 	const vendorOrder = await readVendorOrder('vendor_order.csv');
@@ -474,6 +569,28 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 				.then((orders_file_path) => {
 					console.log('Downloaded file path:', orders_file_path);
 
+          writeCustomerNotePDF(orders_file_path, fullfillmentDateEnd)
+                        .then((customer_note_pdf) => {
+                            const emailOptions = {
+                                from: "jdeck88@gmail.com",
+                                to: "fullfarmcsa@deckfamilyfarm.com",
+                                cc: "jdeck88@gmail.com, info@deckfamilyfarm.com",
+                                subject: 'FFCSA Reports: Customer Notes for ' + fullfillmentDateEnd,
+                                text: "Please see the attached file with customer notes.",
+                            };
+                            emailOptions.attachments = [
+                                {
+                                    filename: 'customer_notes.pdf', // Change the filename as needed
+                                    content: fs.readFileSync(customer_note_pdf), // Attach the file buffer
+                                },
+                            ];
+                            utilities.sendEmail(emailOptions);
+
+                        }).catch((error) => {
+                            console.error("Error in writeCustomerNotePDF:", error);
+                            utilities.sendErrorEmail(error);
+                        });
+
 					writeDeliveryOrderPDF(orders_file_path, fullfillmentDateEnd)
 						.then((delivery_order_pdf) => {
 							const emailOptions = {
@@ -490,7 +607,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 								},
 							];
 							utilities.sendEmail(emailOptions)
-
 						}).catch((error) => {
 							console.error("Error in writeDeliveryOrderPDF:", error);
 							utilities.sendErrorEmail(error)
@@ -512,7 +628,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 								},
 							];
 							utilities.sendEmail(emailOptions)
-
 						}).catch((error) => {
 							console.error("Error in writeDeliveryOrderPDF:", error);
 							utilities.sendErrorEmail(error)
