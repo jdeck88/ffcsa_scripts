@@ -255,178 +255,194 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
 	});
 }
 
-
 async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
-	const vendorOrder = await readVendorOrder('vendor_order.csv');
-	return new Promise((resolve, reject) => {
-		const pdf_file = 'data/delivery_order.pdf'
+  const vendorOrder = await readVendorOrder('vendor_order.csv');
+  return new Promise((resolve, reject) => {
+    const pdf_file = 'data/delivery_order.pdf';
 
-		// Create a new PDF document
-		const doc = new PDFDocument();
-		doc.pipe(fs.createWriteStream(pdf_file));
+    // Create a new PDF document
+    const doc = new PDFDocument();
+    doc.pipe(fs.createWriteStream(pdf_file));
 
-		// Initialize variables to group items by "Fulfillment Name"
-		const customers = {}; // Store customer data including attributes
-		let currentCustomerName = null;
+    // Initialize variables to group items by "Fulfillment Name"
+    const customers = {}; // Store customer data including attributes
+    let currentCustomerName = null;
 
-		const sortedData = [];
+    const sortedData = [];
 
+    // Read the CSV file and sort by "Customer Name" before processing
+    fs.createReadStream(filename)
+      .pipe(fastcsv.parse({ headers: true }))
+      .on('data', (row) => {
+        sortedData.push(row);
+      })
+      .on('end', () => {
+        // Sort the data by "Customer Name"
+        sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
 
-		// Read the CSV file and sort by "Customer Name" before processing
-		fs.createReadStream(filename)
-			.pipe(fastcsv.parse({ headers: true }))
-			.on('data', (row) => {
-				sortedData.push(row);
-			})
-			.on('end', () => {
-				// Sort the data by "Customer Name"
-				sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+        // Process the sorted data
+        sortedData.forEach((row) => {
+          const customerName = row['Customer'];
+          const product = row['Product'] + ' - ' + row['Package Name'];
+          let quantity = Math.round(parseFloat(row['Quantity']));
+          const numItems = Math.round(parseFloat(row['# of Items']));
+          const itemUnit = row['Item Unit'];
+          const vendor = row['Vendor'];
+          const category = row['Category'];
+          const customerPhone = row['Phone'];
+          const company = row['Company'];
+          const fullfillmentName = row['Fulfillment Name'];
+          const fullfillmentAddress = row['Fulfillment Address'];
+          const fullfillmentDate = utilities.formatDate(row['Fulfillment Date']);
+          const customerNote = row['Customer Note'];
+          const startTime = row['Fulfillment - Pickup Start Time'];
+          const endTime = row['Fulfillment - Pickup End Time'];
 
-				// Process the sorted data
-				sortedData.forEach((row) => {
-					const customerName = row['Customer'];
-					const product = row['Product'] + ' - ' + row['Package Name'];
-					quantity = Math.round(parseFloat(row['Quantity']));
-					const numItems = Math.round(parseFloat(row['# of Items']));
-					const itemUnit = row['Item Unit']
-					const vendor = row['Vendor']
-					const category = row['Category']
-					const customerPhone = row['Phone']
-					const fullfillmentName = row['Fulfillment Name']
-					const fullfillmentAddress = row['Fulfillment Address']
-					const fullfillmentDate = utilities.formatDate(row['Fulfillment Date'])
-					const customerNote = row['Customer Note']
-					const startTime = row['Fulfillment - Pickup Start Time']
-					const endTime = row['Fulfillment - Pickup End Time']
+          let timeRange = '';
+          if (startTime && endTime) {
+            timeRange = startTime + ' to ' + endTime;
+          }
 
-					let timeRange = '';
-					if (startTime && endTime) {
-						timeRange = startTime + ' to ' + endTime;
-					}
+          // If # of Items is > 1 and quantity is 1, update quantity to be numItems
+          if (numItems > 1 && quantity == 1) {
+            quantity = numItems;
+          }
 
-					// If # of Items is > 1 and quantity is 1, then update quantity to be numItems
-					if (numItems > 1 && quantity == 1) {
-						quantity = numItems
-					}
+          // If the customerName changes, start a new section
+          if (customerName !== currentCustomerName) {
+            currentCustomerName = customerName;
+            customers[customerName] = {
+              products: [],
+              phone: customerPhone,
+              company: company,
+              fullfillmentName: fullfillmentName,
+              fullfillmentAddress: fullfillmentAddress,
+              fullfillmentDate: fullfillmentDate,
+              timeRange: timeRange,
+              customerNote: customerNote,
+            };
+          }
 
-					// If the customerName changes, start a new section
-					if (customerName !== currentCustomerName) {
-						currentCustomerName = customerName;
-						customers[customerName] = {
-							products: [],
-							phone: customerPhone,
-							fullfillmentName: fullfillmentName,
-							fullfillmentAddress: fullfillmentAddress,
-							fullfillmentDate: fullfillmentDate,
-							timeRange: timeRange,
-							customerNote: customerNote,
-						};
-					}
+          if (category !== 'Membership') {
+            customers[customerName].products.push({
+              product,
+              quantity,
+              itemUnit,
+              vendor,
+            });
+          }
+        });
 
-					if (category !== 'Membership') {
-						customers[customerName].products.push({ product, quantity, itemUnit, vendor });
-					}
+        // Iterate through items and generate the PDF content
+        for (const customerName in customers) {
+          const customerData = customers[customerName];
 
-				});
+          if (customerData.products.length > 0) {
+            // Load the image (replace with the path to your image)
+            const image = 'logo.png';
+            const x = 0; // X-coordinate (left)
+            const y = 0; // Y-coordinate (top)
+            const width = 80; // Image width in pixels
+            const height = 80; // Image height in pixels
+            const lineSpacing = 15;
 
-				// Iterate through items and generate the PDF content
-				for (const customerName in customers) {
-					const customerData = customers[customerName];
+            // Add the image to the PDF document
+            doc.image(image, 10, 10, { width, height });
 
-					if (customerData.products.length > 0) {
-						// Load the image (replace with the path to your image)
-						const image = 'logo.png';
+            // Position the text to appear to the right of the image
+            let textX = x + width + 20;
+            let textY = 0;
 
-						// Set the image position and size
-						const x = 0; // X-coordinate (left)
-						const y = 0; // Y-coordinate (top)
-						const width = 80; // Image width in pixels
-						const height = 80; // Image height in pixels
-						const lineSpacing = 15;
+            doc.font('Helvetica'); // Reset to regular font
 
-						// Add the image to the PDF document
-						doc.image(image, 10, 10, { width, height });
+            // Fulfillment date
+            doc.fontSize(12).text(`${fullfillmentDateEnd}`, textX, textY + 10, { align: 'right' });
+            textY += lineSpacing;
 
-						// Position the text to appear to the right of the image
-						textX = x + width + 20;
-						textY = 0;
+            // Customer details
+            doc.fontSize(12).text(`Name:        ${customerName}`, textX, textY);
+            textY += lineSpacing;
+            doc.fontSize(12).text(`Phone:       ${customerData.phone}`, textX, textY);
+            textY += lineSpacing;
 
-						doc.font('Helvetica') // Reset to regular font
+            // Drop site and time range
+            let timeRangeText = customerData.timeRange ? ` (${customerData.timeRange})` : '';
+            const fullText = `Drop Site:   ${customerData.fullfillmentName}${timeRangeText}`;
+            doc.fontSize(12).text(fullText, textX, textY);
+            textY += lineSpacing;
 
-						doc.fontSize(12).text(`${fullfillmentDateEnd}`, textX, textY + 10, { align: 'right' });
-						textY += lineSpacing
-						doc.fontSize(12).text(`Name:        ${customerName}`, textX, textY);
-						textY += lineSpacing
-						doc.fontSize(12).text(`Phone:       ${customerData.phone}`, textX, textY);
-						textY += lineSpacing
+            // Address
+            let text = `Address:       ${customerData.fullfillmentAddress}`;
+            let textHeight = doc.heightOfString(text, { width: 400 });
+            doc.fontSize(12).text(text, textX, textY, { width: 400 });
+            textY += textHeight + lineSpacing;
 
-						let timeRangeText = '';
-						// Check if timeRange is not an empty string
-						if (customerData.timeRange !== '') {
-							timeRangeText = ` (${customerData.timeRange})`;
-						}
-						// Construct the full text with optional parentheses
-						const fullText = `Drop Site:   ${customerData.fullfillmentName}${timeRangeText}`;
-						doc.fontSize(12).text(fullText, textX, textY);
-						textY += lineSpacing
+            // Directions (if available)
+            if (customerData.company !== '') {
+              text = `Directions:       ${customerData.company}`;
+              textHeight = doc.heightOfString(text, { width: 400 });
+              doc.fontSize(12).text(text, textX, textY, { width: 400 });
+              textY += textHeight + lineSpacing;
+            }
 
-						doc.fontSize(12).text(`Address:     ${customerData.fullfillmentAddress}`, textX, textY);
-						textY += lineSpacing
-						if (customerData.customerNote !== '') {
-							doc.fontSize(12).text(`Customer Note:  ${customerData.customerNote}`, textX, textY, { bold: true });
-						}
+            // Customer Notes (if available)
+            if (customerData.customerNote !== '') {
+              text = `Customer Notes:       ${customerData.customerNote}`;
+              textHeight = doc.heightOfString(text, { width: 400 });
+              doc.fontSize(12).text(text, textX, textY, { width: 400 });
+              textY += textHeight + lineSpacing;
+            }
 
-						// Rset Document
-						doc.x = 10
-						doc.y = 120
+            // Add extra space before Items Ordered
+            textY += 20;
 
-						doc.fontSize(16).text('Items Ordered', { bold: true });
+            // Add "Items Ordered" title
+            doc.fontSize(16).text('Items Ordered', textX, textY, { bold: true });
+            textY += lineSpacing + 16;
 
-                        const items = sortItemsByLocationVendorAndProduct(customerData.products, vendorOrder)
+            // Render table data
+            const items = sortItemsByLocationVendorAndProduct(customerData.products, vendorOrder);
+            const itemsAsData = items.map((item) => [item.product, item.quantity, item.itemUnit, item.vendor]);
 
-						// Set the table column widths
-						const itemsAsData = items.map(item => [item.product, item.quantity, item.itemUnit, item.vendor]);
+            const table = {
+              title: '',
+              widths: [600], // Set the width to the page width
+              headers: ['Product', 'Quantity', 'Unit', 'Vendor', 'Packed'],
+              rows: itemsAsData,
+            };
 
-						const pageWidth = 600
+            doc.table(table);
+            doc.moveDown();
 
-						table = {
-							title: '',
-							widths: [pageWidth], // Set the width to the page width
-							headers: ['Product', 'Quantity', 'Unit', 'Vendor', 'Packed'],
-							rows: itemsAsData,
-						};
+            // Add footer note
+            doc.fontSize(8).font('Helvetica-Oblique').text('Missing an item? Send an email to fullfarmcsa@deckfamilyfarm.com and we\'ll issue you a credit.', doc.x, doc.y);
 
-						doc.table(table);
+            doc.addPage();
+          }
+        }
 
-						doc.moveDown();
+        doc.end();
 
-						doc.fontSize(8).font('Helvetica-Oblique').text(' Missing an item? Send an email to fullfarmcsa@deckfamilyfarm.com and we\'ll issue you a credit.', doc.x, doc.y);
+        // Wait for the stream to finish and then resolve with the file path
+        doc.on('finish', () => {
+          console.log('PDF created successfully.');
+          resolve(pdf_file);
+        });
 
-						doc.addPage();
-					}
+        doc.on('error', (error) => {
+          console.error('PDF creation error:', error);
+          reject(error);
+        });
 
-				}
-
-				doc.end();
-				// Wait for the stream to finish and then resolve with the file path
-				doc.on('finish', () => {
-					console.log('PDF created successfully.');
-					console.log(pdf_file);
-				});
-
-				doc.on('error', (error) => {
-					console.error('PDF creation error:', error);
-					reject(error);
-				});
-
-				// TODO: figure out appropriate aync methods to enable finishing PDF creation
-				setTimeout(() => {
-					console.log("Success!")
-					resolve(pdf_file); // Promise is resolved with "Success!"
-				}, 1000);
-			});
-	});
+        // Temporary async method for finishing PDF creation
+        setTimeout(() => {
+          console.log("Success!");
+          resolve(pdf_file); // Promise is resolved with "Success!"
+        }, 1000);
+      });
+  });
 }
+
 // Build customer delivery orders (picklists)
 async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 	try {
