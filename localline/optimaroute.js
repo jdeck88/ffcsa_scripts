@@ -111,6 +111,7 @@ async function writeOptimarouteXLSX(dairy_file_path, frozen_file_path, delivery_
 									disposition = row['disposition']
 									customerName = row['Customer']
 									customerPhone = formatPhoneNumber(row['Phone'])
+									companyName = row['Company']
 									fullfillmentDate = utilities.formatDate(row['Fulfillment Date'])
 									category = row['Membership']
 									quantity = Math.round(parseFloat(row['Quantity']));
@@ -124,7 +125,9 @@ async function writeOptimarouteXLSX(dairy_file_path, frozen_file_path, delivery_
 										customerPhone = ''
 										instructions = getInstructionsByName(fulfillment_json,dropsiteName)
 									} else {
-										instructions = ''
+                    // we replace instructions with the Company Name in the case of delivery, as
+                    // the Company field stores home delivery instructions per customer
+										instructions = companyName
 										dropsiteName = ''
 									}
 
@@ -134,6 +137,7 @@ async function writeOptimarouteXLSX(dairy_file_path, frozen_file_path, delivery_
 											dropsiteName: dropsiteName,
 											name: customerName,
 											phone: customerPhone,
+											companyName: companyName,
 											type: type,
 											instructions: instructions,
 											products: []
@@ -345,6 +349,7 @@ async function optimaroute(fullfillmentDate) {
 	try {
 		console.log("running optimaroutebuilder")
 		delivery_order_file_path = 'data/orders_list_' + fullfillmentDate + ".csv"
+    console.log(delivery_order_file_path)
 
 		dairy_data = {}
 		frozen_data = {}
