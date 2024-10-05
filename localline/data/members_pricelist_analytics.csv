@@ -1,5 +1,6 @@
 Priceslist,Vendor,Product,Visible,Item Unit,Charge Unit,Package Name,# of Items,Purchase Price,Retail Price,Margin,Markup
 members,Graziers Garden,Yellow Summer Squash,Y,lb,package,each,1,3.5,3,-17,-14
+members,Graziers Garden,Green Tomatoes,Y,lb,package,1 lb,1,2.5,2.55,2,2
 members,Camas Country Mill,Organic Sonora Soft White Wheat Flour,Y,ea,package,4 lbs,1,13.3,17.29,23,30
 members,Camas Country Mill,Sues Soup Mix,Y,ea,package,3 lbs,1,17.4,22.62,23,30
 members,Kiko Denzer,Handcrafted Wooden Fancy Egg Pushers,Y,ea,package,ea,1,12,15.84,24,32
@@ -30,7 +31,6 @@ members,River Ranch Oregon Olive OIl,Colliding Rivers Olive Oil Sugar Scrub,Y,ea
 members,Creole Me Up,Creole Marinade with Sass,Y,ea,package,8oz,1,7.5,9.98,25,33
 members,OGC,Crimini Mushrooms,Y,lb,package,1 lb,1,3.95,5.25,25,33
 members,Small is Beautiful Farm,Cut Flower Bouquet,Y,ea,package,each,1,10,13.3,25,33
-members,OGC,Daikon Radish,Y,lb,package,1 Lb,1,1.67,2.24,25,34
 members,Lonesome Whistle,Dark Northern Rye Flour,Y,ea,package,1.6 lbs,1,4,5.36,25,34
 members,RL Plants,Dark Purple Iris Rhizome,Y,ea,package,each,1,5,6.65,25,33
 members,Full Farm CSA,Deck Family Farm and Full Farm CSA Hat,Y,ea,package,ea,1,13,17.29,25,33
@@ -47,11 +47,13 @@ members,Sweet Creek,Dill Relish,Y,ea,package,12.6 oz,1,4,5.32,25,33
 members,Little Wings,Dino Lacinato Kale,Y,bu,package,bu,1,2,2.66,25,33
 members,River Ranch Oregon Olive OIl,Dry Herb Mix,Y,ea,package,ea 1 ounce jar,1,7,9.38,25,34
 members,Graziers Garden,Edible Calendula Flower,Y,pt,package,each,1,4,5.32,25,33
+members,Graziers Garden,Eggplant,Y,pound,package,pound,1,2.5,3.33,25,33
 members,Lonesome Whistle,Emmer Farro,Y,ea,package,1.25 lb Bag,1,4,5.36,25,34
 members,Lonesome Whistle,Emmer Macaroni,Y,ea,package,0.5 lb bag,1,3.33,4.43,25,33
 members,Sweet Creek,"Enchilada Red Sauce, Medium",Y,ea,package,16 oz,1,3.9,5.19,25,33
 members,Camas Swale Farm,Escarole,Y,bu,package,each,1,2,2.68,25,34
 members,RL Plants,Fall Decor- Iris Rhizome,Y,ea,package,ea,1,8,10.64,25,33
+members,Little Wings,Fennel,Y,ea,package,each,1,2.25,3.02,25,34
 members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 100mL,Y,ea,package,3.38 oz. 100mL,1,10.95,14.56,25,33
 members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 250mL,Y,ea,package,250mL,1,21.95,29.41,25,34
 members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Rosemary and Basil 100mL,Y,ea,package,3.38oz (100mL),1,10.95,14.67,25,34
@@ -64,6 +66,7 @@ members,Elegant Elephant Baking Co.,Gluten Free Dinner Rolls,Y,ea,package,bag of
 members,Elegant Elephant Baking Co.,Gluten Free Mixed Berry Pie,Y,ea,package,9,1,17,22.61,25,33
 members,Elegant Elephant Baking Co.,Gluten Free Sourdough Baguette,Y,ea,package,each,1,5,6.65,25,33
 members,Camas Country Mill,Golden Flax Seed,Y,bag,package,3 lb. bag,1,18,23.94,25,33
+members,Little Wings,Green Bell Pepper,Y,lb,package,1 lb,1,2.5,3.35,25,34
 members,Little Wings,Green Curly Kale,Y,bu,package,each,1,2,2.68,25,34
 members,Graziers Garden,Green Zucchini,Y,lb,package,1 lb,1,2.4,3.22,25,34
 members,Graziers Garden,Hakurei Turnips,Y,lb,package,1 Lb,1,2.25,2.99,25,33
@@ -75,12 +78,11 @@ members,Spoiled Rotten Vinegar,Hibiscus Vinegar,Y,ea,package,8 fl. oz,1,8,10.64,
 members,Camas Country Mill,Hollys Dog Biscuit Mix,Y,bag,package,3 lb bag,1,10,13.3,25,33
 members,Spoiled Rotten Vinegar,Honey Vinegar,Y,ea,package,8 fl. oz,1,8,10.64,25,33
 members,Graziers Garden,Jalapeno Pepper,Y,lb,package,lb,1,4,5.32,25,33
+members,Little Wings,Kohlrabi Purple or Green,Y,bu,package,1 bunch,1,2.25,3.02,25,34
 members,River Ranch Oregon Olive OIl,Lavender Olive Oil Sugar Scrub,Y,ea,package,ea  4oz. jar,1,5,6.7,25,34
-members,Camas Swale Farm,Leeks,Y,lb,package,1 lb,1,2,2.66,25,33
 members,Lonesome Whistle,Lemon Lavender Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.43,25,33
 members,Small is Beautiful Farm,Mixed anjou and bosc Pears,Y,ea,package,ea,1,1,1.33,25,33
 members,Small is Beautiful Farm,Mixed apples,Y,ea,package,ea,1,1,1.34,25,34
-members,Graziers Garden,Mixed green beans,Y,pound,weight,pound,1,4,5.32,25,33
 members,River Ranch Oregon Olive OIl,Morning Mist Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
 members,RL Plants,Open Your Eyes- Iris Rhizome,Y,ea,package,ea,1,9,11.97,25,33
 members,Graziers Garden,Oregano,Y,bu,package,each,1,3.5,4.66,25,33
@@ -92,19 +94,19 @@ members,Camas Country Mill,Pardina Brown Lentils,Y,ea,package,3 lbs,1,10.6,14.1,
 members,Spoiled Rotten Vinegar,Pear Vinegar,Y,ea,package,8 fl. oz,1,7,9.31,25,33
 members,Sweet Creek,Pickled Beets,Y,ea,package,16 oz,1,4.1,5.49,25,34
 members,Graziers Garden,Pickled Garlic Scapes,Y,pt,package,pt,1,8,10.64,25,33
-members,Graziers Garden,Pickling Cucumber,Y,lb,package,1 lb,1,2.5,3.35,25,34
 members,Graziers Garden,Pinto Gold Potatoes,Y,pound,package,pound,1,2.4,3.19,25,33
 members,Lonesome Whistle,Plain Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.43,25,33
+members,Graziers Garden,Poblano Peppers,Y,lb,package,1 lb,1,3.5,4.69,25,34
 members,Graziers Garden,Polish White garlic,Y,1/2 lb,weight,1/2 lb,1,5,6.65,25,33
 members,Graziers Garden,Purple Shvelisi Garlic,Y,1/2 lb,package,1/2 lb,1,5,6.65,25,33
 members,Graziers Garden,Purple Sprouting Broccoli,Y,bu,package,each,1,2.75,3.69,25,34
+members,Camas Swale Farm,Purple curly kale,Y,ea,package,ea,1,1.9,2.55,25,34
 members,Spoiled Rotten Vinegar,Quince Vinegar,Y,ea,package,8 fl oz,1,8,10.64,25,33
 members,Radiant Coffee Roasters,Radiant Decaf Columbia Coffee,Y,ea,package,12 oz,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,14.63,25,33
-members,Camas Swale Farm,Red Bell Pepper,Y,lb,package,lb,1,3,3.99,25,33
 members,Graziers Garden,Red Norland Potatoes- Fresh dug,Y,pound,package,1 lb,1,2,2.68,25,34
 members,Lonesome Whistle,Rise & Shine Gluten Free Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.09,25,33
-members,Graziers Garden,Russet potatoes,Y,pound,package,pound,1,2,2.66,25,33
+members,Little Wings,Rosemary,Y,bu,package,each,1,2.25,2.99,25,33
 members,Red Tail Growers,Salad Chicory Mix,Y,bag,package,1/2 lb bag,1,3.5,4.69,25,34
 members,Queen of Hearts Superfood,Sassy Italian Dressing,Y,ea,package,each,1,6.6,8.78,25,33
 members,RL Plants,Sedum Palmeri Succulents,Y,ea,package,each,1,4,5.32,25,33
@@ -113,8 +115,8 @@ members,Camas Swale Farm,Serrano pepper,Y,lb,package,1 lb,1,4,5.36,25,34
 members,Camas Swale Farm,Shallots,Y,lb,package,1 lb,1,3.8,5.09,25,34
 members,OGC,Shiitake Mushrooms,Y,1/2 lb,package,1/2 lb,1,4.08,5.43,25,33
 members,Graziers Garden,Shishito Frying Pepper,Y,pt,package,each,1,2.7,3.59,25,33
-members,Graziers Garden,Slicing Cucumbers,Y,lb,package,each,1,2,2.66,25,33
-members,Graziers Garden,Strawberries,Y,pt,package,each,1,3.5,4.66,25,33
+members,Red Tail Growers,Spinach,Y,bu,package,each,1,2,2.66,25,33
+members,Little Wings,Spinach  1/2 Lb.,Y,bag,package,each,1,3.75,5.03,25,34
 members,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
 members,Graziers Garden,Sungold Tomatoes,Y,pt,package,each,1,4,5.32,25,33
 members,Sweet Creek,Sweet Relish,Y,ea,package,12. 6 oz,1,4,5.32,25,33
@@ -127,12 +129,14 @@ members,Lonesome Whistle,Up & At Em Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.09
 members,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans New 12 oz Bags,Y,ea,package,12 oz,1,11,14.63,25,33
 members,Graziers Garden,Wee baby cabbages,Y,pound,weight,pound,1,3,3.99,25,33
 members,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,6.65,25,33
+members,Little Wings,Baby Bok Choi,Y,bu,package,each,1,2,2.7,26,35
 members,Red Tail Growers,Bietola,Y,ea,package,ea,1,2,2.7,26,35
 members,Red Tail Growers,Bietola/chard mix,Y,bag,package,1/2 lb bag,1,3.5,4.73,26,35
 members,Sweet Creek,Blueberry Apple Sauce,Y,ea,package,each,1,4.87,6.57,26,35
 members,Reality Kitchen Nonprofit,Braided Challah (seeded),Y,ea,package,each,1,5.25,7.09,26,35
 members,Red Tail Growers,Braising mix,Y,bag,package,1/2 lb,1,3.5,4.73,26,35
 members,Sweet Creek,Cinnamon Apple Sauce,Y,ea,package,23 oz,1,4.54,6.13,26,35
+members,Little Wings,Dill,Y,bu,package,each,1,1.75,2.36,26,35
 members,Camas Swale Farm,Frisee Lettuce,Y,ea,package,each,1,2,2.7,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,Y,ea,package,bag of 4,1,6.1,8.25,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,Y,ea,package,each,1,6.25,8.5,26,36
@@ -140,6 +144,7 @@ members,Sweet Creek,Just Apple Apple Sauce,Y,ea,package,26.5 oz,1,4.54,6.13,26,3
 members,Red Tail Growers,Kale Mix,Y,ea,package,1/2 lb,1,3.5,4.73,26,35
 members,Red Tail Growers,Mild Mustard Salad Mix,Y,bag,package,1/2 lb,1,3.5,4.73,26,35
 members,Red Tail Growers,Nantes Carrots,Y,bu,package,each,1,2.5,3.38,26,35
+members,Little Wings,Parsley,Y,bu,package,each,1,1.75,2.35,26,34
 members,Sweet Creek,Pauls Dill Pickles,Y,ea,package,24 oz,1,5.7,7.7,26,35
 members,Creole Me Up,Pickleez Anana/ Pickled Pineapple,Y,ea,package,ea,1,9,12.15,26,35
 members,Creole Me Up,Pickleez with a Little Bit of Sass,Y,ea,package,16.06oz,1,8.35,11.27,26,35
@@ -253,13 +258,13 @@ members,Deck Family Farm,Top Sirloin Steak,Y,ea,package,1.1-1.7 Lbs,1,19.11,26.3
 members,Deck Family Farm,Turkey Feet,Y,ea,package,1 Lb.,1,7.8,10.76,28,38
 members,Deck Family Farm,Western Beef Short Ribs,Y,ea,package,1.3-2.1 lbs,1,18.23,25.16,28,38
 members,Deck Family Farm,"Western Beef Short Ribs, Large",Y,ea,package,"Large, 2.7-3.5 Lbs",1,33.25,45.89,28,38
-members,Graziers Garden,Eggplant,Y,pound,package,pound,1,2.5,3.5,29,40
 members,Graziers Garden,Fresh Thyme,Y,bu,package,each,1,2.5,3.5,29,40
 members,Elegant Elephant Baking Co.,Gluten Free Apple Pie,Y,ea,package,6,1,7.5,10.5,29,40
 members,Elegant Elephant Baking Co.,Gluten Free Brownie Bite with Chocolate Chips,Y,ea,package,each,1,2.5,3.5,29,40
 members,Elegant Elephant Baking Co.,Gluten Free Cinnamon Roll Pan,Y,ea,package,6,1,6,8.5,29,42
 members,Elegant Elephant Baking Co.,Gluten Free Half Almond Loaf Sliced,Y,ea,package,each,1,5,7,29,40
 members,Elegant Elephant Baking Co.,Gluten Free Mini Banana Bread Loaf,Y,ea,package,each,1,5,7,29,40
+members,Red Tail Growers,Tatsoi,Y,ea,package,1/2 lb bag,1,3.5,5,30,43
 members,Elegant Elephant Baking Co.,Pizza Dough,Y,ea,package,each,1,4.75,6.89,31,45
 members,Graziers Garden,Rainbow Chard,Y,bu,package,each,1,2,2.88,31,44
 members,Reality Kitchen Nonprofit,Braided Challah (plain),Y,ea,package,each,1,5.25,7.72,32,47
