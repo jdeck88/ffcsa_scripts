@@ -65,7 +65,6 @@ guest,Spoiled Rotten Vinegar,Hibiscus Vinegar,Y,ea,package,8 fl. oz,1,8,11.44,30
 guest,Camas Country Mill,Hollys Dog Biscuit Mix,Y,bag,package,3 lb bag,1,10,14.3,30,43
 guest,Spoiled Rotten Vinegar,Honey Vinegar,Y,ea,package,8 fl. oz,1,8,11.44,30,43
 guest,Graziers Garden,Jalapeno Pepper,Y,lb,package,lb,1,4,5.72,30,43
-guest,Lonesome Whistle,Lemon Lavender Popcorn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
 guest,Small is Beautiful Farm,Mixed anjou and bosc Pears,Y,ea,package,ea,1,1,1.43,30,43
 guest,Small is Beautiful Farm,Mixed apples,Y,ea,package,ea,1,1,1.43,30,43
 guest,RL Plants,Open Your Eyes- Iris Rhizome,Y,ea,package,ea,1,9,12.87,30,43
@@ -123,7 +122,6 @@ guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Pork Chaurice Sau
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Pork Loukaniko Sausage - made weekly in our farm kitchen!,Y,pk,package,14 oz. pk/4 links,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Fresh Farm Made Summer Herb Lamb Sausage- made weekly in our farm kitchen!,Y,pk,package,4 Links/pack  14oz Packages,1,12.03,17.56,31,46
 guest,Camas Swale Farm,Frisee Lettuce,Y,ea,package,each,1,2,2.9,31,45
-guest,Little Wings,Green Bell Pepper,Y,lb,package,1 lb,1,2.5,3.6,31,44
 guest,Little Wings,Green Curly Kale,Y,bu,package,each,1,2,2.88,31,44
 guest,Graziers Garden,Green Zucchini,Y,lb,package,1 lb,1,2.4,3.46,31,44
 guest,Deck Family Farm,Ground Beef,Y,ea,package,1 lb,1,5.85,8.54,31,46
@@ -228,7 +226,6 @@ guest,Deck Family Farm,Bacon Ends & Pieces,Y,pk,package,8 oz,1,7.8,12.01,35,54
 guest,Deck Family Farm,Beef Bones,Y,bag,package,3 - 5 lbs,1,10.4,16.02,35,54
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,3-4,1,35.26,54.3,35,54
 guest,Deck Family Farm,Beef Chuck Roast,Y,ea,package,2.5-3 lbs.,1,27.71,42.67,35,54
-guest,Deck Family Farm,Beef Flank Steak,Y,ea,package,1.1  lbs.,1,15.73,24.22,35,54
 guest,Deck Family Farm,Beef Flat Iron Steak,Y,ea,package,1-1.3 lbs.,1,16.45,25.33,35,54
 guest,Deck Family Farm,Beef Oxtail,Y,ea,package,1.8-2.2  lbs.,1,14.3,22.02,35,54
 guest,Deck Family Farm,Beef Patties,Y,pk,package,1 lb / 3 Patties,1,5.85,9.01,35,54
@@ -240,7 +237,6 @@ guest,Deck Family Farm,Bone-In Chicken Breast,Y,ea,package,1.5-2.25 lbs,1,17.06,
 guest,Deck Family Farm,Boneless Pork Chop,Y,pk,package,1.5-2 Lb pk,1,18.77,28.91,35,54
 guest,Deck Family Farm,CRX Roasting Chicken,Y,ea,package,4.3-5 Lbs.,1,24.18,37.24,35,54
 guest,Deck Family Farm,Chicken Hindquarter,Y,ea,package,1-1.6 lbs,1,10.14,15.62,35,54
-guest,Deck Family Farm,Hanger Steak,Y,ea,package,0.8 Lbs.,1,11.44,17.62,35,54
 guest,Deck Family Farm,Lamb Neck Slices,Y,ea,package,1.1-1.5 lb,1,11.2,17.25,35,54
 guest,Deck Family Farm,Lamb Ribs,Y,ea,package,1.4-1.9 lb,1,16.62,25.59,35,54
 guest,Deck Family Farm,Lamb Shank - Whole,Y,ea,package,2 - 2.5 lbs,1,23.4,36.04,35,54
@@ -249,7 +245,6 @@ guest,Barrett Baking,Organic Artisan Sourdough Loaf,Y,ea,package,ea,1,8,12.4,35,
 guest,Deck Family Farm,Pork Shoulder Roast,Y,ea,package,2.8-3.4 lbs,1,33.25,51.21,35,54
 guest,Deck Family Farm,Ribeye Steak,Y,ea,package,0.9-1.2 lbs,1,23.21,35.74,35,54
 guest,Deck Family Farm,"Roast Beef, Sliced",Y,pk,package,8 oz,1,10.73,16.52,35,54
-guest,Deck Family Farm,Skirt Steak,Y,pk,package,.6-.9 Lb,1,10.73,16.52,35,54
 guest,Elegant Elephant Baking Co.,Gluten Free Cinnamon Roll Pan,Y,ea,package,6,1,6,9.5,37,58
 guest,Sweet Creek,Strawberry Fruit Spread,Y,ea,package,10 oz,1,3.8,6,37,58
 guest,Graziers Garden,Fresh Thyme,Y,bu,package,each,1,2.5,4,38,60
