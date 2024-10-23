@@ -4,7 +4,6 @@ members,Full Farm CSA,Deck Family Farms Fall Farm-to-Table Celebration,Y,ea,pack
 members,Camas Country Mill,Organic Sonora Soft White Wheat Flour,Y,ea,package,4 lbs,1,13.3,17.29,23,30
 members,Camas Country Mill,Sues Soup Mix,Y,ea,package,3 lbs,1,17.4,22.62,23,30
 members,Camas Country Mill,Organic Corn Flour,Y,ea,package,2.5 lbs,1,10.6,13.99,24,32
-members,Graziers Garden,Chives,Y,bu,package,each,1,1.5,2,25,33
 members,Little Wings,Collard Greens,Y,bu,package,each,1,2,2.68,25,34
 members,River Ranch Oregon Olive OIl,Colliding Rivers Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
 members,Creole Me Up,Creole Marinade with Sass,Y,ea,package,8oz,1,7.5,9.98,25,33
@@ -32,6 +31,7 @@ members,Camas Swale Farm,Escarole,Y,bu,package,each,1,2,2.68,25,34
 members,RL Plants,Fall Decor- Iris Rhizome,Y,ea,package,ea,1,8,10.64,25,33
 members,Little Wings,Fennel,Y,ea,package,each,1,2.25,3.02,25,34
 members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 100mL,Y,ea,package,3.38 oz. 100mL,1,10.95,14.56,25,33
+members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 250mL,Y,ea,package,250mL,1,21.95,29.41,25,34
 members,Little Wings,Cilantro,Y,bu,package,bu,1,1.75,2.36,26,35
 members,Red Tail Growers,Delicata Squash,Y,ea,package,each,1,2,2.7,26,35
 members,Graziers Garden,Dill,Y,bu,package,each,1,1.75,2.36,26,35
@@ -73,7 +73,7 @@ members,Camas Swale Farm,Celery,Y,bu,package,each,1,2,2.68,25,34
 members,Reality Kitchen Nonprofit,Challah Sandwich Loaf,Y,ea,package,each,1,6,7.98,25,33
 members,Graziers Garden,Cherry Tomatoes,Y,pt,package,each,1,3.75,4.99,25,33
 members,Red Tail Growers,Chioggia Beets,Y,pound,package,1 Lb,1,1,1.34,25,34
-members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 250mL,Y,ea,package,250mL,1,21.95,29.41,25,34
+members,Graziers Garden,Chives,Y,bu,package,each,1,1.5,2,25,33
 members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Rosemary and Basil 100mL,Y,ea,package,3.38oz (100mL),1,10.95,14.67,25,34
 members,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Rosemary and Basil 250mL,Y,ea,package,250mL,1,21.95,29.41,25,34
 members,Graziers Garden,French Breakfast Radish,Y,bu,package,each,1,3.5,4.66,25,33
@@ -158,7 +158,6 @@ members,Red Tail Growers,Bietola/chard mix,Y,bag,package,1/2 lb bag,1,3.5,4.73,2
 members,Sweet Creek,Blueberry Apple Sauce,Y,ea,package,each,1,4.87,6.57,26,35
 members,Reality Kitchen Nonprofit,Braided Challah (seeded),Y,ea,package,each,1,5.25,7.09,26,35
 members,Red Tail Growers,Braising mix,Y,bag,package,1/2 lb,1,3.5,4.73,26,35
-members,Little Wings,Broccolini,Y,bu,package,each,1,2.75,3.71,26,35
 members,Camas Swale Farm,Frisee Lettuce,Y,ea,package,each,1,2,2.7,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,Y,ea,package,bag of 4,1,6.1,8.25,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,Y,ea,package,each,1,6.25,8.5,26,36
