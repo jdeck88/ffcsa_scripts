@@ -596,7 +596,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 							const emailOptions = {
 								from: "jdeck88@gmail.com",
 								to: "fullfarmcsa@deckfamilyfarm.com",
-								cc: "jdeck88@gmail.com, nancy.barrettbaking@gmail.com",
+								cc: "jdeck88@gmail.com",
 								subject: 'FFCSA Reports: Delivery Orders for ' + fullfillmentDateEnd,
 								text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
 							};
