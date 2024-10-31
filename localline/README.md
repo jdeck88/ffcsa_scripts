@@ -19,6 +19,17 @@ type of report that is emailed.  `run.sh` outputs a log file into `data/output.l
 NOTE: always run `delivery_orders.js` first since that downloads necessary files for other
 scripts
 
+These scripts rely on a `.env` file that is not committed to github looks something like:
+```
+USERNAME=user_email
+PASSWORD=user_pass
+
+MAIL_ACCESS=mail_access_key
+MAIL_USER=mail_access_email
+
+ENVIRONMENT=PRODUCTION | DEVELOPMENT
+```
+
 ```
 ##################################################
 # Local Line Scripts (NOTE: UTC is +8 hours)
