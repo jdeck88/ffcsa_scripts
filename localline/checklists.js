@@ -357,7 +357,7 @@ function sendEmail(file_location, filename, subject) {
   const emailOptions = {
     from: "jdeck88@gmail.com",
     to: "fullfarmcsa@deckfamilyfarm.com",
-    cc: "jdeck88@gmail.com, info@deckfamilyfarm.com",
+    cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
     subject: subject,
     text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
   };
@@ -402,7 +402,7 @@ async function checklist(fullfillmentDate) {
           .then((frozen_file) => {
             writeChecklistPDF(dairy_file, frozen_file, delivery_order_file_path)
               .then((checklist_pdf) => {
-                sendEmail(checklist_pdf, 'manifests.pdf', 'FFCSA Reports: Manifests for ' + fullfillmentDate)
+                sendEmail(checklist_pdf, 'manifests.pdf', 'FFCSA Reports: Delivery Manifests for ' + fullfillmentDate)
 
 
               }).catch((error) => {
@@ -415,7 +415,7 @@ async function checklist(fullfillmentDate) {
             writeChecklistPDF(dairy_file, frozen_file, delivery_order_file_path)
               .then((checklist_pdf) => {
                 console.log('TODO write catch!')
-                sendEmail(checklist_pdf, 'manifests.pdf', 'FFCSA Reports: Manifests for ' + fullfillmentDate)
+                sendEmail(checklist_pdf, 'manifests.pdf', 'FFCSA Reports: Delivery Manifests for ' + fullfillmentDate)
               }).catch((error) => {
                 console.error("Error in writeChecklistPDF:", error);
                 utilities.sendErrorEmail(error)

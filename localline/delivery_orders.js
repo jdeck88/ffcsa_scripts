@@ -574,7 +574,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
                             const emailOptions = {
                                 from: "jdeck88@gmail.com",
                                 to: "fullfarmcsa@deckfamilyfarm.com",
-                                cc: "jdeck88@gmail.com, info@deckfamilyfarm.com",
+                                cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
                                 subject: 'FFCSA Reports: Customer Notes for ' + fullfillmentDateEnd,
                                 text: "Please see the attached file with customer notes.",
                             };

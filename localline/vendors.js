@@ -196,7 +196,7 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename) 
                                                 to: email,                                            
                                                 cc: 'fullfarmcsa@deckfamilyfarm.com',
                                                 bcc: 'jdeck88@gmail.com',
-                                                subject: "Full Farm CSA - " + vendorName + " - " + utilities.getToday(), // Subject line
+                                                subject: "FFCSA Reports: Vendor Fulfillments for " + vendorName + " - " + utilities.getToday(), // Subject line
                                                 text: "The attached PDF file contains the Full Farm CSA Order for the next fulfillment Cycle.  " +
                                                     "Respond to this email (including both cc:ed addresses) with questions!"
                                             }
@@ -339,7 +339,7 @@ async function vendors(fullfillmentDate) {
                                     from: "jdeck88@gmail.com",                                    
                                     to: "fullfarmcsa@deckfamilyfarm.com",
                                     cc: "jdeck88@gmail.com, summer.m.spell@gmail.com",
-                                    subject: 'FFCSA Reports: Vendors Data for ' + fullfillmentDate,
+                                    subject: 'FFCSA Reports: All Vendor Data for ' + fullfillmentDate,
                                     text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
                                 };
 
