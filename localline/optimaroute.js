@@ -317,7 +317,7 @@ function updateCategoryForProductID(jsonData, productIDsToUpdate, value) {
 function sendEmail(file_location, filename, subject) {
 	// Email information
 	const emailOptions = {
-		from: "jdeck88@gmail.com",
+		from: "fullfarmcsa@deckfamilyfarm.com",
 		to: "fullfarmcsa@deckfamilyfarm.com",
 		cc: "jdeck88@gmail.com",
 		subject: subject,
@@ -426,7 +426,8 @@ async function optimaroute(fullfillmentDate) {
 	}
 
 	// Run the checklist script
-	///fullfillmentDate = '2023-10-31'
 	fullfillmentDateObject = utilities.getNextFullfillmentDate()
-
 	optimaroute(fullfillmentDateObject.date);
+
+	//fullfillmentDate = '2024-10-29'
+	//optimaroute(fullfillmentDate);
