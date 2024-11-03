@@ -1,5 +1,4 @@
-// Using the following get  the "access" property
-var request = require('request');
+const request = require('request');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -8,332 +7,180 @@ const fastcsv = require('fast-csv');
 const utilities = require('./utilities');
 const ExcelJS = require('exceljs');
 
+// Helper to format phone numbers
 function formatPhoneNumber(phoneNumber) {
-    // Remove all non-digit characters
     let digits = phoneNumber.replace(/\D/g, '');
-
-    // If the first digit is 1, remove it
-    if (digits.startsWith('1')) {
-        digits = digits.substring(1);
-    }
-
-    // Format into (XXX) XXX-XXXX
+    if (digits.startsWith('1')) digits = digits.substring(1);
     return `(${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6)}`;
 }
+
+// Reads a specific column from an Excel file
 async function readLocalExcelAndExtractColumnData(filePath) {
-	try {
-		// Load the Excel workbook from the local file
-		const workbook = new ExcelJS.Workbook();
-		await workbook.xlsx.readFile(filePath);
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
+    const worksheet = workbook.worksheets[0];
 
-		// Get the first worksheet
-		const worksheet = workbook.worksheets[0]; // Assuming the first worksheet
+    const headerRow = worksheet.getRow(1);
+    const columnIndex = headerRow.values.indexOf('Local Line Product ID');
 
-		// Find the column index for "Local Line Product ID"
-		const headerRow = worksheet.getRow(1);
-		let columnIndex = -1;
-		headerRow.eachCell((cell, colNumber) => {
-			if (cell.value === 'Local Line Product ID') {
-				columnIndex = colNumber;
-			}
-		});
+    if (columnIndex === -1) throw new Error('Column "Local Line Product ID" not found');
 
-		if (columnIndex === -1) {
-			throw new Error('Column "Local Line Product ID" not found');
-		}
-
-		// Populate an array with the values in the "Local Line Product ID" column
-		const localLineProductIDs = [];
-		for (let i = 2; i <= worksheet.rowCount; i++) {
-			const cell = worksheet.getCell(i, columnIndex);
-			localLineProductIDs.push(cell.value.toString());
-		}
-
-		return localLineProductIDs;
-	} catch (error) {
-		throw new Error(error)
-	}
+    return worksheet.getColumn(columnIndex).values.slice(2).map(value => value.toString());
 }
 
-async function writeOptimarouteXLSX(dairy_file_path, frozen_file_path, delivery_order_file_path) {
-	return new Promise((resolve, reject) => {
-		//const pdf_file = 'data/dropsite_checklist.pdf'
-		const xlsx_file = 'data/optimaroute.xlsx'
-		// Create a new PDF document
-		//const doc = new PDFDocument();
-		//doc.pipe(fs.createWriteStream(pdf_file))
 
-		// Initialize variables to group items by "Fulfillment Name"
-		const addresses = {};
-		let currentFulfillmentAddress = null;
-		fullfillmentDate = ''
+async function writeOptimarouteXLSX(dairyFilePath, frozenFilePath, deliveryOrderFilePath) {
+    const xlsxFile = 'data/optimaroute.xlsx';
+    const sortedData = [];
 
-		const sortedData = [];
+    const dairyIds = await readLocalExcelAndExtractColumnData(dairyFilePath);
+    const frozenIds = await readLocalExcelAndExtractColumnData(frozenFilePath);
 
-		readLocalExcelAndExtractColumnData(dairy_file_path)
-			.then((dairy_ids) => {
-				readLocalExcelAndExtractColumnData(frozen_file_path)
-					.then((frozen_ids) => {
-						// read the delivery orders 
-						fs.createReadStream(delivery_order_file_path)
-							.pipe(fastcsv.parse({ headers: true }))
-							.on('data', (row) => {
-								sortedData.push(row);
-							})
-							.on('end', () => {
-								// Sort the data by "Fullfillment Name"
-								sortedData.sort((a, b) => a['Fulfillment Name'].localeCompare(b['Fulfillment Name']));
+    fs.createReadStream(deliveryOrderFilePath)
+        .pipe(fastcsv.parse({ headers: true }))
+        .on('data', row => sortedData.push(row))
+        .on('end', () => {
+            sortedData.sort((a, b) => a['Fulfillment Name'].localeCompare(b['Fulfillment Name']));
+  					// update the disposition field
+            sortedData.forEach((item) => {
+                  item.disposition = "tote";
+            });
+            const updatedData = updateCategoryForProductID(sortedData, dairyIds, 'dairy');
+            updateCategoryForProductID(updatedData, frozenIds, 'frozen');
 
-								// update the disposition field
-								sortedData.forEach((item) => {
-									item.disposition = "tote";
-								});
-								updatedData = updateCategoryForProductID(sortedData, dairy_ids, 'dairy');
-								updatedData = updateCategoryForProductID(updatedData, frozen_ids, 'frozen');
+            // Group orders by customerName + deliveryAddress
+            const customerGroups = {};
+            updatedData.forEach(row => {
+                const customerName = row['Customer'].trim();
+                const deliveryAddress = row['Fulfillment Address'].trim();
+                const key = `${customerName} - ${deliveryAddress}`.toLowerCase(); // Use a normalized key
 
-								//updatedData.sort((a, b) => a['Fulfillment Name'].localeCompare(b['Fulfillment Name']));
+                // Initialize customer group if it doesn't exist
+                if (!customerGroups[key]) {
+                    const isPickup = row['Fulfillment Type'] === 'pickup';
+                    customerGroups[key] = {
+                        nameOrDropsite: isPickup
+                            ? `${row['Fulfillment Name']} Dropsite (${customerName})`
+                            : customerName,
+                        customerPhone: formatPhoneNumber(row['Phone']),
+                        deliveryAddress,
+                        instructions: isPickup
+                            ? getInstructionsByName(fulfillment_json,row['Fulfillment Name'])
+                            : row['Company'],
+                        tote: 0,
+                        frozen: 0,
+                        dairy: 0,
+                    };
+                }
 
-								updatedData.sort((a, b) => {
-									const nameComparison = a['Fulfillment Name'].localeCompare(b['Fulfillment Name']);
-									if (nameComparison === 0) {
-										// If the 'Fulfillment Name' is the same, sort by 'Customer' column
-										return a['Customer'].localeCompare(b['Customer']);
-									}
-									return nameComparison;
-								});
-								//console.log(updatedData)
-								// We want to create an array of dropsites that contains an array of customers (the dropsite)
-								// contains just the dropsite name and the customers contain the Customer, Phone
-								updatedData.forEach((row) => {
-									dropsiteName = row['Fulfillment Name']
-									type = row['Fulfillment Type']
-									fulfillmentAddress = row['Fulfillment Address']
-									disposition = row['disposition']
-									customerName = row['Customer']
-									customerPhone = formatPhoneNumber(row['Phone'])
-									companyName = row['Company']
-									fullfillmentDate = utilities.formatDate(row['Fulfillment Date'])
-									category = row['Membership']
-									quantity = Math.round(parseFloat(row['Quantity']));
-									//product = row['Product'];
-									product = row['Product'] + ' - ' + row['Package Name'];
+                // Debugging: Log disposition
+                //console.log(`Disposition for ${customerName}: ${row.disposition}`);
 
-									itemUnit = row['Item Unit']
-									vendor = row['Vendor']
-									if (type === 'pickup') {
-										customerName = "Dropsite: " + dropsiteName
-										customerPhone = ''
-										instructions = getInstructionsByName(fulfillment_json,dropsiteName)
-									} else {
-                    // we replace instructions with the Company Name in the case of delivery, as
-                    // the Company field stores home delivery instructions per customer
-										instructions = companyName
-										dropsiteName = ''
-									}
+                // Update counts for Tote, Frozen, and Dairy
+                const quantity = Math.round(parseFloat(row['Quantity']));
+                if (row.disposition === 'tote') {
+                    //console.log(`Setting tote to 1 for ${customerName} at ${deliveryAddress}`);
+                    customerGroups[key].tote = 1; // Set tote to 1 if any tote item exists
+                }
+                if (row.disposition === 'frozen') {
+                    //console.log(`Setting frozen to 1 for ${customerName} at ${deliveryAddress}`);
+                    customerGroups[key].frozen = 1; // Set frozen to 1 if any frozen item exists
+                }
+                if (row.disposition === 'dairy') {
+                    customerGroups[key].dairy += quantity; // Sum up dairy quantities
+                }
+            });
 
-									if (fulfillmentAddress !== currentFulfillmentAddress) {
-										currentFulfillmentAddress = fulfillmentAddress;
-										addresses[fulfillmentAddress] = {
-											dropsiteName: dropsiteName,
-											name: customerName,
-											phone: customerPhone,
-											companyName: companyName,
-											type: type,
-											instructions: instructions,
-											products: []
-										};
-									}
-									addresses[currentFulfillmentAddress].products.push({
-										quantity: quantity,
-										product: product,
-										itemUnit: itemUnit,
-										disposition: disposition
-									});
+            // Flatten grouped data for output
+// Flatten grouped data for output
+const rows = [];
+for (const key in customerGroups) {
+    const group = customerGroups[key];
 
-								});
-								//console.log(JSON.stringify(addresses, null, 2));
+    // Exclude specific addresses at the output stage
+    if (group.deliveryAddress.includes("25362 High Pass") || group.deliveryAddress.includes("ONLINE DELIVERY")) {
+        continue; // Skip this entry if the address matches exclusion criteria
+    }
 
-								const rows = [];
-
-								for (const address in addresses) {
-									if (addresses.hasOwnProperty(address)) {
-										const addressData = addresses[address];
-										const { dropsiteName, name, phone, type, instructions, products } = addressData;
-
-										let tote = '';
-										let frozen = '';
-										let dairy = 0;
-
-										products.forEach(product => {
-
-											if (product.disposition === 'tote') {
-												if (type != 'pickup') {
-													tote = 1;
-												} else { tote = 'n' }
-											} else if (product.disposition === 'frozen') {
-												if (type != 'pickup') {
-													frozen = 1;
-												} else { frozen = 'n'}
-
-											} else if (product.disposition === 'dairy') {
-												dairy += product.quantity;
-											}
-										});
-										if (dairy === 0) {
-											dairy = ''
-										}
-
-										// Add a row for the current address
-										rows.push([name, phone, address, instructions, tote, frozen, dairy]);
-									}
-								}
-
-								// TODO: figure out appropriate aync methods to enable finishing PDF creation
-								setTimeout(() => {
-									console.log("Success!")
-									resolve(rows); // Promise is resolved with "Success!"
-								}, 1000);
-
-							})
-
-					})
-
-					.catch((error) => {
-						console.error('Error:', error);
-						throw new Error(error)
-					});
-
-			})
-			.catch((error) => {
-				console.error('Error:', error);
-				throw new Error(error)
-			});
-
-	});
-
+    rows.push([
+        group.nameOrDropsite,
+        group.customerPhone,
+        group.deliveryAddress,
+        group.instructions,
+        group.tote ? 1 : '', // Ensure tote shows 1 if any item exists
+        group.frozen ? 1 : '', // Ensure frozen shows 1 if any item exists
+        group.dairy || ''
+    ]);
 }
 
-// Function to create and write XLSX file using ExcelJS
+            // Write to XLSX
+            writeXLSX(rows, xlsxFile);
+        });
+}
+
+// Creates and writes to an XLSX file
 function writeXLSX(rows, outputPath) {
-	return new Promise((resolve, reject) => {
-		const workbook = new ExcelJS.Workbook();
-		const worksheet = workbook.addWorksheet('Sheet1');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
 
-		// Define the headers
-		const headers = ['name/dropsite', 'phone', 'address', 'instructions', 'tote', 'frozen', 'dairy'];
-		worksheet.addRow(headers);
+    // Updated headers with merged "name/dropsite" column
+    worksheet.addRow(['name/dropsite', 'Phone', 'Address', 'Instructions', 'Tote', 'Frozen', 'Dairy']);
+    rows.forEach(row => worksheet.addRow(row));
 
-		// Add the data rows
-		rows.forEach(row => {
-			worksheet.addRow(row);
-		});
-
-		// Write the workbook to a file
-		workbook.xlsx.writeFile(outputPath)
-			.then(() => {
-				console.log(`XLSX file has been written to ${outputPath}`);
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-function productSpecificPackList(doc, dropsitesAll, disposition) {
-
-	count = 0;
-	for (const dropsiteName in dropsitesAll) {
-		const selectedCustomers = {};
-		for (const customerName in dropsitesAll[dropsiteName].customers) {
-			const customerData = dropsitesAll[dropsiteName].customers[customerName];
-			const frozenProducts = customerData.filter((product) => product.disposition === disposition);
-
-			if (frozenProducts.length > 0) {
-				selectedCustomers[customerName] = frozenProducts;
-			}      
-		}
-
-		// only print dropsites that have desired product
-		if (Object.keys(selectedCustomers).length > 0) {
-			if (count > 0) {
-				doc.addPage();
-			}
-			doc.fontSize(14).text(dropsiteName + " " + disposition.charAt(0).toUpperCase() + disposition.slice(1) + " Product Packlist", { bold: true });
-			doc.moveDown();
-
-			allCustomersTable = []
-			for (const customerName in selectedCustomers) {
-				customerData = selectedCustomers[customerName]
-
-				const tableData = [
-					...Object.entries(customerData).map(([dropsite, values]) => [
-						customerName,
-						values.product,
-						values.itemUnit,
-						values.quantity,
-					]),
-				];
-				allCustomersTable.push(...tableData);        
-			}
-			const tableOptions = {
-				headers: ['Name', 'Product', 'Unit', 'Quantity'],
-				rows: allCustomersTable
-			};
-			doc.table(tableOptions)
-			count++
-		}
-	}
+    workbook.xlsx.writeFile(outputPath).then(() => {
+        console.log(`XLSX file has been written to ${outputPath}`);
+    });
 }
 
-
-// Function to add a new page if the remaining space is less than the table height
-function addPageIfNecessary(dropsiteName, data, doc) {
-	//threshold = 100
-	const cellHeight = 80; // Set your desired cell height
-	const totalRowsHeight = data.length * cellHeight;
-	const headerHeight = cellHeight; // Assuming header height is the same as cell height
-	const tableHeight = totalRowsHeight + headerHeight;
-
-	remainingHeight = doc.page.height - doc.y
-
-	if (tableHeight > remainingHeight) {
-		doc.addPage();
-		doc.text(dropsiteName + " (next page...)")
-	}
-}
-
+// Updates product categories based on product IDs
 function updateCategoryForProductID(jsonData, productIDsToUpdate, value) {
-	jsonData.forEach((item) => {
-		product_id_string = Math.floor(item['Product ID'].toString().trim()).toString();
-		if (productIDsToUpdate.includes(product_id_string)) {
-			//console.log('adding ' + item.disposition)
-			item.disposition = value;
-		} 
-	});
-	return jsonData;
+    if (!jsonData || !Array.isArray(jsonData)) {
+        console.error("updateCategoryForProductID: jsonData is not an array or is undefined.");
+        return [];
+    }
+    jsonData.forEach((item) => {
+        const productId = Math.floor(item['Product ID'].toString().trim());
+        if (productIDsToUpdate.includes(productId.toString())) item.disposition = value;
+    });
+    return jsonData;
 }
 
+// Main function to build the OptimaRoute file and email it
+async function optimaroute(fullfillmentDate) {
+    console.log("Running optimaroute builder");
 
-function sendEmail(file_location, filename, subject) {
-	// Email information
-	const emailOptions = {
-		from: "fullfarmcsa@deckfamilyfarm.com",
-		to: "fullfarmcsa@deckfamilyfarm.com",
-		cc: "jdeck88@gmail.com",
-		subject: subject,
-		text: "Please see the attached file.  This is the Excel file to load to optimaroute. Rebecca, please try and use this file for loading to optimaroute, it contains data for all current orders for this day.",
-	};
+    const deliveryOrderPath = `data/orders_list_${fullfillmentDate}.csv`;
+    const dairyFilePath = 'data/dairy.xlsx';
+    const frozenFilePath = 'data/frozen.xlsx';
 
-	// Attach the file to the email
-	emailOptions.attachments = [
-		{
-			filename: filename, // Change the filename as needed
-			content: fs.readFileSync(file_location), // Attach the file buffer
-		},
-	];
+    const accessToken = JSON.parse(await utilities.getAccessToken()).access;
+		fulfillment_json = ''
 
+    utilities.getJsonFromUrl('https://localline.ca/api/backoffice/v2/fulfillment-strategies/', accessToken)
+        .then(async json => {
+        		fulfillment_json = json
+            await Promise.all([
+                utilities.downloadBinaryData('https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2244&direct=true', dairyFilePath, accessToken),
+                utilities.downloadBinaryData('https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2245,2266&direct=true', frozenFilePath, accessToken)
+            ]);
 
-	utilities.sendEmail(emailOptions)
+            const rows = await writeOptimarouteXLSX(dairyFilePath, frozenFilePath, deliveryOrderPath);
+            sendEmail('data/optimaroute.xlsx', 'optimaroute.xlsx', `FFCSA Reports: OptimaRoute File ${fullfillmentDate}`);
+        })
+        .catch(error => utilities.sendErrorEmail(error));
+}
+
+// Sends an email with a file attachment
+function sendEmail(filePath, filename, subject) {
+    const emailOptions = {
+        from: "fullfarmcsa@deckfamilyfarm.com",
+        to: "jdeck88@gmail.com",
+        cc: "jdeck88@gmail.com",
+        subject,
+        text: "Please see the attached file for OptimaRoute. This is a new file that contains individual orders for each dropsite.",
+        attachments: [{ filename, content: fs.readFileSync(filePath) }]
+    };
+    utilities.sendEmail(emailOptions);
 }
 
 function getInstructionsByName(json, name) {
@@ -344,90 +191,7 @@ function getInstructionsByName(json, name) {
     return null;
 }
 
-// Build all check-lists
-async function optimaroute(fullfillmentDate) {
-	try {
-		console.log("running optimaroutebuilder")
-		delivery_order_file_path = 'data/orders_list_' + fullfillmentDate + ".csv"
-    console.log(delivery_order_file_path)
+// Start the process
+optimaroute(utilities.getNextFullfillmentDate().date);
+//optimaroute('2024-10-29');
 
-		dairy_data = {}
-		frozen_data = {}
-		dairy_file_path = ''
-		frozen_file_path = ''
-
-		// Login
-		data = await utilities.getAccessToken();
-		const accessToken = JSON.parse(data).access;
-
-		//dairy tags
-		dairy_url = 'https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2244&direct=true'
-		// frozen and turkey
-		frozen_url = 'https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2245,2266&direct=true'
-		fulfillment_url = 'https://localline.ca/api/backoffice/v2/fulfillment-strategies/'
-
-		dairy_file = 'data/dairy.xlsx'
-		frozen_file = 'data/frozen.xlsx'
-		fulfillment_json = 'data/fulfilsment.json'
-
-		// Download File
-		utilities.getJsonFromUrl(fulfillment_url, accessToken)
-			.then((json) => {
-				fulfillment_json = json
-				//console.log(JSON.stringify(fulfillment_json, null, 2));
-				utilities.downloadBinaryData(dairy_url, dairy_file, accessToken)
-					.then((dairy_file) => {
-						utilities.downloadBinaryData(frozen_url, frozen_file, accessToken)
-							.then((frozen_file) => {
-								writeOptimarouteXLSX(dairy_file, frozen_file, delivery_order_file_path)
-									.then((rows) => {
-										const optimaroute_xlsx = 'data/optimaroute.xlsx'
-
-										// Write the XLSX file
-										writeXLSX(rows, optimaroute_xlsx)
-											.then(() => {
-												console.log('XLSX file creation complete.');
-												sendEmail(optimaroute_xlsx, 'optimaroute.xlsx', 'FFCSA Reports: OptimaRoute File ' + fullfillmentDate)
-											})
-											.catch((error) => {
-												console.error("Error Creating OptimaRoute XLSX:", error);
-											});
-
-									}).catch((error) => {
-										console.error("Error in OptimaRoute XLSX:", error);
-										utilities.sendErrorEmail(error)
-									});
-							})
-							.catch((error) => {
-								console.log('error fetching frozen products list, continuing to run checklist process using local copy as this file often halts....');
-								writeOptimarouteXLSX(dairy_file, frozen_file, delivery_order_file_path)
-									.then((optimaroute_xlsx) => {
-										console.log('TODO write catch!')
-										sendEmail(optimaroute_xlsx, 'optimaroute.csv', 'FFCSA Reports: Optimaaroute for ' + fullfillmentDate)
-									}).catch((error) => {
-										console.error("Error in writeOptimarouteXLSX:", error);
-										utilities.sendErrorEmail(error)
-									});
-							});
-					})
-					.catch((error) => {
-						console.error('error fetching dairy products list');
-						utilities.sendErrorEmail(error)
-					})
-					})
-				.catch((error) => {
-					console.error('error fetching fulfillmentJSON');
-					utilities.sendErrorEmail(error)
-				});
-			} catch (error) {
-				console.error('A general occurred:', error);
-				utilities.sendErrorEmail(error)
-			}
-	}
-
-	// Run the checklist script
-	fullfillmentDateObject = utilities.getNextFullfillmentDate()
-	optimaroute(fullfillmentDateObject.date);
-
-	//fullfillmentDate = '2024-10-29'
-	//optimaroute(fullfillmentDate);
