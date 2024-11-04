@@ -174,7 +174,7 @@ async function optimaroute(fullfillmentDate) {
 function sendEmail(filePath, filename, subject) {
     const emailOptions = {
         from: "fullfarmcsa@deckfamilyfarm.com",
-        to: "jdeck88@gmail.com",
+        to: "fullfarmcsa@deckfamilyfarm.com",
         cc: "jdeck88@gmail.com",
         subject,
         text: "Please see the attached file for OptimaRoute. This is a new file that contains individual orders for each dropsite.",
