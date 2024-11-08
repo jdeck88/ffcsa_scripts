@@ -1,13 +1,18 @@
 Priceslist,Vendor,Product,Visible,Item Unit,Charge Unit,Package Name,# of Items,Purchase Price,Retail Price,Margin,Markup
 herdshare,Deck Family Farm,"*Sale* Stewing Hens, 2 for $20",Y,ea,package,2 Stewing Hens,1,20,20,0,0
+herdshare,Full Farm CSA,Deck Family Farms Fall Farm-to-Table Celebration,Y,ea,package,Adult Ticket (12 and up),1,75,75,0,0
 herdshare,Graziers Garden,Green Tomatoes,Y,lb,package,1 lb,1,2.5,2.55,2,2
 herdshare,Deck Family Farm,"Broad Breasted White Thanksgiving Turkeys, Large",Y,ea,package,17-20  lbs,1,112,126,11,13
 herdshare,Deck Family Farm,"Broad Breasted White Thanksgiving Turkeys, Medium",Y,ea,package,12-16  lbs,1,96,108,11,13
 herdshare,Deck Family Farm,"Bronze Heritage Thanksgiving Turkeys, Large",Y,ea,package,17-23  lbs,1,128,144,11,13
+herdshare,Camas Country Mill,Camas Pizza Blend,Y,ea,package,4 lbs,1,10.3,12,14,17
 herdshare,"Creamy Cow, LLC",Raw Cultured Buttermilk,Y,ea,package,1 qt,1,11,13,15,18
 herdshare,"Creamy Cow, LLC",Raw Farmers Cheese,Y,ea,package,12 oz,1,10,11.75,15,18
 herdshare,"Creamy Cow, LLC",Raw Fresh Sweet Cream,Y,ea,package,1 pt,1,10,11.75,15,18
+herdshare,Camas Country Mill,Hollys Dog Biscuit Mix,Y,bag,package,3 lb bag,1,10,12,17,20
+herdshare,Deck Family Farm,*Stuffing Sale! 15% Off* 1 lb. Ground Pork + 1 pack Country Sausage,Y,ea,package,12 oz,1,16.69,20.99,20,26
 herdshare,"Creamy Cow, LLC",Raw A2/A2 Milk,Y,ea,package,1/2 Gal.,1,15,19,21,27
+herdshare,Deck Family Farm,Lamb Chops,Y,ea,package,4 Pack 1.6-1.9 Lbs,1,22.75,29.46,23,29
 herdshare,Camas Country Mill,Organic Sonora Soft White Wheat Flour,Y,ea,package,4 lbs,1,13.3,17.29,23,30
 herdshare,Camas Country Mill,Sues Soup Mix,Y,ea,package,3 lbs,1,17.4,22.62,23,30
 herdshare,Kiko Denzer,Handcrafted Wooden Fancy Egg Pushers,Y,ea,package,ea,1,12,15.84,24,32
@@ -15,7 +20,6 @@ herdshare,Kiko Denzer,Handcrafted Wooden Plain Kitchen Stir Stix,Y,ea,package,ea
 herdshare,Camas Country Mill,Organic Corn Flour,Y,ea,package,2.5 lbs,1,10.6,13.99,24,32
 herdshare,Red Tail Growers,Acorn squash,Y,ea,package,Each,1,5,6.65,25,33
 herdshare,Red Tail Growers,Ambition Shallots,Y,lb,package,1 lb,1,3.5,4.66,25,33
-herdshare,Red Tail Growers,Arugula,Y,bu,package,1 bunch,1,2,2.66,25,33
 herdshare,Red Tail Growers,Autumn Frost Butternut Squash,Y,ea,package,each,1,4.75,6.37,25,34
 herdshare,RL Plants,Birch Wooden Coasters,Y,pk,package,2 pack,1,10,13.3,25,33
 herdshare,Elegant Elephant Baking Co.,Blackberry Hand Pie,Y,ea,package,each,1,2.95,3.92,25,33
@@ -27,7 +31,6 @@ herdshare,Graziers Garden,Brandywine Tomatoes,Y,lb,package,1 lb,1,3,3.99,25,33
 herdshare,Graziers Garden,Broccoli Greens,Y,bu,package,each,1,4.25,5.65,25,33
 herdshare,Camas Country Mill,Brown Teff Flour,Y,ea,package,4 lbs,1,7.08,9.42,25,33
 herdshare,Red Tail Growers,Bulb Candy Onion,Y,pound,package,pound,1,1.45,1.93,25,33
-herdshare,Camas Country Mill,Camas Pizza Blend,Y,ea,package,4 lbs,1,10.3,13.7,25,33
 herdshare,Graziers Garden,Cantaloupe,Y,ea,package,each,1,6.65,8.84,25,33
 herdshare,Lonesome Whistle,Cayenne Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.43,25,33
 herdshare,Camas Swale Farm,Celeriac,Y,pound,package,each,1,1.5,2,25,33
@@ -36,7 +39,7 @@ herdshare,Reality Kitchen Nonprofit,Challah Sandwich Loaf,Y,ea,package,each,1,6,
 herdshare,Graziers Garden,Cherry Tomatoes,Y,pt,package,each,1,3.75,4.99,25,33
 herdshare,Red Tail Growers,Chioggia Beets,Y,pound,package,1 Lb,1,1,1.34,25,34
 herdshare,Graziers Garden,Chives,Y,bu,package,each,1,1.5,2,25,33
-herdshare,Little Wings,Collard Greens,Y,bu,package,each,1,2,2.68,25,34
+herdshare,Red Tail Growers,Collard Greens,Y,bu,package,each,1,2,2.68,25,34
 herdshare,River Ranch Oregon Olive OIl,Colliding Rivers Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
 herdshare,OGC,Crimini Mushrooms,Y,lb,package,1 lb,1,3.95,5.25,25,33
 herdshare,Lonesome Whistle,Dark Northern Rye Flour,Y,ea,package,1.6 lbs,1,4,5.36,25,34
@@ -52,7 +55,6 @@ herdshare,Full Farm CSA,Deck Family Farm and Full Farm CSA T-Shirt Large,Y,ea,pa
 herdshare,Full Farm CSA,Deck Family Farm and Full Farm CSA T-Shirt Medium,Y,ea,package,ea,1,17,22.61,25,33
 herdshare,Full Farm CSA,Deck Family Farm and Full Farm CSA T-Shirt Small,Y,ea,package,ea,1,17,22.61,25,33
 herdshare,Full Farm CSA,Deck Family Farms Fall Farm-to-Table Celebration,Y,ea,package,Kid Ticket (12 and under),1,,0,NaN,NaN
-herdshare,Full Farm CSA,Deck Family Farms Fall Farm-to-Table Celebration,Y,ea,package,Adult Ticket (12 and up),1,75,75,0,0
 herdshare,Sweet Creek,Dill Relish,Y,ea,package,12.6 oz,1,4,5.32,25,33
 herdshare,River Ranch Oregon Olive OIl,Dry Herb Mix,Y,ea,package,ea 1 ounce jar,1,7,9.38,25,34
 herdshare,Graziers Garden,Edible Calendula Flower,Y,pt,package,each,1,4,5.32,25,33
@@ -60,7 +62,6 @@ herdshare,Graziers Garden,Eggplant,Y,pound,package,pound,1,2.5,3.33,25,33
 herdshare,Lonesome Whistle,Emmer Farro,Y,ea,package,1.25 lb Bag,1,4,5.36,25,34
 herdshare,Camas Swale Farm,Escarole,Y,bu,package,each,1,2,2.68,25,34
 herdshare,RL Plants,Fall Decor- Iris Rhizome,Y,ea,package,ea,1,8,10.64,25,33
-herdshare,Little Wings,Fennel,Y,ea,package,each,1,2.25,3.02,25,34
 herdshare,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Garlic 100mL,Y,ea,package,3.38 oz. 100mL,1,10.95,14.56,25,33
 herdshare,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Rosemary and Basil 100mL,Y,ea,package,3.38oz (100mL),1,10.95,14.67,25,34
 herdshare,River Ranch Oregon Olive OIl,Flavor Infused Olive Oil- Rosemary and Basil 250mL,Y,ea,package,250mL,1,21.95,29.41,25,34
@@ -77,7 +78,6 @@ herdshare,Kiko Denzer,Handcrafted Egg Pushers,Y,ea,package,each,1,8,10.64,25,33
 herdshare,Kiko Denzer,Handcrafted Fancy Wooden Eating Spoons,Y,ea,package,each,1,20,26.6,25,33
 herdshare,RL Plants,Hen and Chicks Succulents,Y,ea,package,each,1,4,5.32,25,33
 herdshare,Spoiled Rotten Vinegar,Hibiscus Vinegar,Y,ea,package,8 fl. oz,1,8,10.64,25,33
-herdshare,Camas Country Mill,Hollys Dog Biscuit Mix,Y,bag,package,3 lb bag,1,10,13.3,25,33
 herdshare,Spoiled Rotten Vinegar,Honey Vinegar,Y,ea,package,8 fl. oz,1,8,10.64,25,33
 herdshare,Graziers Garden,Honeydew Melon,Y,ea,package,each,1,6.65,8.84,25,33
 herdshare,Graziers Garden,Jalapeno Pepper,Y,lb,package,lb,1,4,5.32,25,33
@@ -94,8 +94,10 @@ herdshare,Camas Country Mill,Oregon Wild Rice,Y,ea,package,16 oz,1,11,14.74,25,3
 herdshare,Camas Country Mill,Organic 7-Grain Cereal,Y,ea,package,3 lbs,1,13.25,17.62,25,33
 herdshare,Camas Country Mill,Organic All Purpose Low Gluten Flour,Y,ea,package,4 lbs,1,9.35,12.44,25,33
 herdshare,Camas Country Mill,Organic Buckwheat Flour,Y,ea,package,3 lbs,1,8.9,11.84,25,33
+herdshare,Camas Country Mill,Organic Oat Flakes,Y,ea,package,4 lbs,1,15.25,20.28,25,33
 herdshare,Camas Country Mill,Organic Spelt Flour,Y,ea,package,2 lb. Bag,1,8.4,11.17,25,33
 herdshare,Camas Country Mill,Pardina Brown Lentils,Y,ea,package,3 lbs,1,10.6,14.1,25,33
+herdshare,Red Tail Growers,Parsley,Y,bu,package,each,1,1.5,2.01,25,34
 herdshare,Spoiled Rotten Vinegar,Pear Vinegar,Y,ea,package,8 fl. oz,1,7,9.31,25,33
 herdshare,Sweet Creek,Pickled Beets,Y,ea,package,16 oz,1,4.1,5.49,25,34
 herdshare,Graziers Garden,Pickled Garlic Scapes,Y,pt,package,pt,1,8,10.64,25,33
@@ -110,7 +112,6 @@ herdshare,Spoiled Rotten Vinegar,Quince Vinegar,Y,ea,package,8 fl oz,1,8,10.64,2
 herdshare,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Coffee Beans,Y,ea,package,16 oz,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Radiant Decaf Columbia Coffee,Y,ea,package,12 oz,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,Y,ea,package,16 oz,1,11,14.63,25,33
-herdshare,Little Wings,Radicchio Chiogga Head,Y,ea,package,each,1,2.5,3.33,25,33
 herdshare,Camas Swale Farm,Rainbow Carrots,Y,bu,package,1 bunch,1,2,2.68,25,34
 herdshare,"Creamy Cow, LLC",Raw Cultured Butter,Y,ea,package,0.5 lbs,1,14,18.62,25,33
 herdshare,"Creamy Cow, LLC",Raw Fresh Whole Milk,Y,ea,package,1/4 gal,1,6,8,25,33
@@ -118,7 +119,6 @@ herdshare,"Creamy Cow, LLC",Raw Sweet Cream Butter,Y,ea,package,0.5 lbs,1,12,15.
 herdshare,Red Tail Growers,Red Cabbage,Y,ea,package,each,1,2.5,3.35,25,34
 herdshare,Red Tail Growers,Red Radish,Y,bu,package,each,1,2.25,3.02,25,34
 herdshare,Lonesome Whistle,Rise & Shine Gluten Free Pancake Mix,Y,ea,package,1.6 lbs,1,5.33,7.09,25,33
-herdshare,Camas Swale Farm,Romanesco,Y,lb,package,1 lb,1,2.5,3.33,25,33
 herdshare,Graziers Garden,Russet potatoes,Y,pound,package,pound,1,2,2.66,25,33
 herdshare,Red Tail Growers,Salad Chicory Mix,Y,bag,package,1/2 lb bag,1,3.5,4.69,25,34
 herdshare,Full Farm CSA,Sassy Italian- Queen of Hearts,Y,ea,package,ea,1,7.1,9.44,25,33
@@ -142,17 +142,17 @@ herdshare,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans New 1
 herdshare,Graziers Garden,Wee baby cabbages,Y,pound,weight,pound,1,3,3.99,25,33
 herdshare,RL Plants,Yellow Iris Rhizome,Y,ea,package,each,1,5,6.65,25,33
 herdshare,Full Farm CSA,Zesty Caesar- Queen of Hearts,Y,ea,package,ea,1,7.1,9.44,25,33
+herdshare,Red Tail Growers,Baby Carrots,Y,bu,package,each,1,2.75,3.71,26,35
 herdshare,Reality Kitchen Nonprofit,Braided Challah (seeded),Y,ea,package,each,1,5.25,7.09,26,35
 herdshare,Red Tail Growers,Braising mix,Y,bag,package,1/2 lb,1,3.5,4.73,26,35
 herdshare,Red Tail Growers,Delicata Squash,Y,ea,package,each,1,2,2.7,26,35
 herdshare,Graziers Garden,Dill,Y,bu,package,each,1,1.75,2.36,26,35
 herdshare,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,Y,ea,package,bag of 4,1,6.1,8.25,26,35
 herdshare,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,Y,ea,package,each,1,6.25,8.5,26,36
+herdshare,Camas Swale Farm,Green Curly Kale,Y,bu,package,each,1,1.84,2.47,26,34
 herdshare,Red Tail Growers,Kale Mix,Y,ea,package,1/2 lb,1,3.5,4.73,26,35
 herdshare,Red Tail Growers,Lacinato (Dino) Kale,Y,bu,package,bu.,1,2,2.7,26,35
 herdshare,Red Tail Growers,Mild Mustard Salad Mix,Y,bag,package,1/2 lb,1,3.5,4.73,26,35
-herdshare,Red Tail Growers,Nantes Carrots,Y,bu,package,each,1,2.5,3.38,26,35
-herdshare,Little Wings,Parsley,Y,bu,package,each,1,1.75,2.35,26,34
 herdshare,Full Farm CSA,Persimmon,Y,ea,package,ea,1,1,1.35,26,35
 herdshare,Creole Me Up,Pickleez Anana/ Pickled Pineapple,Y,ea,package,ea,1,9,12.15,26,35
 herdshare,Creole Me Up,Pickleez with a Little Bit of Sass,Y,ea,package,16.06oz,1,8.35,11.27,26,35
@@ -166,19 +166,23 @@ herdshare,Red Tail Growers,White Russian Kale,Y,bu,package,bu,1,2,2.7,26,35
 herdshare,Reality Kitchen Nonprofit,Wholewheat Multigrain Sandwich Loaf,Y,ea,package,each,1,5.25,7.09,26,35
 herdshare,Deck Family Farm,Hikers Pepperoni Sticks,Y,pk,package,pk,1,4.88,6.73,27,38
 herdshare,Full Farm CSA,Wildcraft Hot Sauce,Y,ea,package,ea,1,8,11,27,38
+herdshare,Deck Family Farm,*Back in Stock!* Boneless Pork Chop,Y,pk,package,1-1.4 Lb pk,1,12.87,17.76,28,38
+herdshare,Deck Family Farm,*Back in Stock!* Pork Shoulder Roast,Y,ea,package,2.4-3 lbs,1,28.96,39.96,28,38
 herdshare,Deck Family Farm,*Sale 50% Off!* Beef Bones,Y,bag,package,3 - 5 lbs,1,5.2,7.18,28,38
+herdshare,Deck Family Farm,Baby Back Ribs,Y,pk,package,.84  Lbs,1,7.91,10.92,28,38
 herdshare,Deck Family Farm,Bacon Ends & Pieces,Y,pk,package,8 oz,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Beef Back Ribs,Y,ea,package,2.4-3.1 Lbs,1,23.68,32.68,28,38
 herdshare,Deck Family Farm,Beef Brisket,Y,ea,package,3-4,1,35.26,48.66,28,38
 herdshare,Deck Family Farm,Beef Chuck Roast,Y,ea,package,2.5-3 lbs.,1,27.71,38.24,28,38
+herdshare,Deck Family Farm,Beef Flank Steak,Y,ea,package,1.62  lbs.,1,23.16,31.96,28,38
+herdshare,Deck Family Farm,Beef Flat Iron Steak,Y,ea,package,.4-.6 lbs.,1,7.15,9.87,28,38
 herdshare,Deck Family Farm,Beef Heart,Y,ea,package,2-3 lb,1,13,17.94,28,38
 herdshare,Deck Family Farm,Beef Kidney,Y,pk,package,0.8 - 1 Lbs,1,12.87,17.76,28,38
-herdshare,Deck Family Farm,Beef Liver,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,21.71,28,38
 herdshare,Deck Family Farm,Beef Marrow Bones,Y,pk,package,3.8-4.4 Lbs,1,18.66,25.75,28,38
 herdshare,Deck Family Farm,Beef Oxtail,Y,ea,package,1.4-1.8  lbs.,1,11.44,15.79,28,38
 herdshare,Deck Family Farm,Beef Patties,Y,pk,package,1 lb / 3 Patties,1,5.85,8.07,28,38
 herdshare,Deck Family Farm,Beef Shank Osso Buco,Y,ea,package,.9-1.3  lbs.,1,9.47,13.07,28,38
-herdshare,Deck Family Farm,Beef Stew Meat,Y,ea,package,.9-1.1 lbs,1,9.57,13.21,28,38
+herdshare,Deck Family Farm,Beef Stew Meat,Y,ea,package,.9-1.2 lbs,1,10.58,14.6,28,38
 herdshare,Deck Family Farm,Beef Tongue,Y,pk,package,1.9-2.5 Lbs,1,11.44,15.79,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Blueberry Maple Linked Sausage,Y,pk,package,4 links/pack  14oz packages,1,11.05,15.25,28,38
 herdshare,Deck Family Farm,Bone-In Chicken Breast,Y,ea,package,1.5-2.25 lbs,1,17.06,23.54,28,38
@@ -194,12 +198,12 @@ herdshare,Deck Family Farm,Chicken Feet,Y,ea,package,2 lb,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Chicken Liver,Y,ea,package,1/2 lb,1,6.5,8.97,28,38
 herdshare,Deck Family Farm,Chicken Wings,Y,ea,package,1.4-1.6 lbs,1,9.75,13.46,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,English Banger Linked Sausage,Y,pk,package,4 links/pk,1,11.05,15.25,28,38
+herdshare,Deck Family Farm,Fresh Garlic Sausage Links,Y,pk,package,12 oz / 4 count,1,10.73,14.81,28,38
 herdshare,Elegant Elephant Baking Co.,Gluten Free Blueberry Scone,Y,ea,package,each,1,2.9,4,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Grass-Fed Organ Blend,Y,ea,package,1lb. Pack,1,9.43,13.01,28,38
 herdshare,Deck Family Farm,Ground Beef,Y,ea,package,1 lb,1,5.85,8.07,28,38
 herdshare,Deck Family Farm,Ground Lamb,Y,ea,package,1 lb,1,11.05,15.25,28,38
 herdshare,Deck Family Farm,Ground Pork,Y,ea,package,1 lb,1,9.43,13.01,28,38
-herdshare,Deck Family Farm,Hanger Steak,Y,ea,package,0.4-.7 Lbs.,1,7.86,10.85,28,38
 herdshare,"Creamy Cow, LLC",Henni Penni Hispanico  4.8-5.8 oz,Y,ea,package,4.8-5.8 oz,1,10.79,14.89,28,38
 herdshare,"Creamy Cow, LLC",Henni Penni Hispanico  5.9-6.9 oz,Y,ea,package,5.9-6.9 oz,1,13.5,18.63,28,38
 herdshare,Deck Family Farm,"Honey, Bulk Raw",Y,ea,package,4 gallon,1,245,338.1,28,38
@@ -207,42 +211,42 @@ herdshare,Deck Family Farm,"Honey, Raw",Y,ea,package,1/2 pt,1,9.43,13.01,28,38
 herdshare,Deck Family Farm,"Honey, Raw",Y,ea,package,1 qt,1,26,35.88,28,38
 herdshare,Deck Family Farm,"Honey, Raw",Y,ea,package,1 pt,1,14.3,19.73,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Hot Italian Linked Sausage,Y,pk,package,14 oz packs 4 links/pk,1,11.05,15.25,28,38
-herdshare,Deck Family Farm,Korean Beef Short Ribs,Y,ea,package,.9-1.3 lbs,1,11.8,16.28,28,38
-herdshare,Deck Family Farm,Lamb Kabob,Y,pk,package,1-1.3 Lb,1,13.45,18.56,28,38
+herdshare,Deck Family Farm,Korean Beef Short Ribs,Y,ea,package,1.2-1.6 lbs,1,15.01,20.71,28,38
 herdshare,Deck Family Farm,Lamb Neck Slices,Y,ea,package,1.1-1.5 lb,1,11.2,15.46,28,38
 herdshare,Deck Family Farm,Lamb Ribs,Y,ea,package,1.4-1.9 lb,1,16.62,22.94,28,38
 herdshare,Deck Family Farm,Lamb Shank - Whole,Y,ea,package,2 - 2.5 lbs,1,23.4,32.29,28,38
 herdshare,Deck Family Farm,Lamb Shoulder Roast,Y,ea,package,2.3 -2.7 lbs,1,27.63,38.13,28,38
-herdshare,Deck Family Farm,Landgaeger Jerky,Y,pk,package,3 count / 3 oz,1,9.1,12.56,28,38
+herdshare,Deck Family Farm,Landjaeger Jerky,Y,pk,package,3 count / 3 oz,1,9.1,12.56,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Linked Greek Loukaniko Sausage,Y,pk,package,14 oz. pk/4 links,1,11.05,15.25,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Linked Lamb Merguez Sausage,Y,ea,package,"14oz, Pack",1,12.03,16.6,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Linked Thai Curry Sausage (Sai Ua),Y,ea,package,"14oz, Pack",1,11.05,15.25,28,38
 herdshare,Deck Family Farm,New York Steak,Y,ea,package,0.5 - 0.9 lbs,1,14.11,19.47,28,38
 herdshare,Deck Family Farm,"Olympia Provisions, Dog Treats",Y,pk,package,5 oz. pk,1,9.75,13.46,28,38
-herdshare,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1/2 dozen,1,4.23,5.84,28,38
 herdshare,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1 dozen,1,7.15,9.87,28,38
+herdshare,Deck Family Farm,Organic Pasture Raised Chicken Eggs,Y,ea,package,1/2 dozen,1,4.23,5.84,28,38
 herdshare,Deck Family Farm,"Pastrami, Sliced",Y,pk,package,8 oz,1,10.73,14.81,28,38
 herdshare,Deck Family Farm,Peppered Knife Cut Beef Jerky,Y,pk,package,3 oz,1,9.75,13.46,28,38
 herdshare,Deck Family Farm,Pet Food Organ Mix,Y,ea,package,1 lb,1,6.5,8.97,28,38
 herdshare,Deck Family Farm,Pork Bones,Y,ea,package,3-5 lbs.,1,5.2,7.18,28,38
 herdshare,Deck Family Farm,Pork Frankfurter,Y,pk,package,12 oz pk,1,11.05,15.25,28,38
 herdshare,Deck Family Farm,Pork Shank,Y,pk,package,2.4-3.1 Lb. pk,1,25.92,35.77,28,38
-herdshare,Deck Family Farm,Pork Tenderloin Roast,Y,pk,package,0.8 - 1.3 Lbs.,1,11.26,15.54,28,38
-herdshare,Deck Family Farm,Red Ranger Roaster,Y,ea,package,2.2-2.7 Lbs.,1,15.93,21.98,28,38
-herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Beef Tallow,Y,ea,package,8 oz,1,5.53,7.63,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Beef Tallow,Y,ea,package,16 oz,1,11.05,15.25,28,38
-herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,Y,ea,package,16 oz,1,7.8,10.76,28,38
+herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Beef Tallow,Y,ea,package,8 oz,1,5.53,7.63,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,Y,ea,package,8 oz,1,3.9,5.38,28,38
-herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,10.76,28,38
+herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,Y,ea,package,16 oz,1,7.8,10.76,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard,Y,ea,package,8 oz.,1,3.9,5.38,28,38
+herdshare,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Ribeye Steak,Y,ea,package,0.9-1.2 lbs,1,23.21,32.03,28,38
 herdshare,Deck Family Farm,"Roast Beef, Sliced",Y,pk,package,8 oz,1,10.73,14.81,28,38
+herdshare,Deck Family Farm,Short Ribs,Y,ea,package,1.4-2 Lbs,1,18.23,25.16,28,38
+herdshare,Deck Family Farm,Smoked Kielbasa Sausage,Y,pk,package,12 oz,1,10.72,14.79,28,38
 herdshare,Deck Family Farm,Spare Ribs,Y,pk,package,3.4-4 Lbs,1,28.86,39.83,28,38
 herdshare,Deck Family Farm,Stewing Hen,Y,ea,package,2 - 3.8 lbs,1,10.08,13.91,28,38
 herdshare,Deck Family Farm,Summer Sausage,Y,ea,package,8 oz,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Sweet Italian Sausage Links,Y,pk,package,12 oz 4 count,1,10.73,14.81,28,38
 herdshare,Deck Family Farm,Tamari Pressed Beef Jerky,Y,pk,package,3 oz,1,9.75,13.46,28,38
 herdshare,Deck Family Farm,Top Sirloin Steak,Y,ea,package,1.3-1.7 Lbs,1,20.48,28.26,28,38
+herdshare,Deck Family Farm,Tri-Tip,Y,ea,package,2.42 lbs.,1,27.92,38.53,28,38
 herdshare,Deck Family Farm,Turkey Feet,Y,ea,package,2 Lb.,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Unrendered Beef Tallow,Y,pk,package,2-3.7 Lb pk,1,7.41,10.23,28,38
 herdshare,Graziers Garden,Fresh Thyme,Y,bu,package,each,1,2.5,3.5,29,40
