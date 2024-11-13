@@ -5,7 +5,6 @@ guest,Graziers Garden,Green Tomatoes,Y,lb,package,1 lb,1,2.5,2.56,2,2
 guest,Deck Family Farm,"Broad Breasted White Thanksgiving Turkeys, Large",Y,ea,package,17-20  lbs,1,112,140,20,25
 guest,Deck Family Farm,"Broad Breasted White Thanksgiving Turkeys, Medium",Y,ea,package,12-16  lbs,1,96,120,20,25
 guest,Deck Family Farm,*Stuffing Sale! 15% Off* 1 lb. Ground Pork + 1 pack Country Sausage,Y,ea,package,12 oz,1,16.69,23.59,29,41
-guest,Red Tail Growers,Braising mix,Y,bag,package,1/2 lb,1,3.5,4.9,29,40
 guest,Red Tail Growers,Kale Mix,Y,ea,package,1/2 lb,1,3.5,4.9,29,40
 guest,Camas Country Mill,Organic Corn Flour,Y,ea,package,2.5 lbs,1,10.6,14.95,29,41
 guest,Camas Country Mill,Organic Sonora Soft White Wheat Flour,Y,ea,package,4 lbs,1,13.3,18.62,29,40
@@ -214,14 +213,12 @@ guest,Deck Family Farm,Beef Tongue,Y,pk,package,1.9-2.5 Lbs,1,11.44,17.62,35,54
 guest,Deck Family Farm,Bone-In Chicken Breast,Y,ea,package,1.5-2.25 lbs,1,17.06,26.27,35,54
 guest,Deck Family Farm,Bratwurst Sausage,Y,ea,package,12 oz.,1,10.72,16.51,35,54
 guest,Deck Family Farms Hyland Artisinal Meats,Bulk Farm Made Chorizo Sausage,Y,pk,package,1 12oz Package,1,9.1,14.01,35,54
-guest,Deck Family Farms Hyland Artisinal Meats,Bulk Thai Curry Sausage (Sai Ua),Y,ea,package,"14oz, Pack",1,9.1,14.01,35,54
 guest,Deck Family Farms Hyland Artisinal Meats,Grass-Fed Organ Blend,Y,ea,package,1lb. Pack,1,9.43,14.52,35,54
 guest,Deck Family Farm,Lamb Chops,Y,ea,package,4 Pack 1.6-1.9 Lbs,1,22.75,35.04,35,54
 guest,Deck Family Farm,Lamb Neck Slices,Y,ea,package,1.1-1.5 lb,1,11.2,17.25,35,54
 guest,Deck Family Farm,Lamb Ribs,Y,ea,package,1.4-1.9 lb,1,16.62,25.59,35,54
 guest,Deck Family Farm,Lamb Shank - Whole,Y,ea,package,2 - 2.5 lbs,1,23.4,36.04,35,54
 guest,Deck Family Farms Hyland Artisinal Meats,Linked Lamb Merguez Sausage,Y,ea,package,"14oz, Pack",1,12.03,18.53,35,54
-guest,Deck Family Farms Hyland Artisinal Meats,Linked Thai Curry Sausage (Sai Ua),Y,ea,package,"14oz, Pack",1,11.05,17.02,35,54
 guest,Deck Family Farm,Ribeye Steak,Y,ea,package,0.9-1.2 lbs,1,23.21,35.74,35,54
 guest,Deck Family Farm,"Roast Beef, Sliced",Y,pk,package,8 oz,1,10.73,16.52,35,54
 guest,Deck Family Farm,Top Sirloin Steak,Y,ea,package,1.3-1.7 Lbs,1,20.48,31.54,35,54
