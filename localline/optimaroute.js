@@ -150,6 +150,7 @@ async function optimaroute(fullfillmentDate) {
     console.log("Running optimaroute builder");
 
     const deliveryOrderPath = `data/orders_list_${fullfillmentDate}.csv`;
+    //console.log("looking at "+deliveryOrderPath)
     const dairyFilePath = 'data/dairy.xlsx';
     const frozenFilePath = 'data/frozen.xlsx';
 
@@ -192,6 +193,8 @@ function getInstructionsByName(json, name) {
 }
 
 // Start the process
-optimaroute(utilities.getNextFullfillmentDate().date);
+const nextDate = utilities.getNextFullfillmentDate().date;
+console.log("Next Fulfillment Date:", nextDate);
+optimaroute(nextDate);
 //optimaroute('2024-10-29');
 
