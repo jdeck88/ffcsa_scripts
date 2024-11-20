@@ -315,7 +315,7 @@ async function populateCustomers(accessToken) {
 
 async function subscriptions(yesterday,lastweek) {
   try {
-    console.log("running subscriptions updater")
+    console.log(`Subscriptions called with startDate: ${lastweek}, endDate: ${yesterday}`);
 
     url = 'https://localline.ca/api/backoffice/v2/orders/export/?' +
       'file_type=orders_list_view&' +
@@ -469,4 +469,26 @@ async function storeCredit(customerID, amount, accessToken) {
 
 //subscriptions('2024-03-01','2024-02-26');
 //subscriptions('2024-11-03','2024-11-01');
-subscriptions(utilities.getOrderDay(),utilities.getOrderDayMinusTwentyOne());
+//subscriptions(utilities.getOrderDay(),utilities.getOrderDayMinusTwentyOne());
+
+
+// Main logic for handling command-line arguments or default calls
+if (require.main === module) {
+    const args = process.argv.slice(2); // Get command-line arguments
+
+    if (args[0] === 'today') {
+        // Handle the "today" argument
+        const today = new Date();
+        const priorDate = new Date(today);
+        priorDate.setDate(today.getDate() - 1);
+
+        const todayString = today.toISOString().split('T')[0];
+        const priorDateString = priorDate.toISOString().split('T')[0]; 
+
+        //console.log(`testing with ${todayString}, ${priorDateString}`)
+        subscriptions(todayString, priorDateString);
+    } else {
+       //console.log(`testing with ${utilities.getOrderDay()}, ${utilities.getOrderDayMinusTwentyOne()}`)
+       subscriptions(utilities.getOrderDay(), utilities.getOrderDayMinusTwentyOne());
+    }
+}
