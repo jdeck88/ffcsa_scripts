@@ -104,6 +104,7 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
                 sortedData.forEach((row) => {
                     const customerName = row['Customer'];
                     const customerNote = row['Customer Note'];
+                    const priceList = row['Price List'];
 
                     // Only include customers with non-blank customer notes
                     if (customerNote && customerNote.trim() !== '') {
@@ -111,6 +112,7 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
                             currentCustomerName = customerName;
                             customers[customerName] = {
                                 customerNote: customerNote,
+                                priceList: priceList
                             };
                         }
                     }
@@ -137,6 +139,11 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
                         doc.font('Helvetica')
                             .fontSize(12)
                             .text(`Customer Notes: ${customerData.customerNote}`);
+                        doc.moveDown(1.5);
+
+                        doc.font('Helvetica')
+                            .fontSize(12)
+                            .text(`Note taken on pricelist =  ${customerData.priceList}`);
                         doc.moveDown(1.5);
 
                         // Add a line after each customer
