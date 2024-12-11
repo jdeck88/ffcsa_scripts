@@ -25,7 +25,6 @@ guest,Red Tail Growers,Bulb Candy Onion,Y,pound,package,pound,1,1.45,2.07,30,43
 guest,Full Farm CSA,Butternut Squash,Y,ea,package,each,1,2.52,3.6,30,43
 guest,Camas Country Mill,Camas Pizza Blend,Y,ea,package,4 lbs,1,10.3,14.73,30,43
 guest,Lonesome Whistle,Cayenne Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
-guest,Full Farm CSA,Celeriac,Y,pound,package,each,1,2,2.86,30,43
 guest,Reality Kitchen Nonprofit,Challah Sandwich Loaf,Y,ea,package,each,1,6,8.58,30,43
 guest,OGC,Crimini Mushrooms,Y,lb,package,1 lb,1,3.95,5.65,30,43
 guest,RL Plants,Dark Purple Iris Rhizome,Y,ea,package,each,1,5,7.15,30,43
@@ -138,7 +137,6 @@ guest,Deck Family Farm,Beef Heart,Y,ea,package,1.9-2.9 lb,1,12.48,18.22,32,46
 guest,Deck Family Farm,Beef Kidney,Y,pk,package,0.8 - 1 Lbs,1,12.87,18.79,32,46
 guest,Deck Family Farm,Beef Stew Meat,Y,ea,package,.9-1.2 lbs,1,10.58,15.45,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Bulk Cajun Chaurice Sausage,Y,pk,package,12 oz. pk,1,9.1,13.29,32,46
-guest,Deck Family Farm,Bulk Country Sausage,Y,ea,package,12 oz,1,8.61,12.57,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Bulk English Breakfast Sausage,Y,pk,package,12 oz pk,1,9.1,13.29,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Bulk Lamb Merguez Sausage,Y,ea,package,"12oz , Pack",1,10.08,14.72,32,46
 guest,Deck Family Farm,Chicken Gizzards,Y,pk,package,1/2 lb pk,1,6.5,9.49,32,46
@@ -172,7 +170,6 @@ guest,Deck Family Farm,Beef Back Ribs,Y,ea,package,2.4-3.1 Lbs,1,23.68,36.47,35,
 guest,Deck Family Farm,Beef Bones,Y,pk,package,3-5 Lbs,1,10.4,16.02,35,54
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,2-3,1,25.19,38.79,35,54
 guest,Deck Family Farm,Beef Chuck Roast,Y,ea,package,2-2.6 lbs.,1,23.17,35.68,35,54
-guest,Deck Family Farm,Beef Flank Steak,Y,ea,package,1-1.4  lbs.,1,17.16,26.43,35,54
 guest,Deck Family Farm,Beef Liver,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,24.22,35,54
 guest,Deck Family Farm,Beef Marrow Bones,Y,pk,package,2.7-3.7 Lbs,1,14.56,22.42,35,54
 guest,Deck Family Farm,Beef Shank Osso Buco,Y,ea,package,.9-1.3  lbs.,1,9.47,14.58,35,54
@@ -188,7 +185,6 @@ guest,Deck Family Farm,Chorizo Sausage,Y,pk,package,12 oz 4 count,1,10.73,16.52,
 guest,Deck Family Farms Hyland Artisinal Meats,Grass-Fed Organ Blend,Y,ea,package,1lb. Pack,1,9.43,14.52,35,54
 guest,Deck Family Farm,"Honey Maple Ham, Ends & Pieces",Y,pk,package,8 oz,1,7.8,12.01,35,54
 guest,Deck Family Farm,Lamb Chops 2 Pack,Y,ea,package,2 Pack .6-.8 Lbs,1,9.1,14.01,35,54
-guest,Deck Family Farm,Lamb Chops 4 Pack,Y,ea,package,4 Pack 1.4-1.6 Lbs,1,19.5,30.03,35,54
 guest,Deck Family Farm,Lamb Neck Slices,Y,ea,package,1.1-1.5 lb,1,11.2,17.25,35,54
 guest,Deck Family Farm,Lamb Ribs,Y,ea,package,1.4-1.9 lb,1,16.62,25.59,35,54
 guest,Deck Family Farm,Lamb Shank - Whole,Y,ea,package,2 - 2.5 lbs,1,23.4,36.04,35,54
@@ -201,7 +197,6 @@ guest,Deck Family Farm,Red Ranger Roasting Chicken,Y,ea,package,3-4 Lbs.,1,22.75
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard,Y,ea,package,16 oz.,1,7.8,12.01,35,54
 guest,Deck Family Farm,"Roast Beef, Ends & Pieces",Y,pk,package,8 oz,1,7.8,12.01,35,54
 guest,Deck Family Farm,"Roast Beef, Sliced",Y,pk,package,8 oz,1,10.73,16.52,35,54
-guest,Deck Family Farm,Top Sirloin Steak,Y,ea,package,1.3-1.7 Lbs,1,20.48,31.54,35,54
 guest,Deck Family Farm,Turkey Feet,Y,ea,package,2 Lb.,1,7.8,12.01,35,54
 guest,Elegant Elephant Baking Co.,Gluten Free Cinnamon Roll Pan,Y,ea,package,6,1,6,9.5,37,58
 guest,Sweet Creek,Strawberry Fruit Spread,Y,ea,package,10 oz,1,3.8,6,37,58
