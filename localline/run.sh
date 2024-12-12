@@ -53,7 +53,7 @@ fi
 if [ "$1" == "weekly_kpi.js" ]; then
   if [[ -n $(git status -s data/weekly_kpi.json) ]]; then
     git add data/weekly_kpi.json
-    git add data/fulfillment_kpi.json
+    #git add data/fulfillment_kpi.json
     git commit -m "Update weekly kpi files"
     git push
     echo "Changes pushed to GitHub."
