@@ -64,7 +64,6 @@ guest,Camas Country Mill,Organic Spelt Flour,Y,ea,package,2 lb. Bag,1,8.4,12.01,
 guest,Camas Country Mill,Pardina Brown Lentils,Y,ea,package,3 lbs,1,10.6,15.16,30,43
 guest,OGC,Parsnips,Y,lb,package,1 lb,1,2.5,3.58,30,43
 guest,Spoiled Rotten Vinegar,Pear Vinegar,Y,ea,package,8 fl. oz,1,7,10.01,30,43
-guest,Lonesome Whistle,Plain Kettle Corn,Y,ea,package,0.4 lb bag,1,3.33,4.76,30,43
 guest,Spoiled Rotten Vinegar,Quince Vinegar,Y,ea,package,8 fl oz,1,8,11.44,30,43
 guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Ground Coffee,Y,ea,package,12 oz,1,11,15.73,30,43
@@ -126,7 +125,6 @@ guest,Red Tail Growers,Salad Chicory Mix,Y,bag,package,1/2 lb bag,1,3.75,5.4,31,
 guest,Sweet Creek,"Salsa, Hot",Y,ea,package,16 oz,1,3.7,5.37,31,45
 guest,Creole Me Up,Sassy Madame Sara Creole Marinade,Y,ea,package,9.4 oz,1,7.5,10.88,31,45
 guest,Full Farm CSA,Shallots,Y,lb,package,1 lb,1,3.5,5.08,31,45
-guest,Red Tail Growers,Siberian Kale,Y,bu,package,bu,1,2,2.88,31,44
 guest,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
 guest,Reality Kitchen Nonprofit,Wholewheat Multigrain Sandwich Loaf,Y,ea,package,each,1,5.25,7.61,31,45
 guest,Red Tail Growers,Yellow Onion,Y,lb,package,1lb,1,1.45,2.09,31,44
@@ -171,7 +169,6 @@ guest,Deck Family Farm,Beef Back Ribs,Y,ea,package,2.4-3.1 Lbs,1,23.68,36.47,35,
 guest,Deck Family Farm,Beef Bones,Y,pk,package,3-5 Lbs,1,10.4,16.02,35,54
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,2-3,1,25.19,38.79,35,54
 guest,Deck Family Farm,Beef Chuck Roast,Y,ea,package,2-2.6 lbs.,1,23.17,35.68,35,54
-guest,Deck Family Farm,Beef Flank Steak,Y,ea,package,1-1.4  lbs.,1,17.16,26.43,35,54
 guest,Deck Family Farm,Beef Liver,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,24.22,35,54
 guest,Deck Family Farm,Beef Marrow Bones,Y,pk,package,2.7-3.7 Lbs,1,14.56,22.42,35,54
 guest,Deck Family Farm,Beef Shank Osso Buco,Y,ea,package,1.5 - 2.1  lbs.,1,19.31,29.74,35,54
@@ -203,7 +200,6 @@ guest,Deck Family Farm,"Roast Beef, Sliced",Y,pk,package,8 oz,1,10.73,16.52,35,5
 guest,Deck Family Farm,Smoked Kielbasa Sausage,Y,pk,package,12 oz,1,10.72,16.51,35,54
 guest,Deck Family Farm,Turkey Feet,Y,ea,package,2 Lb.,1,7.8,12.01,35,54
 guest,Elegant Elephant Baking Co.,Gluten Free Cinnamon Roll Pan,Y,ea,package,6,1,6,9.5,37,58
-guest,Sweet Creek,Strawberry Fruit Spread,Y,ea,package,10 oz,1,3.8,6,37,58
 guest,Deck Family Farm,Unrendered Beef Tallow,Y,pk,package,2-3.7 Lb pk,1,7.41,11.71,37,58
 guest,Elegant Elephant Baking Co.,Gluten Free Brownie Bite with Chocolate Chips,Y,ea,package,each,1,2.5,4,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Half Almond Loaf Sliced,Y,ea,package,each,1,5,8,38,60
