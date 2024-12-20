@@ -1,6 +1,5 @@
 Priceslist,Vendor,Product,Visible,Item Unit,Charge Unit,Package Name,# of Items,Purchase Price,Retail Price,Margin,Markup
 guest,Deck Family Farm,Lamb Kabob,Y,pk,package,1-1.35 Lb,1,21.15,21.15,0,0
-guest,Graziers Garden,Green Tomatoes,Y,lb,package,1 lb,1,2.5,2.56,2,2
 guest,Red Tail Growers,Braising mix,Y,bag,package,1/2 lb,1,3.75,5.25,29,40
 guest,Red Tail Growers,Kale Mix,Y,ea,package,1/2 lb,1,3.5,4.9,29,40
 guest,Camas Country Mill,Organic Corn Flour,Y,ea,package,2.5 lbs,1,10.6,14.95,29,41
@@ -81,7 +80,6 @@ guest,OGC,Rutabega,Y,lb,package,1 lb,1,1.9,2.72,30,43
 guest,RL Plants,Sedum Palmeri Succulents,Y,ea,package,each,1,4,5.72,30,43
 guest,RL Plants,Sedum Rupestre Blue Spruce,Y,ea,package,each,1,4,5.72,30,43
 guest,OGC,Shiitake Mushrooms,Y,1/2 lb,package,1/2 lb,1,4.08,5.83,30,43
-guest,Graziers Garden,Spearmint,Y,bu,package,each,1,3,4.29,30,43
 guest,OGC,Sunchokes,Y,lb,package,1 lb,1,4.18,5.98,30,43
 guest,OGC,Tatsoi,Y,ea,package,each,1,2.11,3.02,30,43
 guest,Jar Joy Goods,The Daily Jar Tote/Jar Bag: Organic Waxed Canvas-WFTO Certified,Y,ea,package,each,1,41.95,59.99,30,43
@@ -130,7 +128,6 @@ guest,Reality Kitchen Nonprofit,Wholewheat Multigrain Sandwich Loaf,Y,ea,package
 guest,Red Tail Growers,Yellow Onion,Y,lb,package,1lb,1,1.45,2.09,31,44
 guest,Deck Family Farm,Beef Heart,Y,ea,package,1.9-2.9 lb,1,12.48,18.22,32,46
 guest,Deck Family Farm,Beef Kidney,Y,pk,package,0.8 - 1 Lbs,1,12.87,18.79,32,46
-guest,Deck Family Farm,Beef Stew Meat,Y,ea,package,.9-1.2 lbs,1,10.58,15.45,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Bulk Cajun Chaurice Sausage,Y,pk,package,12 oz. pk,1,9.1,13.29,32,46
 guest,Deck Family Farm,Bulk Country Sausage,Y,ea,package,12 oz,1,8.61,12.57,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Bulk English Breakfast Sausage,Y,pk,package,12 oz pk,1,9.1,13.29,32,46
@@ -170,7 +167,6 @@ guest,Deck Family Farm,Beef Bones,Y,pk,package,3-5 Lbs,1,10.4,16.02,35,54
 guest,Deck Family Farm,Beef Brisket,Y,ea,package,2-3,1,25.19,38.79,35,54
 guest,Deck Family Farm,Beef Chuck Roast,Y,ea,package,2-2.6 lbs.,1,23.17,35.68,35,54
 guest,Deck Family Farm,Beef Liver,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,24.22,35,54
-guest,Deck Family Farm,Beef Marrow Bones,Y,pk,package,2.7-3.7 Lbs,1,14.56,22.42,35,54
 guest,Deck Family Farm,Beef Shank Osso Buco,Y,ea,package,1.5 - 2.1  lbs.,1,19.31,29.74,35,54
 guest,Deck Family Farm,Beef Tongue,Y,pk,package,2-2.6 Lbs,1,11.44,17.62,35,54
 guest,Deck Family Farm,Boneless Pork Chop,Y,pk,package,1-1.4 Lb pk,1,12.87,19.82,35,54
@@ -184,7 +180,6 @@ guest,Deck Family Farm,Chorizo Sausage,Y,pk,package,12 oz 4 count,1,10.73,16.52,
 guest,Deck Family Farms Hyland Artisinal Meats,Grass-Fed Organ Blend,Y,ea,package,1lb. Pack,1,9.43,14.52,35,54
 guest,Deck Family Farm,Ground Beef - Organic,Y,ea,package,1 lb,1,5.85,9.01,35,54
 guest,Deck Family Farm,Ground Lamb,Y,ea,package,1 lb,1,11.05,17.02,35,54
-guest,Deck Family Farm,"Honey Maple Ham, Ends & Pieces",Y,pk,package,8 oz,1,7.8,12.01,35,54
 guest,Deck Family Farm,Lamb Chops 2 Pack,Y,ea,package,2 Pack .6-.8 Lbs,1,9.1,14.01,35,54
 guest,Deck Family Farm,Lamb Neck Slices,Y,ea,package,1.1-1.5 lb,1,11.2,17.25,35,54
 guest,Deck Family Farm,Lamb Ribs,Y,ea,package,1.4-1.9 lb,1,16.62,25.59,35,54
