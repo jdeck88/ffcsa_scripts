@@ -6475,6 +6475,23 @@
           "Beaverton": 157.55
         }
       }
+    },
+    {
+      "dateRange": "2024-12-23 to 2024-12-29",
+      "data": {
+        "totalSales": "0.00",
+        "numOrders": 0,
+        "numSubscriberOrders": 0,
+        "numGuestOrders": 0,
+        "averageItemsPerOrder": null,
+        "averageOrderAmount": "NaN",
+        "totalActiveSubscribers": 243,
+        "projectedMonthlySubscriptionRevenue": 57266,
+        "vendors": {},
+        "category": {},
+        "product": {},
+        "dropsite": {}
+      }
     }
   ]
 }
