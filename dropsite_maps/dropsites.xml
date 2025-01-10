@@ -1,0 +1,10 @@
+﻿<berkeleymapper>
+	<concepts>
+		<concept order="12" viewlist="0" datatype="darwin:decimallatitude" alias="Decimal Latitude"/>
+		<concept order="13" viewlist="0" datatype="darwin:decimallongitude" alias="Decimal Longitude"/>
+		<concept order="4" viewlist="1" datatype="char120:1" alias="Dropsite Name"/>
+	</concepts>
+	<logos>
+		<logo img="https://arctos.database.museum/images/ArctosBlue-generic-logo.svg" url="https://www.deckfamilyfarm.com/"/>
+	</logos>
+</berkeleymapper>
