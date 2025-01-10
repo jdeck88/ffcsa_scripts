@@ -28,6 +28,7 @@ fi
 # Execute the Node.js script
 node "$node_script" >> data/output.log 2>&1
 
+git pull
 # Run github push when subscriptions file is run...
 echo $1
 if [ "$1" == "subscriptions.js" ]; then
@@ -65,6 +66,16 @@ if [ "$1" == "fulfillment_kpi.js" ]; then
   if [[ -n $(git status -s data/fulfillment_summary_kpi.json) ]]; then
     git add data/fulfillment_summary_kpi.json
     git commit -m "Update fulfillment summary kpi file"
+    git push
+    echo "Changes pushed to GitHub."
+  else
+    echo "No changes in data files."
+  fi
+fi
+if [ "$1" == "fulfillment_strategies.js" ]; then
+  if [[ -n $(git status -s data/delivery_data.tsv) ]]; then
+    git add data/delivery_data.tsv
+    git commit -m "Update fulfillment strategies file"
     git push
     echo "Changes pushed to GitHub."
   else

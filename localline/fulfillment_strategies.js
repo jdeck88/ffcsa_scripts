@@ -36,12 +36,14 @@ async function run() {
 
                 return {
                     name,
+                    delivery_days: deliveryDays.length > 0 ? deliveryDays.join(", ") : "None"
+                    formatted_address: address.formatted_address || "Address not available",
+                    time_slots: availability.time_slots.length > 0 ? availability.time_slots.map(slot => `${slot.start} - ${slot.end}`).join(", ") : "No time slots",
+                    instructions: availability.instructions 
+                        ? availability.instructions.replace(/<[^>]+>/g, '').replace(/\t+/g, ' ').trim() 
+                        : "No instructions",  // Removes tabs and HTML tags from instructions
                     latitude: address.latitude,
                     longitude: address.longitude,
-                    formatted_address: address.formatted_address || "Address not available",
-                    instructions: availability.instructions ? availability.instructions.replace(/<[^>]+>/g, '').trim() : "No instructions",
-                    time_slots: availability.time_slots.length > 0 ? availability.time_slots.map(slot => `${slot.start} - ${slot.end}`).join(", ") : "No time slots",
-                    delivery_days: deliveryDays.length > 0 ? deliveryDays.join(", ") : "None"
                 };
             });
 
@@ -51,7 +53,7 @@ async function run() {
         }
 
         // Prepare the TSV file
-        const tsvHeader = "Name\tLatitude\tLongitude\tFormatted Address\tInstructions\tTime Slots\tDelivery Days\n";
+        const tsvHeader = "Name\tDay\tAddress\tTime\tInstructions\tLatitude\tLongitude\n";
         const tsvRows = formattedData.map(row => {
             return `${row.name}\t${row.latitude}\t${row.longitude}\t${row.formatted_address}\t${row.instructions}\t${row.time_slots}\t${row.delivery_days}`;
         }).join("\n");

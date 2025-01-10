@@ -1,11 +1,15 @@
 ﻿<berkeleymapper>
 	<concepts>
+		<concept order="1" viewlist="1" datatype="char120:1" alias="Name"/>
+		<concept order="2" viewlist="1" datatype="char120:2" alias="Day"/>
+		<concept order="3" viewlist="1" datatype="char120:3" alias="Address"/>
+		<concept order="4" viewlist="1" datatype="char120:4" alias="Time"/>
+		<concept order="5" viewlist="1" datatype="char255:1" alias="Instructions"/>
 		<concept order="12" viewlist="0" datatype="darwin:decimallatitude" alias="Decimal Latitude"/>
 		<concept order="13" viewlist="0" datatype="darwin:decimallongitude" alias="Decimal Longitude"/>
-		<concept order="4" viewlist="1" datatype="char120:1" alias="Dropsite Name"/>
 	</concepts>
 	<gisdata>
-	<layer title="Eugene Dropsite Delivery Area" legend="1" active="1" >
+	<layer title="Dropsite Delivery Area (you must live in this area to qualify for home delivery)" legend="1" active="1" >
 	<![CDATA[https://raw.githubusercontent.com/jdeck88/ffcsa/b04fe77b727efc7bb963785d597688a4ebec997a/ffcsa/static/docs/delivery_area.kml]]>
 	</layer>
 	</gisdata>
