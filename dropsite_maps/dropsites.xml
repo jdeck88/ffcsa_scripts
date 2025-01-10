@@ -4,6 +4,11 @@
 		<concept order="13" viewlist="0" datatype="darwin:decimallongitude" alias="Decimal Longitude"/>
 		<concept order="4" viewlist="1" datatype="char120:1" alias="Dropsite Name"/>
 	</concepts>
+	<gisdata>
+	<layer title="Eugene Dropsite Delivery Area" legend="1" active="1" >
+	<![CDATA[ https://raw.githubusercontent.com/jdeck88/ffcsa/b04fe77b727efc7bb963785d597688a4ebec997a/ffcsa/static/docs/delivery_area.kml ]]>
+	</layer>
+	</gisdata>
 	<logos>
 		<logo img="https://github.com/jdeck88/ffcsa_scripts/blob/7d438482384d0f7b0aafceb417aea57bc7180aeb/dropsite_maps/csalogo.jpeg?raw=true" url="https://www.deckfamilyfarm.com/"/>
 	</logos>
