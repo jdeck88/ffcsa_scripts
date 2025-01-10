@@ -5,6 +5,6 @@
 		<concept order="4" viewlist="1" datatype="char120:1" alias="Dropsite Name"/>
 	</concepts>
 	<logos>
-		<logo img="https://github.com/jdeck88/ffcsa_scripts/blob/main/dropsite_maps/csalogo.jpeg?raw=true" url="https://www.deckfamilyfarm.com/"/>
+		<logo img="https://github.com/jdeck88/ffcsa_scripts/blob/7d438482384d0f7b0aafceb417aea57bc7180aeb/dropsite_maps/csalogo.jpeg?raw=true" url="https://www.deckfamilyfarm.com/"/>
 	</logos>
 </berkeleymapper>
