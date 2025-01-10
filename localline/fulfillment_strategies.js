@@ -20,7 +20,7 @@ async function run() {
 
         // Filter and format the data
         let formattedData = results
-            .filter(location => location.address && location.address.latitude !== null) // Exclude records with null latitude
+            .filter(location => location.active === true && location.address && location.address.latitude !== null)
             .map(location => {
                 const { name, address, availability } = location;
 
@@ -39,9 +39,13 @@ async function run() {
                     day: deliveryDays.length > 0 ? deliveryDays.join(", ") : "None",
                     address: address.formatted_address || "Address not available",
                     time: availability.time_slots.length > 0 ? availability.time_slots.map(slot => `${slot.start} - ${slot.end}`).join(", ") : "No time slots",
-                    instructions: availability.instructions 
-                        ? availability.instructions.replace(/<[^>]+>/g, '').replace(/\t+/g, ' ').trim() 
-                        : "No instructions",  // Removes tabs and HTML tags from instructions
+                    instructions: availability.instructions ? availability.instructions
+        .replace(/<[^>]+>/g, '')  // Remove HTML tags
+        .replace(/\t+/g, ' ')  // Replace tabs with a space
+        .replace(/\n+/g, ' ')  // Replace new lines with a space
+        .replace(/\r+/g, ' ')  // Replace carriage returns with a space (for Windows-style newlines)
+        .trim()  // Remove leading and trailing whitespace
+    : "No instructions",  // Default value if instructions are missing
                     latitude: address.latitude,
                     longitude: address.longitude,
                 };
