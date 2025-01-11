@@ -39,6 +39,7 @@ async function run() {
                     day: deliveryDays.length > 0 ? deliveryDays.join(", ") : "None",
                     address: address.formatted_address || "Address not available",
                     time: availability.time_slots.length > 0 ? availability.time_slots.map(slot => `${slot.start} - ${slot.end}`).join(", ") : "No time slots",
+                  /*
                     instructions: availability.instructions ? availability.instructions
         .replace(/<[^>]+>/g, '')  // Remove HTML tags
         .replace(/\t+/g, ' ')  // Replace tabs with a space
@@ -46,6 +47,7 @@ async function run() {
         .replace(/\r+/g, ' ')  // Replace carriage returns with a space (for Windows-style newlines)
         .trim()  // Remove leading and trailing whitespace
     : "No instructions",  // Default value if instructions are missing
+                  // */
                     latitude: address.latitude,
                     longitude: address.longitude,
                 };
@@ -57,9 +59,9 @@ async function run() {
         }
 
         // Prepare the TSV file
-        const tsvHeader = "Name\tDay\tAddress\tTime\tInstructions\tLatitude\tLongitude\n";
+        const tsvHeader = "Name\tDay\tAddress\tTime\tLatitude\tLongitude\n";
         const tsvRows = formattedData.map(row => {
-            return `${row.name}\t${row.day}\t${row.address}\t${row.time}\t${row.instructions}\t${row.latitude}\t${row.longitude}`;
+            return `${row.name}\t${row.day}\t${row.address}\t${row.time}\t${row.latitude}\t${row.longitude}`;
         }).join("\n");
 
         const tsvContent = tsvHeader + tsvRows;
