@@ -1,4 +1,9 @@
 ﻿<berkeleymapper>
+  <metadata>
+    <legendText>
+      <![CDATA[ Full Farm CSA dropsite locations.  You may pickup your totes at one of the indicated dropsites for free.  Home delivery, with a charge is provided in the grey areas on the map. ]]>
+    </legendText>
+  </metadata>
 	<concepts>
 		<concept order="1" viewlist="1" datatype="char120:1" alias="Name"/>
 		<concept order="2" viewlist="1" datatype="char120:2" alias="Day"/>
