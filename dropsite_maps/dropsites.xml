@@ -9,7 +9,7 @@
 	</concepts>
 	<gisdata>
 	<layer title="Dropsite Delivery Area (you must live in this area to qualify for home delivery)" legend="1" active="1" >
-	<![CDATA[https://raw.githubusercontent.com/jdeck88/ffcsa/b04fe77b727efc7bb963785d597688a4ebec997a/ffcsa/static/docs/delivery_area.kml]]>
+	<![CDATA[https://raw.githubusercontent.com/jdeck88/ffcsa_scripts/dropsite_maps/dropsites.kmz]]>
 	</layer>
 	</gisdata>
 	<logos>
