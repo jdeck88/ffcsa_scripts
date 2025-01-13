@@ -5,7 +5,7 @@
     <abstract>Configuration file for FFCSA</abstract>
     <linkbackheader location="https://deckfamilyfarm.com/"/>
     <legendText>
-      <![CDATA[ Full Farm CSA dropsite locations.  You may pickup your totes at one of the indicated dropsites for free.  Home delivery, with a charge is provided in the grey areas on the map. Use the address lookup below to see if you qualify for home delivery.]]>
+      <![CDATA[ Full Farm CSA dropsite locations.  You may pickup your totes at one of the indicated dropsites for free.  Home delivery, with a charge is provided in the pink shaded areas on the map. Use the address lookup below to see if you qualify for home delivery.]]>
     </legendText>
   </metadata>
 	<concepts>
