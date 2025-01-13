@@ -1,5 +1,0 @@
-﻿Latitude	Longitude	Dropsite
-44.5	-123.2	Dropsite 1
-44.6	-123.7	Dropsite 1
-44.5	-123.7	Dropsite 1
-44.6	-123.2	Dropsite 1
