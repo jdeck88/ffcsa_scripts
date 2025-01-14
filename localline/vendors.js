@@ -48,9 +48,9 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename) 
                                     const category = row['Category']
                                     const fullfillmentDate = row['Fulfillment Date']
   				   // If # of Items is > 1 and quantity is 1, then update quantity to be numItems
-                                   if (numItems > 1 && quantity == 1) {
-                  			quantity = numItems
-          			   }
+                                   //if (numItems > 1 && quantity == 1) {
+                  			//quantity = numItems
+          			   //}
 
                                     // If the customerName changes, start a new section
                                     if (vendorName !== currentVendorName) {
@@ -200,7 +200,15 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename) 
                                                 text: "The attached PDF file contains the Full Farm CSA Order for the next fulfillment Cycle.  " +
                                                     "Respond to this email (including both cc:ed addresses) with questions!"
                                             }
-                                            // JBD
+                                            // JBD -- use the following section for testing, so just DFF gets a vendor report
+                                          /*
+                                          if (vendorName == "Deck Family Farm") {
+                                            console.log("mailing dff")
+                                            utilities.mailADocument(vendorDoc, mailOptions, 'vendor_fulfillment.pdf');
+                                          } else {
+                                            console.log("skipping")
+                                          }
+                                          */
                                             utilities.mailADocument(vendorDoc, mailOptions, 'vendor_fulfillment.pdf');
                                             setTimeout(() => {
                                                 console.log("waiting for emails to process")
@@ -338,7 +346,7 @@ async function vendors(fullfillmentDate) {
                                 const emailOptions = {
                                     from: "jdeck88@gmail.com",                                    
                                     to: "fullfarmcsa@deckfamilyfarm.com",
-                                    cc: "jdeck88@gmail.com, summer.m.spell@gmail.com, shantideck22@gmail.com",
+                                    cc: "jdeck88@gmail.com, summer.m.spell@gmail.com",
                                     subject: 'FFCSA Reports: All Vendor Data for ' + fullfillmentDate,
                                     text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
                                 };
