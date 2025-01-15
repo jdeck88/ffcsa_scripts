@@ -64,7 +64,8 @@ ENVIRONMENT=PRODUCTION | DEVELOPMENT
 
 # Run pricelist check script to print results Friday morning 03:10 PT which is 11:10 UTC
 10 11 * * 5 /home/exouser/code/ffcsa_scripts/localline/run.sh pricelist_checker.js
-# Run fulfillment_strategies morning 03:12 PT which is 11:10 UTC
+
+# Run fulfillment_strategies friday morning 03:12 PT which is 11:10 UTC
 12 11 * * 5 /home/exouser/code/ffcsa_scripts/localline/run.sh fulfillment_strategies.js
 
 # Run monthly_customers report on the 1st of the month at 01:01 PT which is 09:00 UTC

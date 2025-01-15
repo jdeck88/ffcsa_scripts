@@ -75,6 +75,7 @@ fi
 if [ "$1" == "fulfillment_strategies.js" ]; then
   if [[ -n $(git status -s data/delivery_data.tsv) ]]; then
     git add data/delivery_data.tsv
+    git add ../docs/delivery_data.html
     git commit -m "Update fulfillment strategies file"
     git push
     echo "Changes pushed to GitHub."
