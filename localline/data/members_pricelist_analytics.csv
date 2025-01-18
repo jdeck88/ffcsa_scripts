@@ -1,5 +1,5 @@
 Priceslist,Vendor,Product,Inventory,Visible,Item Unit,Charge Unit,Package Name,# of Items,Purchase Price,Retail Price,Margin,Markup
-members,Sweet Creek,Jalapeno Relish,12,Y,ea,package,each,1,10.5,10.5,0,0
+members,Sweet Creek,Jalapeno Relish,11,Y,ea,package,each,1,10.5,10.5,0,0
 members,Camas Country Mill,Camas Pizza Blend,5,Y,ea,package,4 lbs,1,10.3,12,14,17
 members,Camas Country Mill,Hollys Dog Biscuit Mix,8,Y,bag,package,3 lb bag,1,10,12,17,20
 members,Deck Family Farm,Lamb Bones,,Y,pk,package,3 - 5 Lbs,1,5.2,6.66,22,28
@@ -8,22 +8,22 @@ members,Camas Country Mill,Sues Soup Mix,1,Y,ea,package,3 lbs,1,17.4,22.62,23,30
 members,Sweet Creek,Blackberry Fruit Spread,12,Y,ea,package,10 oz,1,3.8,5,24,32
 members,Kiko Denzer,Handcrafted Wooden Fancy Egg Pushers,2,Y,ea,package,ea,1,12,15.84,24,32
 members,Camas Country Mill,Organic Corn Flour,10,Y,ea,package,2.5 lbs,1,10.6,13.99,24,32
-members,Sweet Creek,Strawberry Fruit Spread,12,Y,ea,package,10 oz,1,3.8,5,24,32
+members,Sweet Creek,Strawberry Fruit Spread,11,Y,ea,package,10 oz,1,3.8,5,24,32
 members,Full Farm CSA,Autumn Frost Squash Large,8,Y,ea,package,ea,1,6,7.98,25,33
-members,Full Farm CSA,Autumn Frost Squash Small,7,Y,ea,package,ea,1,2.5,3.33,25,33
+members,Full Farm CSA,Autumn Frost Squash Small,6,Y,ea,package,ea,1,2.5,3.33,25,33
 members,Red Tail Growers,Badger Flame Gold Beets,5,Y,lb,package,lb,1,1.25,1.66,25,33
 members,RL Plants,Birch Wooden Coasters,1,Y,pk,package,2 pack,1,10,13.3,25,33
 members,Elegant Elephant Baking Co.,Blackberry Hand Pie,0,Y,ea,package,each,1,2.95,3.92,25,33
 members,Spoiled Rotten Vinegar,Blackstrap Vinegar,4,Y,ea,package,8 fl. oz,1,8,10.64,25,33
 members,Sweet Creek,Blueberry Fruit Spread,15,Y,ea,package,10 oz,1,3.8,5.05,25,33
-members,OGC,Bosc Pear,62,Y,ea,package,ea,1,0.75,1,25,33
+members,OGC,Bosc Pear,56,Y,ea,package,ea,1,0.75,1,25,33
 members,Elegant Elephant Baking Co.,Box of 5 Cupcakes,0,Y,ea,package,each,1,6,7.98,25,33
-members,Radiant Coffee Roasters,Brazil Cerrado Miniero - Dark Roast Coffee Beans,10,Y,ea,package,12 oz,1,11,14.63,25,33
+members,Radiant Coffee Roasters,Brazil Cerrado Miniero - Dark Roast Coffee Beans,9,Y,ea,package,12 oz,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Brazil Cerrado Miniero - Dark Roast Ground Coffee,13,Y,ea,package,12 oz,1,11,14.63,25,33
 members,Lone Wolf Ranch,Broccoli Microgreens,,Y,pk,package,1 oz. pk,1,2.5,3.33,25,33
 members,OGC,Celeriac,38,Y,pound,package,1 lb,1,1.7,2.26,25,33
 members,Reality Kitchen Nonprofit,Challah Sandwich Loaf,0,Y,ea,package,each,1,6,7.98,25,33
-members,Red Tail Growers,Chioggia Beets,0,Y,pound,package,1 Lb,1,1,1.34,25,34
+members,Full Farm CSA,Chioggia Beets,50,Y,pound,package,1 Lb,1,1,1.34,25,34
 members,River Ranch Oregon Olive OIl,Colliding Rivers Olive Oil Sugar Scrub,7,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
 members,OGC,Crimini Mushrooms,20,Y,lb,package,1 lb,1,3.95,5.25,25,33
 members,Lonesome Whistle,Dark Northern Rye Flour,5,Y,ea,package,1.6 lbs,1,4,5.36,25,34
@@ -49,26 +49,27 @@ members,Camas Country Mill,"Garbanzo Beans/ Chickpeas, Organic",2,Y,ea,package,3
 members,Lonesome Whistle,Garlic Dill Popcorn,3,Y,ea,package,0.4 lb bag,1,3.33,4.43,25,33
 members,Elegant Elephant Baking Co.,Gluten Free Dinner Rolls,0,Y,ea,package,bag of 6,1,5.35,7.12,25,33
 members,Elegant Elephant Baking Co.,Gluten Free Mixed Berry Pie,0,Y,ea,package,9,1,17,22.61,25,33
-members,Full Farm CSA,Green Kabocha,8,Y,ea,package,ea,1,3.5,4.69,25,34
-members,Red Tail Growers,Hakurei Turnips,0,Y,lb,package,1 lb.,1,1.65,2.19,25,33
+members,Full Farm CSA,Green Kabocha,6,Y,ea,package,ea,1,3.5,4.69,25,34
+members,Full Farm CSA,Hakurei Turnips,40,Y,lb,package,1 lb.,1,1.65,2.19,25,33
 members,Kiko Denzer,Handcrafted Egg Pushers,3,Y,ea,package,each,1,8,10.64,25,33
 members,Kiko Denzer,Handcrafted Fancy Wooden Eating Spoons,1,Y,ea,package,each,1,20,26.6,25,33
 members,RL Plants,Hen and Chicks Succulents,0,Y,ea,package,each,1,4,5.32,25,33
 members,Spoiled Rotten Vinegar,Hibiscus Vinegar,6,Y,ea,package,8 fl. oz,1,8,10.64,25,33
 members,Spoiled Rotten Vinegar,Honey Vinegar,5,Y,ea,package,8 fl. oz,1,8,10.64,25,33
-members,Red Tail Growers,Leeks,13,Y,bu,package,1 bunch,1,2.5,3.33,25,33
-members,Small is Beautiful Farm,Mixed Dried Fruit,10,Y,bag,package,1/2 Lb. bag,1,6,7.98,25,33
+members,Full Farm CSA,Leeks,40,Y,bu,package,1 bunch,1,2.5,3.33,25,33
+members,Small is Beautiful Farm,Mixed Dried Fruit,9,Y,bag,package,1/2 Lb. bag,1,6,7.98,25,33
 members,River Ranch Oregon Olive OIl,Morning Mist Olive Oil Sugar Scrub,2,Y,ea,package,ea 4 oz jar,1,5,6.7,25,34
 members,Camas Country Mill,Organic 7-Grain Cereal,15,Y,ea,package,3 lbs,1,13.25,17.62,25,33
-members,Camas Country Mill,Organic All Purpose Low Gluten Flour,2,Y,ea,package,4 lbs,1,9.35,12.44,25,33
+members,Camas Country Mill,Organic All Purpose Low Gluten Flour,1,Y,ea,package,4 lbs,1,9.35,12.44,25,33
 members,Camas Country Mill,Organic Buckwheat Flour,4,Y,ea,package,3 lbs,1,8.9,11.84,25,33
 members,Camas Country Mill,Organic Oat Flakes,4,Y,ea,package,4 lbs,1,15.25,20.28,25,33
+members,Sourdough Bliss,Organic Sourdough Seed Bread,12,Y,ea,package,ea,1,7.5,9.98,25,33
+members,Sourdough Bliss,Organic Sourdough Wheat Sandwich Loaf,12,Y,ea,package,ea,1,6.5,8.65,25,33
 members,Camas Country Mill,Organic Spelt Flour,5,Y,ea,package,2 lb. Bag,1,8.4,11.17,25,33
 members,OGC,Parsnips,0,Y,lb,package,1 lb,1,2.5,3.33,25,33
 members,Spoiled Rotten Vinegar,Pear Vinegar,3,Y,ea,package,8 fl. oz,1,7,9.31,25,33
 members,Graziers Garden,Pickled Garlic Scapes,26,Y,pt,package,pt,1,8,10.64,25,33
 members,Sweet Creek,Pickled Jalapenos,13,Y,ea,package,16 oz,1,7.5,9.98,25,33
-members,OGC,Pink Lady Apple,62,Y,ea,package,ea,1,0.75,1,25,33
 members,Lone Wolf Ranch,Purple Radish Microgreens,,Y,pk,package,1 oz. pk,1,2.5,3.33,25,33
 members,Spoiled Rotten Vinegar,Quince Vinegar,4,Y,ea,package,8 fl oz,1,8,10.64,25,33
 members,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans,18,Y,ea,package,12 oz,1,11,14.63,25,33
@@ -80,10 +81,10 @@ members,Radiant Coffee Roasters,Radiant Decaf Columbia Ground Coffee,3,Y,ea,pack
 members,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,9,Y,ea,package,12 oz,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Ground Coffee,17,Y,ea,package,12 oz,1,11,14.63,25,33
 members,OGC,Radicchio Chiogga Head,0,Y,ea,package,each,1,2.75,3.66,25,33
-members,Full Farm CSA,Red Cabbage,10,Y,ea,package,each,1,2.5,3.35,25,34
-members,OGC,Red DAnjou Pears,59,Y,ea,package,each,1,0.85,1.13,25,33
-members,Small is Beautiful Farm,Red Onion,20,Y,lb,package,1 lb,1,2,2.68,25,34
-members,Full Farm CSA,Red Skinned Daikon Radish,20,Y,lb,package,lb,1,1.65,2.19,25,33
+members,Full Farm CSA,Red Cabbage,8,Y,ea,package,each,1,2.5,3.35,25,34
+members,OGC,Red DAnjou Pears,52,Y,ea,package,each,1,0.85,1.13,25,33
+members,Small is Beautiful Farm,Red Onion,17,Y,lb,package,1 lb,1,2,2.68,25,34
+members,Full Farm CSA,Red Skinned Daikon Radish,19,Y,lb,package,lb,1,1.65,2.19,25,33
 members,Lonesome Whistle,Rise & Shine Gluten Free Pancake Mix,4,Y,ea,package,1.6 lbs,1,5.33,7.09,25,33
 members,OGC,Rutabega,0,Y,lb,package,1 lb,1,1.9,2.53,25,33
 members,RL Plants,Sedum Palmeri Succulents,0,Y,ea,package,each,1,4,5.32,25,33
@@ -99,24 +100,24 @@ members,Full Farm CSA,Tote Bag,30,Y,ea,package,ea,1,13,17.29,25,33
 members,Lonesome Whistle,Up & At Em Pancake Mix,4,Y,ea,package,1.6 lbs,1,5.33,7.09,25,33
 members,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Coffee Beans,11,Y,ea,package,12 oz,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Ground Coffee,14,Y,ea,package,12 oz,1,11,14.63,25,33
-members,Small is Beautiful Farm,Winter Carrots,10,Y,bag,package,2# bag,1,4,5.32,25,33
+members,Small is Beautiful Farm,Winter Carrots,5,Y,bag,package,2# bag,1,4,5.32,25,33
 members,RL Plants,Yellow Iris Rhizome,2,Y,ea,package,each,1,5,6.65,25,33
-members,Sweet Creek,Apricot Fruit Spread,12,Y,ea,package,10 oz,1,3.8,5.13,26,35
-members,Sweet Creek,Basil Tomato Sauce,24,Y,ea,package,16 oz,1,3.76,5.08,26,35
+members,Sweet Creek,Apricot Fruit Spread,10,Y,ea,package,10 oz,1,3.8,5.13,26,35
+members,Sweet Creek,Basil Tomato Sauce,22,Y,ea,package,16 oz,1,3.76,5.08,26,35
 members,Reality Kitchen Nonprofit,Braided Challah (seeded),3,Y,ea,package,each,1,5.25,7.09,26,35
-members,Red Tail Growers,Braising mix,22,Y,bag,package,1/2 lb,1,4.25,5.74,26,35
-members,Sweet Creek,Cinnamon Apple Sauce,12,Y,ea,package,23 oz,1,4.54,6.13,26,35
+members,Full Farm CSA,Braising mix,38,Y,bag,package,1/2 lb,1,4.25,5.74,26,35
+members,Sweet Creek,Cinnamon Apple Sauce,11,Y,ea,package,23 oz,1,4.54,6.13,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Cheddar Rolls,0,Y,ea,package,bag of 4,1,6.1,8.25,26,35
 members,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,0,Y,ea,package,each,1,6.25,8.5,26,36
 members,Sweet Creek,Just Apple Apple Sauce,12,Y,ea,package,26.5 oz,1,4.54,6.13,26,35
 members,Sweet Creek,Pauls Dill Pickles,14,Y,ea,package,32 oz,1,5.7,7.7,26,35
-members,Red Tail Growers,Red Beets,0,Y,lb,package,1 lb,1,1.25,1.69,26,35
+members,Full Farm CSA,Red Beets,75,Y,lb,package,1 lb,1,1.25,1.69,26,35
 members,Sweet Creek,Roasted Garlic Tomato Sauce,24,Y,ea,package,16 oz,1,3.76,5.08,26,35
-members,My Brothers Farm,Roasted Hazelnuts 12 oz.,3,Y,ea,package,12 oz bag,1,12.7,17.15,26,35
-members,Sweet Creek,"Salsa, Hot",12,Y,ea,package,16 oz,1,3.7,5,26,35
+members,My Brothers Farm,Roasted Hazelnuts 12 oz.,0,Y,ea,package,12 oz bag,1,12.7,17.15,26,35
+members,Sweet Creek,"Salsa, Hot",9,Y,ea,package,16 oz,1,3.7,5,26,35
 members,Sweet Creek,"Salsa, Medium",12,Y,ea,package,16 oz,1,3.7,5,26,35
 members,Reality Kitchen Nonprofit,Sourdough Rye Sandwich Loaf,0,Y,ea,package,each,1,5.25,7.09,26,35
-members,Sweet Creek,Tomatillo Salsa,12,Y,ea,package,16 oz,1,4.4,5.94,26,35
+members,Sweet Creek,Tomatillo Salsa,11,Y,ea,package,16 oz,1,4.4,5.94,26,35
 members,Reality Kitchen Nonprofit,Wholewheat Multigrain Sandwich Loaf,0,Y,ea,package,each,1,5.25,7.09,26,35
 members,Deck Family Farm,Hikers Pepperoni Sticks,,Y,pk,package,pk,1,4.88,6.73,27,38
 members,Full Farm CSA,Wildcraft Hot Sauce,35,Y,ea,package,ea,1,8,11,27,38
@@ -180,7 +181,7 @@ members,Deck Family Farm,Pork Bones,,Y,ea,package,3-5 lbs.,1,5.2,7.18,28,38
 members,Deck Family Farm,Pork Frankfurter,,Y,pk,package,12 oz pk,1,11.05,15.25,28,38
 members,Deck Family Farm,Pork Shank,,Y,pk,package,2.4-3.1 Lb. pk,1,25.92,35.77,28,38
 members,Deck Family Farm,Pork Shoulder Roast,0,Y,ea,package,2-2.7 lbs,1,25.2,34.78,28,38
-members,Sweet Creek,Raspberry Fruit Spread,12,Y,ea,package,10 oz,1,3.8,5.25,28,38
+members,Sweet Creek,Raspberry Fruit Spread,11,Y,ea,package,10 oz,1,3.8,5.25,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Rendered Beef Tallow,0,Y,ea,package,16 oz,1,11.05,15.25,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Back Fat,7,Y,ea,package,16 oz,1,7.8,10.76,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard 16 oz.,,Y,ea,package,16 oz.,1,7.8,10.76,28,38
