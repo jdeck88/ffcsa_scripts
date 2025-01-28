@@ -3,8 +3,6 @@ guest,Sweet Creek,Jalapeno Relish,8,Y,ea,package,each,1,10.5,10.5,0,0
 guest,Camas Country Mill,Organic Corn Flour,10,Y,ea,package,2.5 lbs,1,10.6,14.95,29,41
 guest,Creole Me Up,Pickleez Anana/ Pickled Pineapple,1,Y,ea,package,ea,1,9,12.6,29,40
 guest,My Brothers Farm,Roasted Hazelnuts 12 oz.,10,Y,ea,package,12 oz bag,1,12.7,17.78,29,40
-guest,Camas Country Mill,Sues Soup Mix,0,Y,ea,package,3 lbs,1,17.4,24.36,29,40
-guest,Red Tail Growers,Badger Flame Gold Beets,5,Y,lb,package,lb,1,1.25,1.79,30,43
 guest,RL Plants,Birch Wooden Coasters,1,Y,pk,package,2 pack,1,10,14.3,30,43
 guest,Elegant Elephant Baking Co.,Blackberry Hand Pie,0,Y,ea,package,each,1,2.95,4.22,30,43
 guest,Spoiled Rotten Vinegar,Blackberry Vinegar,2,Y,ea,package,8 fl. oz,1,7,10.01,30,43
@@ -31,7 +29,7 @@ guest,Full Farm CSA,Deck Family Farm and Full Farm CSA T-Shirt Medium,21,Y,ea,pa
 guest,Full Farm CSA,Deck Family Farm and Full Farm CSA T-Shirt Small,7,Y,ea,package,ea,1,17,24.31,30,43
 guest,Sweet Creek,Dill Relish,23,Y,ea,package,12.6 oz,1,4,5.72,30,43
 guest,River Ranch Oregon Olive OIl,Dry Herb Mix,33,Y,ea,package,ea 1 ounce jar,1,7,10.01,30,43
-guest,Lonesome Whistle,Einkorn Fusilli,7,Y,ea,package,0.5 lb bag,1,3.33,4.76,30,43
+guest,Lonesome Whistle,Einkorn Fusilli,6,Y,ea,package,0.5 lb bag,1,3.33,4.76,30,43
 guest,Graziers Garden,Frozen Strawberries,0,Y,bag,package,~1 lbs,1,7,10.01,30,43
 guest,Camas Country Mill,"Garbanzo Beans/ Chickpeas, Organic",1,Y,ea,package,3 lbs,1,10.63,15.2,30,43
 guest,Elegant Elephant Baking Co.,Gluten Free Dinner Rolls,0,Y,ea,package,bag of 6,1,5.35,7.65,30,43
@@ -44,20 +42,19 @@ guest,RL Plants,Hen and Chicks Succulents,0,Y,ea,package,each,1,4,5.72,30,43
 guest,Spoiled Rotten Vinegar,Hibiscus Vinegar,6,Y,ea,package,8 fl. oz,1,8,11.44,30,43
 guest,Camas Country Mill,Hollys Dog Biscuit Mix,8,Y,bag,package,3 lb bag,1,10,14.3,30,43
 guest,Spoiled Rotten Vinegar,Honey Vinegar,5,Y,ea,package,8 fl. oz,1,8,11.44,30,43
-guest,Small is Beautiful Farm,Mixed Dried Fruit,0,Y,bag,package,1/2 Lb. bag,1,6,8.58,30,43
+guest,Small is Beautiful Farm,Mixed Dried Fruit,4,Y,bag,package,1/2 Lb. bag,1,6,8.58,30,43
 guest,Camas Country Mill,Organic 7-Grain Cereal,15,Y,ea,package,3 lbs,1,13.25,18.95,30,43
-guest,Camas Country Mill,Organic All Purpose Low Gluten Flour,0,Y,ea,package,4 lbs,1,9.35,13.37,30,43
 guest,Camas Country Mill,Organic Buckwheat Flour,2,Y,ea,package,3 lbs,1,8.9,12.73,30,43
 guest,Camas Country Mill,Organic Oat Flakes,3,Y,ea,package,4 lbs,1,15.25,21.81,30,43
-guest,Sourdough Bliss,Organic Sourdough Seed Bread,7,Y,ea,package,ea,1,7.5,10.73,30,43
-guest,Sourdough Bliss,Organic Sourdough Wheat Sandwich Loaf,7,Y,ea,package,ea,1,6.5,9.3,30,43
+guest,Sourdough Bliss,Organic Sourdough Seed Bread,11,Y,ea,package,ea,1,7.5,10.73,30,43
+guest,Sourdough Bliss,Organic Sourdough Wheat Sandwich Loaf,12,Y,ea,package,ea,1,6.5,9.3,30,43
 guest,Camas Country Mill,Organic Spelt Flour,3,Y,ea,package,2 lb. Bag,1,8.4,12.01,30,43
 guest,OGC,Parsnips,0,Y,lb,package,1 lb,1,2.5,3.58,30,43
 guest,Spoiled Rotten Vinegar,Pear Vinegar,4,Y,ea,package,8 fl. oz,1,7,10.01,30,43
 guest,Sweet Creek,Pickled Jalapenos,8,Y,ea,package,16 oz,1,7.5,10.73,30,43
-guest,Creole Me Up,Pickleez Zonyon in Purple (Pickled Onions),0,Y,ea,package,16oz,1,9,12.87,30,43
+guest,Lone Wolf Ranch,Purple Radish Microgreens,,Y,pk,package,1 oz. pk,1,2.5,3.58,30,43
 guest,Spoiled Rotten Vinegar,Quince Vinegar,3,Y,ea,package,8 fl oz,1,8,11.44,30,43
-guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans,14,Y,ea,package,12 oz,1,11,15.73,30,43
+guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Coffee Beans,13,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Balanced Blend - Medium Roast Ground Coffee,12,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Coffee Beans,6,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Breakfast Blend - Light Roast Ground Coffee,10,Y,ea,package,12 oz,1,11,15.73,30,43
@@ -66,15 +63,15 @@ guest,Radiant Coffee Roasters,Radiant Decaf Columbia Ground Coffee,1,Y,ea,packag
 guest,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Coffee Beans,8,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Radiant Midnight Blend - Dark Roast Ground Coffee,15,Y,ea,package,12 oz,1,11,15.73,30,43
 guest,OGC,Radicchio Chiogga Head,0,Y,ea,package,each,1,2.75,3.93,30,43
-guest,Full Farm CSA,Red Cabbage,22,Y,ea,package,each,1,2.5,3.58,30,43
-guest,OGC,Red DAnjou Pears,0,Y,ea,package,each,1,0.85,1.22,30,44
+guest,Full Farm CSA,Red Cabbage,19,Y,ea,package,each,1,2.5,3.58,30,43
+guest,OGC,Red DAnjou Pears,74,Y,ea,package,each,1,0.85,1.22,30,44
 guest,Lonesome Whistle,Rise & Shine Gluten Free Pancake Mix,4,Y,ea,package,1.6 lbs,1,5.33,7.62,30,43
 guest,OGC,Rutabega,0,Y,lb,package,1 lb,1,1.9,2.72,30,43
 guest,RL Plants,Sedum Palmeri Succulents,0,Y,ea,package,each,1,4,5.72,30,43
 guest,RL Plants,Sedum Rupestre Blue Spruce,0,Y,ea,package,each,1,4,5.72,30,43
 guest,OGC,Shiitake Mushrooms,0,Y,1/2 lb,package,1/2 lb,1,4.08,5.83,30,43
 guest,OGC,Sunchokes,0,Y,lb,package,1 lb,1,4.18,5.98,30,43
-guest,Full Farm CSA,Tetsakabuto Winter Squash,40,Y,ea,package,ea,1,6,8.58,30,43
+guest,Full Farm CSA,Tetsakabuto Winter Squash,38,Y,ea,package,ea,1,6,8.58,30,43
 guest,Jar Joy Goods,The Daily Jar Tote/Jar Bag: Organic Waxed Canvas-WFTO Certified,3,Y,ea,package,each,1,41.95,59.99,30,43
 guest,Jar Joy Goods,The Insulated Jar Tote/Jar Bag: Hemp + Natural Rubber (Yulex),1,Y,ea,package,each,1,110.5,158.02,30,43
 guest,Camas Country Mill,Three Sisters Porridge,6,Y,ea,package,4 lbs,1,13.25,18.95,30,43
@@ -85,13 +82,13 @@ guest,Radiant Coffee Roasters,Vietnam Lotus - Light Roast Ground Coffee,14,Y,ea,
 guest,Small is Beautiful Farm,Winter Carrots,0,Y,bag,package,2# bag,1,4,5.72,30,43
 guest,RL Plants,Yellow Iris Rhizome,2,Y,ea,package,each,1,5,7.15,30,43
 guest,Sweet Creek,Apricot Fruit Spread,4,Y,ea,package,10 oz,1,3.8,5.51,31,45
-guest,Sweet Creek,Basil Tomato Sauce,8,Y,ea,package,16 oz,1,3.76,5.45,31,45
+guest,Sweet Creek,Basil Tomato Sauce,7,Y,ea,package,16 oz,1,3.76,5.45,31,45
 guest,Deck Family Farms Hyland Artisinal Meats,Blueberry Maple Linked Sausage,34,Y,pk,package,4 links/pack  14oz packages,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Cajun Chaurice Linked Sausage,,Y,pk,package,14 oz pk/ 4links,1,11.05,16.13,31,46
 guest,Deck Family Farm,Chicken Wings,0,Y,ea,package,1.6-2 lbs,1,11.7,17.08,31,46
-guest,Full Farm CSA,Chioggia Beets,34,Y,pound,package,1 Lb,1,1,1.44,31,44
+guest,Full Farm CSA,Chioggia Beets,33,Y,pound,package,1 Lb,1,1,1.44,31,44
 guest,Sweet Creek,Cinnamon Apple Sauce,9,Y,ea,package,23 oz,1,4.54,6.58,31,45
-guest,River Ranch Oregon Olive OIl,Colliding Rivers Olive Oil Sugar Scrub,7,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
+guest,River Ranch Oregon Olive OIl,Colliding Rivers Olive Oil Sugar Scrub,6,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
 guest,Lonesome Whistle,Dark Northern Rye Flour,3,Y,ea,package,1.6 lbs,1,4,5.76,31,44
 guest,Lonesome Whistle,Emmer Farro,5,Y,ea,package,1.25 lb Bag,1,4,5.76,31,44
 guest,Deck Family Farms Hyland Artisinal Meats,English Banger Linked Sausage,1,Y,pk,package,4 links/pk,1,11.05,16.13,31,46
@@ -112,8 +109,8 @@ guest,Full Farm CSA,Red Beets,54,Y,lb,package,1 lb,1,1.25,1.81,31,45
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Beef Tallow,0,Y,ea,package,16 oz,1,11.05,16.13,31,46
 guest,Deck Family Farms Hyland Artisinal Meats,Rendered Pork Leaf Lard 8 oz.,0,Y,ea,package,8 oz.,1,3.9,5.62,31,44
 guest,Sweet Creek,Roasted Garlic Tomato Sauce,12,Y,ea,package,16 oz,1,3.76,5.45,31,45
-guest,Sweet Creek,"Salsa, Hot",5,Y,ea,package,16 oz,1,3.7,5.37,31,45
-guest,Sweet Creek,"Salsa, Medium",4,Y,ea,package,16 oz,1,3.7,5.37,31,45
+guest,Sweet Creek,"Salsa, Hot",4,Y,ea,package,16 oz,1,3.7,5.37,31,45
+guest,Sweet Creek,"Salsa, Medium",3,Y,ea,package,16 oz,1,3.7,5.37,31,45
 guest,River Ranch Oregon Olive OIl,Summer Day Olive Oil Sugar Scrub,5,Y,ea,package,ea 4 oz jar,1,5,7.2,31,44
 guest,Sweet Creek,Tomatillo Salsa,5,Y,ea,package,16 oz,1,4.4,6.38,31,45
 guest,Reality Kitchen Nonprofit,Wholewheat Multigrain Sandwich Loaf,0,Y,ea,package,each,1,5.25,7.61,31,45
@@ -156,7 +153,6 @@ guest,Elegant Elephant Baking Co.,Gluten Free Potato Loaf with Teff,0,Y,ea,packa
 guest,Deck Family Farm,Bacon Ends & Pieces,0,Y,pk,package,8 oz,1,7.8,12.01,35,54
 guest,Deck Family Farm,Beef Bones,,Y,pk,package,3-5 Lbs,1,5.2,8.01,35,54
 guest,Deck Family Farm,Beef Chuck Roast,0,Y,ea,package,2.3-2.9 lbs.,1,26.2,40.35,35,54
-guest,Deck Family Farm,Beef Flat Iron Steak,0,Y,ea,package,.7-1.1 lbs.,1,12.87,19.82,35,54
 guest,Deck Family Farm,Beef Liver,11,Y,pk,package,0.9-1.3 Lb. pk,1,15.73,24.22,35,54
 guest,Deck Family Farm,Beef Shank Osso Buco,,Y,ea,package,2.1-2.4  lbs.,1,24.13,37.16,35,54
 guest,Deck Family Farm,Beef Tongue,5,Y,pk,package,2.5-3  Lbs,1,14.3,22.02,35,54
@@ -172,7 +168,6 @@ guest,Deck Family Farm,Lamb Kabob,8,Y,pk,package,0.9-1.1 Lb,1,11.7,18.02,35,54
 guest,Deck Family Farm,Lamb Neck Slices,0,Y,ea,package,1.1-1.5 lb,1,11.2,17.25,35,54
 guest,Deck Family Farm,Lamb Shank - Whole,0,Y,ea,package,2 - 2.5 lbs,1,23.4,36.04,35,54
 guest,Deck Family Farm,Lamb Shoulder Roast,0,Y,ea,package,3-4 lbs.,1,38.68,59.57,35,54
-guest,Deck Family Farm,Lamb Stew Meat,0,Y,ea,package,.9-1.1 lbs,1,11.7,18.02,35,54
 guest,Deck Family Farms Hyland Artisinal Meats,Linked Farm Made Chorizo Sausage,16,Y,pk,package,4 Links/pack  14oz Packages,1,11.05,17.02,35,54
 guest,Deck Family Farms Hyland Artisinal Meats,Linked Thai Curry Sausage (Sai Ua),,Y,ea,package,"14oz, Pack",1,11.05,17.02,35,54
 guest,Deck Family Farm,Pork Shoulder Roast,0,Y,ea,package,2-2.7 lbs,1,25.2,38.81,35,54
@@ -183,19 +178,18 @@ guest,Deck Family Farm,"Roast Beef, Sliced",0,Y,pk,package,8 oz,1,10.73,16.52,35
 guest,Deck Family Farm,Smoked Kielbasa Sausage,0,Y,pk,package,12 oz,1,10.72,16.51,35,54
 guest,Deck Family Farm,Spare Ribs,0,Y,pk,package,2-3 lb,1,19.5,30.03,35,54
 guest,Deck Family Farm,Stewing Hen,6,Y,ea,package,January Promo,2,13,20.02,35,54
-guest,Deck Family Farm,Tri-Tip,1,Y,ea,package,1.6 - 2 lbs.,1,23.65,36.42,35,54
 guest,Deck Family Farm,Turkey Feet,,Y,ea,package,2 lb.,1,7.8,12.01,35,54
 guest,Elegant Elephant Baking Co.,Gluten Free Cinnamon Roll Pan,0,Y,ea,package,6,1,6,9.5,37,58
 guest,Sweet Creek,Strawberry Fruit Spread,5,Y,ea,package,10 oz,1,3.8,6,37,58
 guest,Deck Family Farm,Unrendered Beef Tallow,3,Y,pk,package,2-3.7 Lb pk,1,7.41,11.71,37,58
-guest,Full Farm CSA,Frozen Blueberries,95,Y,bag,package,~1.0 lbs,1,4.25,6.8,38,60
+guest,Full Farm CSA,Frozen Blueberries,92,Y,bag,package,~1.0 lbs,1,4.25,6.8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Brownie Bite with Chocolate Chips,0,Y,ea,package,each,1,2.5,4,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Half Almond Loaf Sliced,0,Y,ea,package,each,1,5,8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Mini Banana Bread Loaf,0,Y,ea,package,each,1,5,8,38,60
 guest,Elegant Elephant Baking Co.,Gluten Free Blueberry Scone,0,Y,ea,package,each,1,2.9,4.75,39,64
-guest,Sweet Creek,Raspberry Fruit Spread,3,Y,ea,package,10 oz,1,3.8,6.25,39,64
+guest,Sweet Creek,Raspberry Fruit Spread,2,Y,ea,package,10 oz,1,3.8,6.25,39,64
 guest,Reality Kitchen Nonprofit,Sourdough Rye Sandwich Loaf,0,Y,ea,package,each,1,5.25,8.66,39,65
-guest,OGC,Bosc Pear,44,Y,ea,package,ea,1,0.75,1.25,40,67
+guest,OGC,Bosc Pear,38,Y,ea,package,ea,1,0.75,1.25,40,67
 guest,Reality Kitchen Nonprofit,Braided Challah (plain),0,Y,ea,package,each,1,5.25,8.93,41,70
 guest,Reality Kitchen Nonprofit,Braided Challah (seeded),3,Y,ea,package,each,1,5.25,8.93,41,70
 guest,Elegant Elephant Baking Co.,Chocolate Donut,0,Y,ea,package,each,1,2.35,4,41,70
@@ -205,4 +199,4 @@ guest,Elegant Elephant Baking Co.,Gluten Free Chocolate Cream Pie,0,Y,ea,package
 guest,Elegant Elephant Baking Co.,Seven Layer Cookie,0,Y,ea,package,each,1,2.5,4.5,44,80
 guest,Elegant Elephant Baking Co.,Croutons,0,Y,ea,package,each,1,5.25,9.98,47,90
 guest,OGC,Russet potatoes,,Y,bag,package,3 Lb bag,1,2,4,50,100
-guest,Deck Family Farms Hyland Artisinal Meats,Seasonal*   Chorizo Verde,108,Y,pk,package,14 oz pk,1,11.9,28.9,59,143
+guest,Deck Family Farms Hyland Artisinal Meats,Seasonal*   Chorizo Verde,107,Y,pk,package,14 oz pk,1,11.9,28.9,59,143
