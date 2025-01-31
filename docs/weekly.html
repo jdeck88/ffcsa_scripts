@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekly KPI Data</title>
 
-    <!-- ✅ DataTables CSS for Styling -->
+    <!-- ✅ DataTables & FixedColumns CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.3.1/css/fixedColumns.dataTables.min.css">
 
@@ -24,19 +24,16 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            white-space: nowrap;
         }
 
         th {
             background-color: #f2f2f2;
         }
 
-        /* ✅ Fix the first column (KPI Labels) */
+        /* ✅ Enable horizontal scrolling */
         .dataTables_wrapper {
-            overflow: auto;
-        }
-
-        th, td {
-            white-space: nowrap;
+            overflow-x: auto;
         }
     </style>
 </head>
@@ -49,7 +46,6 @@
         <thead>
             <tr id="headerRow">
                 <th>KPI</th> <!-- ✅ First column is fixed KPI labels -->
-                <!-- Date columns will be inserted dynamically -->
             </tr>
         </thead>
         <tbody id="tableBody">
