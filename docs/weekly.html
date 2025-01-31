@@ -15,9 +15,15 @@
             margin: 20px;
         }
 
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* ✅ Enables full horizontal scrolling */
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
+            table-layout: fixed; /* ✅ Ensures proper column alignment */
         }
 
         th, td {
@@ -31,34 +37,50 @@
             background-color: #f2f2f2;
         }
 
-        /* ✅ Enable horizontal scrolling */
+        /* ✅ Fix the first column */
         .dataTables_wrapper {
             overflow-x: auto;
         }
+
+        th, td {
+            min-width: 120px; /* ✅ Ensures proper alignment */
+        }
+
     </style>
 </head>
 <body>
 
     <h1>Weekly KPI Data</h1>
 
-    <!-- ✅ Transposed Table -->
-    <table id="weeklyKpiTable" class="display nowrap stripe row-border order-column">
-        <thead>
-            <tr id="headerRow">
-                <th>KPI</th> <!-- ✅ First column is fixed KPI labels -->
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            <!-- Table content will be populated dynamically -->
-        </tbody>
-    </table>
-
+    <div class="table-container">
+        <table id="weeklyKpiTable" class="display nowrap stripe row-border order-column">
+            <thead>
+                <tr id="headerRow">
+                    <th>KPI</th> <!-- ✅ First column is fixed KPI labels -->
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Table content will be populated dynamically -->
+            </tbody>
+        </table>
+    </div>
     <!-- ✅ jQuery and DataTables Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/3.3.1/js/dataTables.fixedColumns.min.js"></script>
 
     <script src="weekly.js"></script> <!-- ✅ External JS file -->
+
+<h3>Additional Rows Requested</h3>
+<li>Non-subscribing members that have balances (need to fetch balances in report)</li>
+<li>delivery miles this week (need to fetch from optimaroute)</li>
+<li>delivery hours this week  (need to fetch from optimaroute)</li>
+<li>Errors/week (manual entry required)</li>
+<li>Positive responses/week (manual entry required)</li>
+<li>Other FFCSA operatring costs (manual entry required, not technically a KPI)</li>
+<li>Labor pick up & packout (manual entry required, not technically a KPI)</li>
+<li>Supplies (manual entry required, not technically a KPI)</li>
+<li>Building depriciation and lease (manual entry required, not technically a KPI)</li>
 </body>
 </html>
 

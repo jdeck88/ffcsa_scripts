@@ -1,61 +1,109 @@
-$(document).ready(function () {
-    // ✅ Example Data: Each object represents a week's KPI values
-    const rawData = [
-        { date: "2024-01-01 - 2024-01-07", totalSales: 10000, orders: 120, subscriberOrders: 80, guestOrders: 40, avgItems: 3.5, avgOrderAmount: 85, activeSubscribers: 300, projectedRevenue: 15000 },
-        { date: "2024-01-08 - 2024-01-14", totalSales: 10500, orders: 130, subscriberOrders: 85, guestOrders: 45, avgItems: 3.8, avgOrderAmount: 88, activeSubscribers: 320, projectedRevenue: 16000 },
-        { date: "2024-01-15 - 2024-01-21", totalSales: 9500, orders: 110, subscriberOrders: 75, guestOrders: 35, avgItems: 3.6, avgOrderAmount: 83, activeSubscribers: 290, projectedRevenue: 14500 }
-    ];
+$(document).ready(async function () {
+    const dataUrl = "https://raw.githubusercontent.com/jdeck88/ffcsa_scripts/main/localline/data/weekly_kpi.json";
 
-    // ✅ Extract Unique Dates (Headers)
-    const dates = rawData.map(entry => entry.date);
+    try {
+        // ✅ Fetch JSON Data from GitHub
+        const response = await fetch(dataUrl);
+        if (!response.ok) throw new Error(`Failed to fetch weekly data: ${response.statusText}`);
+        const jsonData = await response.json();
 
-    // ✅ Extract KPI Labels from First Object Keys (Skipping `date`)
-    const kpiLabels = Object.keys(rawData[0]).filter(key => key !== "date");
+        // ✅ Extract weekly data
+        const weeksData = jsonData.weeks;
+        if (!Array.isArray(weeksData) || weeksData.length === 0) {
+            throw new Error("Invalid JSON format: Missing 'weeks' array.");
+        }
 
-    // ✅ Insert Date Headers into the Table
-    const headerRow = document.getElementById("headerRow");
-    dates.forEach(date => {
-        const th = document.createElement("th");
-        th.textContent = date;
-        headerRow.appendChild(th);
-    });
+        // ✅ Compute Yearly Sales Average from Weekly Data
+        const totalSalesValues = weeksData.map(week => parseFloat(week.data.totalSales) || 0);
+        const yearlyAverageSales = totalSalesValues.reduce((sum, sales) => sum + sales, 0) / totalSalesValues.length;
 
-    // ✅ Populate Transposed Table Data
-    const tableBody = document.getElementById("tableBody");
+        console.log(`✅ Computed Yearly Average Sales: ${yearlyAverageSales.toFixed(2)}`);
 
-    kpiLabels.forEach(kpi => {
-        const tr = document.createElement("tr");
+        // ✅ Extract Unique Date Ranges as Columns
+        const dateRanges = weeksData.map(entry => entry.dateRange);
 
-        // ✅ Add KPI Label (Frozen First Column)
-        const tdLabel = document.createElement("td");
-        tdLabel.textContent = formatKpiLabel(kpi);
-        tr.appendChild(tdLabel);
+        // ✅ Extract KPI Labels from First Entry (excluding nested objects)
+        let kpiLabels = Object.keys(weeksData[0].data).filter(
+            key => typeof weeksData[0].data[key] !== "object"
+        );
 
-        // ✅ Add KPI Data for Each Date
-        rawData.forEach(entry => {
-            const td = document.createElement("td");
-            td.textContent = entry[kpi];
-            tr.appendChild(td);
+        // ✅ Add New KPI Labels for Computed Columns
+        kpiLabels.push("activeSubscriberOrderRate", "salesComparedToYearlyAvg");
+
+        // ✅ Populate Table Headers with Date Ranges
+        const headerRow = document.getElementById("headerRow");
+        dateRanges.forEach(dateRange => {
+            const th = document.createElement("th");
+            th.textContent = dateRange;
+            headerRow.appendChild(th);
         });
 
-        tableBody.appendChild(tr);
-    });
+        // ✅ Populate Table Body
+        const tableBody = document.getElementById("tableBody");
 
-    // ✅ Initialize DataTable with Fixed First Column
-    $('#weeklyKpiTable').DataTable({
-        scrollX: true,
-        scrollCollapse: true,
-        paging: false, // ✅ Keep all KPI rows visible
-        fixedColumns: {
-            leftColumns: 1 // ✅ Freeze first column (KPI names)
-        }
-    });
+        kpiLabels.forEach(kpi => {
+            const tr = document.createElement("tr");
+
+            // ✅ First Column: KPI Label (Frozen Column)
+            const tdLabel = document.createElement("td");
+            tdLabel.textContent = formatKpiLabel(kpi);
+            tr.appendChild(tdLabel);
+
+            // ✅ Append Data for Each Date
+            weeksData.forEach(week => {
+                const td = document.createElement("td");
+
+                if (kpi === "activeSubscriberOrderRate") {
+                    // ✅ Calculate % of Active Subscribers Who Made an Order
+                    const percentage = ((week.data.numSubscriberOrders / week.data.totalActiveSubscribers) * 100).toFixed(2);
+                    td.textContent = `${Math.round(percentage)}%`
+                } else if (kpi === "salesComparedToYearlyAvg") {
+                    // ✅ Compare Total Sales to Yearly Average
+                    const comparison = ((parseFloat(week.data.totalSales) / yearlyAverageSales) * 100).toFixed(2);
+                    td.textContent = `${Math.round(comparison)}%`
+                } else {
+                    // ✅ Default: Use existing data
+                    td.textContent = week.data[kpi] !== undefined ? week.data[kpi] : "-";
+                }
+
+                tr.appendChild(td);
+            });
+
+            tableBody.appendChild(tr);
+        });
+
+        // ✅ Initialize DataTable with Fixed First Column
+        let table = $('#weeklyKpiTable').DataTable({
+            scrollX: true,
+            scrollCollapse: true,
+            paging: false, // ✅ Keep all KPI rows visible
+            ordering: false, // ✅ Disable sorting
+            info: false, // ✅ Hide table info text
+            searching: false, // ✅ Disable search box
+            fixedColumns: {
+                leftColumns: 1 // ✅ Freeze first column (KPI names)
+            }
+        });
+
+        // ✅ Start Scrolled to the Right
+        setTimeout(() => {
+            let container = $(".dataTables_scrollBody");
+            container.scrollLeft(container[0].scrollWidth);
+        }, 500);
+
+        console.log("✅ Data loaded successfully");
+
+    } catch (error) {
+        console.error("❌ Error fetching data:", error);
+    }
 });
 
 // ✅ Convert camelCase KPIs to readable labels
 function formatKpiLabel(kpi) {
-    return kpi
-        .replace(/([A-Z])/g, " $1") // Add spaces before uppercase letters
-        .replace(/^./, str => str.toUpperCase()); // Capitalize first letter
+    const labels = {
+        activeSubscriberOrderRate: "% of Active Subscribers Ordered",
+        salesComparedToYearlyAvg: "Sales Compared to Yearly Avg"
+    };
+    return labels[kpi] || kpi.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase());
 }
 
