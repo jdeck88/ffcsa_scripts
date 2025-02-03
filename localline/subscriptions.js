@@ -322,8 +322,7 @@ async function subscriptions(yesterday,lastweek) {
       'send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&' +
       `start_date=${lastweek}&` +
       `end_date=${yesterday}&` +
-      //'payment__status=PAID&payment__status=AUTHORIZED&' +
-      'vendors=3148&price_lists=2719,2895&status=OPEN'
+      'price_lists=2719&status=OPEN'
 
     data = {}
 
@@ -377,7 +376,6 @@ async function subscriptions(yesterday,lastweek) {
                         },
                       ];
                     }
-                    //utilities.sendSubscribersEmail(results, 'subscriptions_' + yesterday + '.pdf', 'Subscriptions made on ... ' + yesterday)
                     utilities.sendEmail(emailOptions)
                   } catch (error) {
                     console.error('Error:', error);
