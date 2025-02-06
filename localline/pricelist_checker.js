@@ -37,8 +37,9 @@ async function run_analyzer(pricelist_name, url) {
 				.filter(row => row[12] === 'Y')
 				.map(row => ({
 					Priceslist: pricelist_name, // Vendor
-					Vendor: row[3].replace(/["']/g, ''), // Vendor
-					Product: row[5].replace(/["']/g, ''), // Product
+					Vendor: row[3].replace(/["']/g, ''),
+          Category: row[19]?.replace(/["']/g, '') || '',
+					Product: row[5].replace(/["']/g, ''), 
 					Inventory: row[11], // Visible
 					Visible: row[12], // Visible
 					'Item Unit': row[8], // Item Unit
