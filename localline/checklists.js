@@ -388,9 +388,8 @@ function sendEmail(file_location, filename, subject) {
   // Email information
   const emailOptions = {
     from: "jdeck88@gmail.com",
-    to: "jdeck88@gmail.com",
-    //to: "fullfarmcsa@deckfamilyfarm.com",
-    //cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
+    to: "fullfarmcsa@deckfamilyfarm.com",
+    cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
     subject: subject,
     text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
   };
