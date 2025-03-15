@@ -8,7 +8,7 @@ const utilities = require('./utilities');
 const ExcelJS = require('exceljs');
 
 
-async function writeVendorsPDF(products_file_path, vendors_file_path, filename) {
+async function writeVendorsPDF(products_file_path, vendors_file_path, filename, fullfillmentDate) {
     return new Promise((resolve, reject) => {
         const pdf_file = 'data/vendors.pdf'
 
@@ -46,7 +46,7 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename) 
                                     const price = (parseFloat(row['Product Subtotal']) / quantity).toFixed(2);
                                     const totalPrice = row['Product Subtotal']
                                     const category = row['Category']
-                                    const fullfillmentDate = row['Fulfillment Date']
+                                    //const fullfillmentDate = row['Fulfillment Date']
   				   // If # of Items is > 1 and quantity is 1, then update quantity to be numItems
                                    //if (numItems > 1 && quantity == 1) {
                   			//quantity = numItems
@@ -96,8 +96,9 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename) 
                                             itemRow.totalPrice = quantity * itemRow.price;
                                         }
 
-                                        fullfillmentDate = utilities.formatDate(fullfillmentDate)
-                                        doc.fontSize(16).text(fullfillmentDate, { align: 'right' });
+                                      //console.log(fullfillmentDate)
+                                        formattedDate = fullfillmentDate
+                                        doc.fontSize(16).text(formattedDate, { align: 'right' });
                                         doc.fontSize(16).text(vendorName, { bold: true });
 
                                         // Set the table column widths
@@ -339,7 +340,7 @@ async function vendors(fullfillmentDate) {
             .then((vendors_file) => {
                 utilities.downloadBinaryData(products_url, products_file, accessToken)
                     .then((products_file) => {
-                        writeVendorsPDF(products_file, vendors_file, delivery_order_file_path)
+                        writeVendorsPDF(products_file, vendors_file, delivery_order_file_path, fullfillmentDate)
                             .then((vendors_pdf) => {
 
                                 // Email information
