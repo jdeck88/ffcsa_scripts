@@ -32,6 +32,9 @@ function getJsonFromUrl(url, accessToken) {
 
 // Utilitiy functions for date formatting
 function formatDate(inputDate) {
+    // format date doesn't really work all that well and i'll just go with input date
+    return inputDate;
+  /*
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -52,6 +55,7 @@ function formatDate(inputDate) {
     const formattedDate = `${dayOfWeek}, ${month} ${dayWithSuffix}`;
 
     return formattedDate;
+    */
 }
 
 // This is our login
