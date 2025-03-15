@@ -108,7 +108,7 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                   dropsiteName = row['Fulfillment Name']
                   disposition = row['disposition']
                   customerName = row['Customer'] + "\n" + formatPhoneNumber(row['Phone'])
-                  fullfillmentDate = utilities.formatDate(row['Fulfillment Date'])
+                  //fullfillmentDate = row['Fulfillment Date']
                   customerPhone = row['Phone']
                   category = row['Membership']
                   quantity = Math.round(parseFloat(row['Quantity']));
@@ -181,30 +181,48 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                 }
 
                 count = 0
-                for (const dropsiteName in dropsites) {
-                  if (count > 0) {
-                    doc.addPage();
-                  }
-                  count++
-                  doc.fontSize(12).text(fullfillmentDate, { align: 'right' });
+for (const dropsiteName in dropsites) {
+  const tableData = Object.entries(dropsites[dropsiteName].customers).map(([name, values]) => ({
+    name,
+    tote: values.tote || '',
+    dairy: values.dairy || '',
+    frozen: values.frozen || ''
+  }));
 
-                  doc.fontSize(16).text(dropsiteName + " Manifest", { bold: true });
+  masterdropsites[dropsiteName] = tableData;
 
-                  // Convert the data into the desired format
-                  const tableData = Object.entries(dropsites[dropsiteName].customers).map(([name, values]) => ({
-                    name,
-                    tote: values.tote || '',
-                    dairy: values.dairy || '',
-                    frozen: values.frozen || ''
-                  }));
-                  masterdropsites[dropsiteName] = (tableData)
-                  const tableOptions = {
-                    headers: ['Name', 'Tote', 'Dairy', 'Frozen'],
-                    rows: tableData.map((row) => [row.name, row.tote, row.dairy, row.frozen]),
-                  };
+  // Define the number of rows per page
+  const rowsPerPage = 22; // Adjust if needed
+  const totalPages = Math.ceil(tableData.length / rowsPerPage);
 
-                  doc.table(tableOptions);
-                }
+  let page = 1;
+  for (let i = 0; i < tableData.length; i += rowsPerPage) {
+    if (dropsiteName.toLowerCase().includes("membership purchase")) {
+        continue; // Skip this iteration
+    }
+    //if (i > 0) {
+    //  doc.addPage(); // Add a new page after the first
+   // }
+
+    // Print fulfillment date in the top right
+    doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
+
+    // Print title with pagination
+    const title = `${dropsiteName} Manifest - Page ${page} of ${totalPages}`;
+    doc.fontSize(16).text(title, { bold: true });
+    //doc.moveDown(2);
+
+    // Print table for current page
+    const tableOptions = {
+      headers: ['Name', 'Tote', 'Dairy', 'Frozen'],
+      rows: tableData.slice(i, i + rowsPerPage).map((row) => [row.name, row.tote, row.dairy, row.frozen]),
+    };
+    doc.table(tableOptions);
+
+    doc.addPage();
+    page++; // Increment page number
+  }
+}
 
 
                 // Master Checklist Table
@@ -222,7 +240,8 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
 
                   masterdropsites[dropsiteName] = sums
                 }
-                doc.addPage();
+                //doc.addPage();
+                doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
                 doc.fontSize(16).text("Master Manifest", { bold: true });
                 const tableData = [
                   ...Object.entries(masterdropsites).map(([dropsite, values]) => [dropsite, values.tote, values.dairy, values.frozen]),
@@ -278,8 +297,8 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
 }
 
 function productSpecificPackList(doc, dropsitesAll, disposition) {
+  let firstPage = true; // Track whether it's the first page (avoid unnecessary page breaks)
 
-  count = 0;
   for (const dropsiteName in dropsitesAll) {
     const selectedCustomers = {};
     for (const customerName in dropsitesAll[dropsiteName].customers) {
@@ -288,39 +307,52 @@ function productSpecificPackList(doc, dropsitesAll, disposition) {
 
       if (frozenProducts.length > 0) {
         selectedCustomers[customerName] = frozenProducts;
-      }      
+      }
     }
 
-    // only print dropsites that have desired product
+    // Only print dropsites that have the desired product
     if (Object.keys(selectedCustomers).length > 0) {
-      if (count > 0) {
-        doc.addPage();
-      }
-      doc.fontSize(14).text(dropsiteName + " " + disposition.charAt(0).toUpperCase() + disposition.slice(1) + " Product Packlist", { bold: true });
-      doc.moveDown();
-
-      allCustomersTable = []
+      let allCustomersTable = [];
       for (const customerName in selectedCustomers) {
-        customerData = selectedCustomers[customerName]
+        const customerData = selectedCustomers[customerName];
 
-        const tableData = [
-          ...Object.entries(customerData).map(([dropsite, values]) => [
-            customerName,
-            values.product,
-            values.itemUnit,
-            values.quantity,
-          ]),
-        ];
-        allCustomersTable.push(...tableData);        
+        const tableData = customerData.map((values) => [
+          customerName,
+          values.product,
+          values.itemUnit,
+          values.quantity,
+        ]);
+
+        allCustomersTable.push(...tableData);
       }
-      const tableOptions = {
-        headers: ['Name', 'Product', 'Unit', 'Quantity'],
-        rows: allCustomersTable
-      };
-      doc.table(tableOptions)
-      count++
+
+      const rowsPerPage = 22; // Adjust based on your PDF layout
+      const totalPages = Math.ceil(allCustomersTable.length / rowsPerPage);
+
+      let page = 1;
+      for (let i = 0; i < allCustomersTable.length; i += rowsPerPage) {
+        if (!firstPage) {
+          doc.addPage(); // Start a new page if it's NOT the first dropsite
+        }
+        firstPage = false; // Set flag to false after the first page
+
+        // Print title with pagination
+        const title = `${dropsiteName} ${disposition.charAt(0).toUpperCase() + disposition.slice(1)} Product Packlist, Page ${page} of ${totalPages}`;
+       doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
+        doc.fontSize(14).text(title, { bold: true });
+
+        // Print table data for the current page
+        const tableOptions = {
+          headers: ['Name', 'Product', 'Unit', 'Quantity'],
+          rows: allCustomersTable.slice(i, i + rowsPerPage),
+        };
+        doc.table(tableOptions);
+
+        page++;
+      }
     }
   }
+
 }
 
 
@@ -356,8 +388,9 @@ function sendEmail(file_location, filename, subject) {
   // Email information
   const emailOptions = {
     from: "jdeck88@gmail.com",
-    to: "fullfarmcsa@deckfamilyfarm.com",
-    cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
+    to: "jdeck88@gmail.com",
+    //to: "fullfarmcsa@deckfamilyfarm.com",
+    //cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
     subject: subject,
     text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
   };
