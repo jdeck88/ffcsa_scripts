@@ -46,25 +46,25 @@ async function run_analyzer(pricelist_name, url) {
             productsData.slice(1).forEach(row => {
                 const vendor = row[3]?.replace(/["']/g, '') || '';
                 const product = row[5]?.replace(/["']/g, '') || '';
-                const packageName = row[16]?.replace(/["']/g, '') || '';  // Ensure package name is included
+                const packageName = row[17]?.replace(/["']/g, '') || '';  // Ensure package name is included
                 const uniqueKey = `${product} - ${packageName}`; // Unique key for combinedData
 
                 // Store data for all vendors (only active products)
-                if (row[12] === 'Y') {
+                if (row[13] === 'Y') {
                     allVendorData.push({
                         Pricelist: pricelist_name,
                         Vendor: vendor,
-                        Category: row[19]?.replace(/["']/g, '') || '',
+                        Category: row[20]?.replace(/["']/g, '') || '',
                         Product: product,
                         'Package Name': packageName,
                         Inventory: row[11] || '',
                         'Item Unit': row[8] || '',
-                        'Charge Unit': row[9] || '',
-                        '# of Items': row[17] || '',
-                        'Purchase Price': row[20] || '',
-                        'Retail Price': row[21] || '',
-                        'Margin': row[20] && row[21] ? (((row[21] - row[20]) / row[21]) * 100).toFixed(0) : '',
-                        'Markup': row[20] && row[21] ? (((row[21] - row[20]) / row[20]) * 100).toFixed(0) : ''
+                        'Charge Unit': row[10] || '',
+                        '# of Items': row[18] || '',
+                        'Purchase Price': row[21] || '',
+                        'Retail Price': row[22] || '',
+                        'Margin': row[21] && row[22] ? (((row[22] - row[21]) / row[22]) * 100).toFixed(0) : '',
+                        'Markup': row[21] && row[22] ? (((row[22] - row[21]) / row[21]) * 100).toFixed(0) : ''
                     });
                 }
 
@@ -75,18 +75,18 @@ if (vendor.toLowerCase().includes("deck family farm")) { // Match any vendor con
             Vendor: vendor, // Store the exact vendor name for clarity
             Product: product,
             'Package Name': packageName,
-            Category: row[19]?.replace(/["']/g, '') || '',
+            Category: row[20]?.replace(/["']/g, '') || '',
             Inventory: row[11] || '',
             'Item Unit': row[8] || '',
-            'Charge Unit': row[9] || '',
-            '# of Items': row[17] || '',
-            'Purchase Price': row[20] || ''
+            'Charge Unit': row[10] || '',
+            '# of Items': row[18] || '',
+            'Purchase Price': row[21] || ''
         };
     }
 
     // Add price list retail price and margin as separate columns
-    combinedData[uniqueKey][`${pricelist_name} Retail Price`] = row[21] || '';
-    combinedData[uniqueKey][`${pricelist_name} Margin`] = row[20] && row[21] ? (((row[21] - row[20]) / row[21]) * 100).toFixed(0) : '';
+    combinedData[uniqueKey][`${pricelist_name} Retail Price`] = row[22] || '';
+    combinedData[uniqueKey][`${pricelist_name} Margin`] = row[21] && row[22] ? (((row[22] - row[21]) / row[22]) * 100).toFixed(0) : '';
 }
 
 
