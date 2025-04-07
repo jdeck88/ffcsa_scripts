@@ -34,8 +34,14 @@ ENVIRONMENT=PRODUCTION | DEVELOPMENT
 ##################################################
 # Local Line Scripts (NOTE: UTC is +8 hours)
 ##################################################
-# Run Subscriptions every day at 02:01 PT which is 10:00 UTC
-1 10 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+# Run Subscriptions script at 6pm
+1 1 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+# Run Subscriptions script at 12am
+1 7 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+# Run Subscriptions script at 6am
+1 13 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+# Run Subscriptions script at 12pm
+1 19 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
 # download the subscriber metabase report from local line every day which keeps a log of
 # all upcoming subscriptions.  logging changes in git allows us to look back in time
 2 10 * * * /home/exouser/code/ffcsa_scripts/localline/download_subscriber_meta_report.sh

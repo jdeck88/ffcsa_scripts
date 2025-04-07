@@ -392,7 +392,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           const vendor = row['Vendor'];
           const category = row['Category'];
           const customerPhone = row['Phone'];
-          const company = row['Company'];
+          const company = row['About This Customer'];
           const fullfillmentName = row['Fulfillment Name'];
           const fullfillmentAddress = row['Fulfillment Address'];
           const fullfillmentDate = utilities.formatDate(row['Fulfillment Date']);

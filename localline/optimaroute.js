@@ -92,7 +92,7 @@ function groupOrdersByCustomer(updatedData) {
                 deliveryAddress,
                 instructions: isPickup
                     ? getInstructionsByName(fulfillment_json, row['Fulfillment Name'])
-                    : row['Company'],
+                    : row['About This Customer'],
                 tote: 0,
                 frozen: 0,
                 dairy: 0,
