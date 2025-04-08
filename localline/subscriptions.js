@@ -256,9 +256,17 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
 
         doc.end();
 
+        // sort allbombined data on success field in reverse alphabetical order
+        allCombinedData.sort((a, b) => String(b.success).localeCompare(String(a.success)));
+
         const results = {
           count: num_subscriptions,
-          pdf_file: pdf_file
+          pdf_file: pdf_file,
+          body_text: formatTextTable({
+            title: 'All Data in Text Format (see attached PDF for another view)',
+            headers: ['Credit Balance', 'Status', 'CustomerID', 'OrderID', 'Customer', 'Email', 'Subscription Date', 'Level', 'Total'],
+            rows: allCombinedData.map(item => [ item.success, item.status, item.id, item.order, item.customer, item.email, item.subscription_date, item.level, item.amount, ]),
+          })
         };
 
         // TODO: figure out appropriate aync methods to enable finishing PDF creation
@@ -354,7 +362,8 @@ async function subscriptions(yesterday,lastweek) {
                 .then((results) => {
                   try {
 
-                    bodytext = "Please see the attached file.  Subscribers report is run daily."
+                    //bodytext = "Please see the attached file.  Subscribers report is run daily."
+                    bodytext = results.body_text
                     if (parseInt(results.count) < 1) {
                       bodytext = "No new subscribers this day. No file to attach"
                     }
@@ -461,6 +470,26 @@ async function storeCredit(customerID, amount, accessToken) {
     isProcessing = false;
   }
 }
+
+function formatTextTable({ title, headers, rows }) {
+  const colWidths = headers.map((header, i) => {
+    const maxDataLength = Math.max(...rows.map(row => String(row[i] ?? '').length));
+    return Math.max(header.length, maxDataLength) + 2;
+  });
+
+  const formatRow = (row) =>
+    row.map((cell, i) => String(cell ?? '').padEnd(colWidths[i])).join('');
+
+  let output = title + '\n\n';
+  output += formatRow(headers) + '\n';
+  output += colWidths.map(w => '-'.repeat(w)).join('') + '\n';
+  for (const row of rows) {
+    output += formatRow(row) + '\n';
+  }
+
+  return output;
+}
+
 
 // Run the delivery_order script
 //orderDayFormatted = '2023-10-31'
