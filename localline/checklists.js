@@ -93,6 +93,7 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
 
                 //updatedData.sort((a, b) => a['Fulfillment Name'].localeCompare(b['Fulfillment Name']));
 
+                /*
                 updatedData.sort((a, b) => {
                   const nameComparison = a['Fulfillment Name'].localeCompare(b['Fulfillment Name']);
                   if (nameComparison === 0) {
@@ -101,13 +102,30 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                   }
                   return nameComparison;
                 });
+                */
+                updatedData.sort((a, b) => {
+                  const siteCompare = a['Fulfillment Name'].localeCompare(b['Fulfillment Name']);
+                  if (siteCompare !== 0) return siteCompare;
+
+                  const lastA = a['Last Name'] || '';
+                  const lastB = b['Last Name'] || '';
+                  return lastA.localeCompare(lastB);
+                });
+
 //console.log(updatedData)
                 // We want to create an array of dropsites that contains an array of customers (the dropsite)
                 // contains just the dropsite name and the customers contain the Customer, Phone
                 updatedData.forEach((row) => {
                   dropsiteName = row['Fulfillment Name']
                   disposition = row['disposition']
-                  customerName = row['Customer'] + "\n" + formatPhoneNumber(row['Phone'])
+                  //customerName = row['Customer'] + "\n" + formatPhoneNumber(row['Phone'])
+                  const lastName = row['Last Name']?.trim() || '';
+                  const firstName = row['First Name']?.trim() || '';
+                  const formattedName = `${lastName}, ${firstName}`;
+
+
+                  customerName = formattedName + "\n" + formatPhoneNumber(row['Phone']);
+
                   //fullfillmentDate = row['Fulfillment Date']
                   customerPhone = row['Phone']
                   category = row['Membership']

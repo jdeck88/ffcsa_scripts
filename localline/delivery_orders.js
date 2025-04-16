@@ -98,11 +98,14 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
             })
             .on('end', () => {
                 // Sort the data by "Customer Name"
-                sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+                //sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+                sortedData.sort((a, b) => { return a['Last Name'].localeCompare(b['Last Name']); });
+
 
                 // Process the sorted data
                 sortedData.forEach((row) => {
-                    const customerName = row['Customer'];
+                    //const customerName = row['Customer'];
+                    const customerName = `${row['Last Name']}, ${row['First Name']}`;
                     const customerNote = row['Customer Note'];
                     const priceList = row['Price List'];
 
@@ -380,11 +383,14 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
       })
       .on('end', () => {
         // Sort the data by "Customer Name"
-        sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+        //sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+        sortedData.sort((a, b) => { return a['Last Name'].localeCompare(b['Last Name']); });
+
 
         // Process the sorted data
         sortedData.forEach((row) => {
-          const customerName = row['Customer'];
+          //const customerName = row['Customer'];
+          const customerName = `${row['Last Name']}, ${row['First Name']}`;
           const product = row['Product'] + ' - ' + row['Package Name'];
           let quantity = Math.round(parseFloat(row['Quantity']));
           const numItems = Math.round(parseFloat(row['# of Items']));

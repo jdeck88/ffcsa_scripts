@@ -1,14 +1,13 @@
 Pricelist,Vendor,Category,Product,Package Name,Inventory,Item Unit,Charge Unit,# of Items,Purchase Price,Retail Price,Margin,Markup
 herdshare,River Ranch Oregon Olive OIl,Dry Goods,2022 Arbequina  Olive Oil 100mL,Ea.,product,ea,ea,1,8.95,11.9,25,33
 herdshare,River Ranch Oregon Olive OIl,Dry Goods,2022 Arbequina  Olive Oil 250mL,Ea.,product,ea,ea,1,16.75,22.45,25,34
-herdshare,Red Tail Growers,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Baby Bok Choi,each,product,bu,bu,1,2,2.7,26,35
+herdshare,Sweet Creek,Dry Goods,Apricot Fruit Spread,10 oz,product,ea,ea,1,3.8,5.13,26,35
 herdshare,Deck Family Farm,Sausages & Cured Meats,Bacon Ends & Pieces,8 oz,product,pk,pk,1,9.43,13.01,28,38
 herdshare,Sweet Creek,Dry Goods,Basil Tomato Sauce,16 oz,product,ea,ea,1,3.76,5.08,26,35
+herdshare,Deck Family Farm,Grass-fed Beef,Bavette Steak,0.9 to 1.6,product,pk,pk,1,16.9,23.32,28,38
 herdshare,Deck Family Farm,Grass-fed Beef,Beef Back Ribs,2.4-3.1 Lbs,product,ea,ea,1,35.36,48.8,28,38
 herdshare,Deck Family Farm,Grass-fed Beef,Beef Bones,3-5 Lbs,product,pk,pk,1,3.5,4.83,28,38
 herdshare,Deck Family Farm,Grass-fed Beef,Beef Chuck Roast,2.3-2.9 lbs.,product,ea,ea,1,27.04,37.32,28,38
-herdshare,Deck Family Farm,Grass-fed Beef,Beef Flank Steak,1.1-1.4  lbs.,product,ea,ea,1,21.13,29.16,28,38
-herdshare,Deck Family Farm,Grass-fed Beef,Beef Flat Iron Steak,.7-1.1 lbs.,product,ea,ea,1,15.21,20.99,28,38
 herdshare,Deck Family Farm,Organ Meat & Lard,Beef Kidney,0.8 - 1 Lbs,product,pk,pk,1,12.87,17.76,28,38
 herdshare,Deck Family Farm,Grass-fed Beef,Beef Liver,0.9-1.3 Lb. pk,product,pk,pk,1,18.59,25.65,28,38
 herdshare,Deck Family Farm,Grass-fed Beef,Beef Shank Osso Buco,2.1-2.4  lbs.,product,ea,ea,1,27.06,37.34,28,38
@@ -17,19 +16,13 @@ herdshare,Deck Family Farm,Grass-fed Beef,Beef Tenderloin,0.3-0.6 lbs.,product,p
 herdshare,Deck Family Farm,Grass-fed Beef,Beef Tongue,2.5-3  Lbs,product,pk,pk,1,16.98,23.43,28,38
 herdshare,Sweet Creek,Dry Goods,Blackberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5,24,32
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Blackberry Hand Pie,each,product,ea,ea,1,2.95,3.92,25,33
-herdshare,Spoiled Rotten Vinegar,Dry Goods,Blackstrap Vinegar,8 fl. oz,product,ea,ea,1,8,10.64,25,33
-herdshare,Camas Country Mill,Dry Goods,Blue Cornmeal,3 lb bag,product,bag,bag,1,10.2,13.57,25,33
 herdshare,Sweet Creek,Dry Goods,Blueberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5.05,25,33
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Box of 5 Cupcakes,each,product,ea,ea,1,6,7.98,25,33
 herdshare,Reality Kitchen Nonprofit,Dry Goods,Braided Challah (plain),each,product,ea,ea,1,5.25,7.72,32,47
 herdshare,Reality Kitchen Nonprofit,Dry Goods,Braided Challah (seeded),each,product,ea,ea,1,5.25,7.09,26,35
-herdshare,Red Tail Growers,Organic Vegetables - Leafy Greens,Braising mix,1/2 lb,product,bag,bag,1,4.25,5.65,25,33
 herdshare,Deck Family Farm,Sausages & Cured Meats,Bratwurst Sausage,12 oz.,product,ea,ea,1,13,17.94,28,38
-herdshare,Radiant Coffee Roasters,Dry Goods,Brazil Cerrado Miniero - Dark Roast Coffee Beans,12 oz,product,ea,ea,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Dry Goods,Brazil Cerrado Miniero - Dark Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
 herdshare,Deck Family Farm,Grass-fed Beef,"Brisket, Large","Large, 4.0 - 5 lbs.",product,ea,ea,1,46.75,64.52,28,38
-herdshare,Deck Family Farm,Grass-fed Beef,"Brisket, Medium","Medium, 3.00 - 3.99 lbs",product,ea,ea,1,38.62,53.3,28,38
-herdshare,Deck Family Farm,Grass-fed Beef,"Brisket, Small","Small, 2.3 - 2.99 lbs",product,ea,ea,1,30.42,41.98,28,38
 herdshare,Lone Wolf Ranch,Organic Vegetables - Leafy Greens,Broccoli Microgreens,1 oz. pk,product,pk,pk,1,2.5,3.33,25,33
 herdshare,Camas Country Mill,Dry Goods,Brown Teff Flour,3 lbs,product,ea,ea,1,11.05,14.7,25,33
 herdshare,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Bulk Cajun Chaurice Sausage,12 oz. pk,product,pk,pk,1,10.73,14.81,28,38
@@ -42,9 +35,10 @@ herdshare,OGC,Organic Vegetables - Roots,Celeriac,1 lb,product,pound,pound,1,1.7
 herdshare,Reality Kitchen Nonprofit,Dry Goods,Challah Sandwich Loaf,each,product,ea,ea,1,6,7.98,25,33
 herdshare,Deck Family Farm,Pasture-raised Poultry,Chicken Liver,1/2 lb,product,ea,ea,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Pasture-raised Poultry,Chicken Wings,1 - 1.5 lbs,product,ea,ea,1,8.12,11.21,28,38
-herdshare,Red Tail Growers,Organic Vegetables - Herbs,Chives,each,product,bu,bu,1,1.75,2.33,25,33
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Chocolate Donut,each,product,ea,ea,1,2.35,3.5,33,49
+herdshare,Little Wings,Organic Vegetables - Herbs,Cilantro,each,product,bu,bu,1,3.5,4.66,25,33
 herdshare,Sweet Creek,Dry Goods,Cinnamon Apple Sauce,23 oz,product,ea,ea,1,4.54,6.13,26,35
+herdshare,Full Farm CSA,Organic Vegetables - Leafy Greens,Collard Raab,bu,product,bu,bu,1,2.5,3.33,25,33
 herdshare,River Ranch Oregon Olive OIl,Home Goods,Colliding Rivers Olive Oil Sugar Scrub,ea 4 oz jar,product,ea,ea,1,5,6.7,25,34
 herdshare,Deck Family Farm,Sausages & Cured Meats,Country Sausage,12 oz,product,ea,ea,1,10.08,13.91,28,38
 herdshare,OGC,Organic Vegetables - Mushrooms,Crimini Mushrooms,1 lb,product,lb,lb,1,3.95,5.25,25,33
@@ -77,7 +71,6 @@ herdshare,River Ranch Oregon Olive OIl,Dry Goods,Flavor Infused Olive Oil- Rosem
 herdshare,River Ranch Oregon Olive OIl,Dry Goods,Flavor Infused Olive Oil- Rosemary and Basil 250mL,250mL,product,ea,ea,1,21.95,29.41,25,34
 herdshare,Deck Family Farm,Sausages & Cured Meats,Fresh Garlic Sausage Links,12 oz / 4 count,product,pk,pk,1,11.7,16.15,28,38
 herdshare,OGC,Organic Fruit,Gala Apple,ea,product,ea,ea,1,0.5,0.75,33,50
-herdshare,Camas Country Mill,Dry Goods,"Garbanzo Beans/ Chickpeas, Organic",3 lbs,product,ea,ea,1,12.5,16.63,25,33
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Apple Pie,6,product,ea,ea,1,7.5,10.5,29,40
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Banana Cream Pie,6,product,ea,ea,1,8,12,33,50
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Blueberry Scone,each,product,ea,ea,1,2.9,4,28,38
@@ -90,19 +83,19 @@ herdshare,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Half Almond Loaf Sli
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Mini Banana Bread Loaf,each,product,ea,ea,1,5,7,29,40
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Mixed Berry Pie,9,product,ea,ea,1,17,22.61,25,33
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Potato Loaf with Teff,each,product,ea,ea,1,6.25,8.5,26,36
-herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Gogo Gouda  5.9 -6.9oz,5.9 -6.9oz,product,ea,ea,1,12.5,16.63,25,33
-herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Gogo Gouda 7.0-8.0oz,7.0-8.0oz,product,ea,ea,1,14.22,18.91,25,33
 herdshare,Camas Country Mill,Dry Goods,Golden Flax Seed,3 lb. bag,product,bag,bag,1,14.5,19.29,25,33
 herdshare,OGC,Organic Fruit,Granny Smith Apple,ea,product,ea,ea,1,0.55,0.75,27,36
 herdshare,Deck Family Farms Hyland Artisinal Meats,Organ Meat & Lard,Grass-Fed Organ Blend,1lb. Pack,product,ea,ea,1,9.75,13.46,28,38
-herdshare,OGC,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Green Cabbage,each,product,ea,ea,1,2,2.66,25,33
 herdshare,Sweet Creek,Dry Goods,Green Enchilada Sauce,each,product,ea,ea,1,3.9,5.19,25,33
+herdshare,Red Tail Growers,Organic Vegetables - Onions/Garlic,Green Garlic,bu,product,bu,bu,1,2.35,3.15,25,34
+herdshare,Little Wings,Organic Vegetables - Leafy Greens,Green Mizuna,each,product,bu,bu,1,2,2.9,31,45
 herdshare,Deck Family Farm,Grass-fed Beef,Ground Beef,1 lb,product,ea,ea,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Grass-fed Beef,Ground Beef - Organic,1 lb,product,ea,ea,1,7.8,10.76,28,38
 herdshare,Deck Family Farm,Spring Lamb,Ground Lamb,1 lb,product,ea,ea,1,13,17.94,28,38
 herdshare,Deck Family Farm,Pasture-raised Pork,Ground Pork,1 lb,product,ea,ea,1,11.05,15.25,28,38
+herdshare,Little Wings,Organic Vegetables - Roots,Hakurei Turnips,1 bunch,product,bu,bu,1,2.25,2.99,25,33
 herdshare,Kiko Denzer,Home Goods,Handcrafted Fancy Wooden Eating Spoons,each,product,ea,ea,1,20,26.6,25,33
-herdshare,Deck Family Farm,Grass-fed Beef,Hanger Steak,.4 - .7 Lbs.,product,ea,ea,1,9.3,12.83,28,38
+herdshare,Full Farm CSA,Organic Vegetables - Leafy Greens,Hardy Kale Mix,1/2 lb,product,ea,ea,1,3.5,5,30,43
 herdshare,RL Plants,Home Goods,Hen and Chicks Succulents,each,product,ea,ea,1,4,5.32,25,33
 herdshare,Deck Family Farm,Sausages & Cured Meats,Hikers Pepperoni Sticks,pk,product,pk,pk,1,5.85,8.07,28,38
 herdshare,Camas Country Mill,Dry Goods,Hollys Dog Biscuit Mix,3 lb bag,product,bag,bag,1,10,13.3,25,33
@@ -110,6 +103,7 @@ herdshare,Spoiled Rotten Vinegar,Dry Goods,Honey Vinegar,8 fl. oz,product,ea,ea,
 herdshare,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Hot Italian Linked Sausage,14 oz packs 4 links/pk,product,pk,pk,1,13,17.94,28,38
 herdshare,Sweet Creek,Dry Goods,Jalapeno Relish,each,product,ea,ea,1,10.5,10.5,0,0
 herdshare,Sweet Creek,Dry Goods,Just Apple Apple Sauce,26.5 oz,product,ea,ea,1,4.54,6.13,26,35
+herdshare,Full Farm CSA,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Kale Raab,bu,product,bu,bu,1,2.5,3.33,25,33
 herdshare,Deck Family Farm,Grass-fed Beef,Korean Beef Short Ribs,1.2-1.4 lbs,product,ea,ea,1,16.48,22.74,28,38
 herdshare,Deck Family Farm,Spring Lamb,Lamb Bones,3 - 5 Lbs,product,pk,pk,1,3.5,4.83,28,38
 herdshare,Deck Family Farm,Spring Lamb,Lamb Chops 2 Pack,2 Pack .7-1.1 Lbs,product,ea,ea,1,14.04,19.38,28,38
@@ -122,11 +116,10 @@ herdshare,Deck Family Farm,Spring Lamb,Lamb Stew Meat,.9-1.1 lbs,product,ea,ea,1
 herdshare,Deck Family Farm,Sausages & Cured Meats,Landjaeger Jerky,3 count / 3 oz,product,pk,pk,1,10.73,14.81,28,38
 herdshare,River Ranch Oregon Olive OIl,Home Goods,Lavender Olive Oil Sugar Scrub,ea  4oz. jar,product,ea,ea,1,5,6.7,25,34
 herdshare,Red Tail Growers,Organic Vegetables - Onions/Garlic,Leeks,1 bunch,product,bu,bu,1,2.5,3.33,25,33
-herdshare,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Farm Made Chorizo Sausage,4 Links/pack  14oz Packages,product,pk,pk,1,13,17.94,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Greek Loukaniko Sausage,14 oz. pk/4 links,product,pk,pk,1,13,17.94,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Thai Curry Sausage (Sai Ua),"14oz, Pack",product,ea,ea,1,13,17.94,28,38
-herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Live Culture Yogurt,1 quart,product,ea,ea,1,10,13.3,25,33
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Live Culture Yogurt,8 oz,product,ea,ea,1,6,7.98,25,33
+herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Live Culture Yogurt,1 quart,product,ea,ea,1,10,13.3,25,33
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Live Culture Yogurt in Special Jar,1 Pint,product,ea,ea,1,9,14.97,40,66
 herdshare,Sourdough Bliss,Dry Goods,Mini Sourdough Glazed Lemon Loaf Cake,ea,product,ea,ea,1,4,5.32,25,33
 herdshare,Small is Beautiful Farm,Organic Vegetables - Leafy Greens,Mixed salad greens,1/2 lb,product,1/2 lb,1/2 lb,1,4,5.32,25,33
@@ -166,9 +159,8 @@ herdshare,Deck Family Farm,Pasture-raised Pork,"Pork Shoulder Roast, Large",2.8 
 herdshare,Deck Family Farm,Pasture-raised Pork,"Pork Shoulder Roast, Small",2-2.7 lbs,product,ea,ea,1,30.36,41.9,28,38
 herdshare,OGC,Organic Vegetables - Roots,Purple Daikon Radish,1 pound,product,lb,lb,1,3.7,4.92,25,33
 herdshare,Lone Wolf Ranch,Organic Vegetables - Leafy Greens,Purple Radish Microgreens,1 oz. pk,product,pk,pk,1,2.5,3.33,25,33
-herdshare,Spoiled Rotten Vinegar,Dry Goods,Quince Vinegar,8 fl oz,product,ea,ea,1,8,10.64,25,33
+herdshare,Full Farm CSA,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Purple Sprouting Broccoli,each,product,bu,bu,1,3,3.99,25,33
 herdshare,Radiant Coffee Roasters,Dry Goods,Radiant Balanced Blend - Medium Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
-herdshare,Radiant Coffee Roasters,Dry Goods,Radiant Breakfast Blend - Light Roast Coffee Beans,12 oz,product,ea,ea,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Dry Goods,Radiant Breakfast Blend - Light Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Dry Goods,Radiant Decaf Columbia Coffee Beans,12 oz,product,ea,ea,1,11,14.63,25,33
 herdshare,Radiant Coffee Roasters,Dry Goods,Radiant Decaf Columbia Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
@@ -179,15 +171,14 @@ herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw A2/A2 Milk,1/2 Gal.,pr
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw Cultured Butter,0.5 lbs,product,ea,ea,1,14,18.62,25,33
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw Farmers Cheese,12 oz,product,ea,ea,1,10,11.75,15,18
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw Fresh Sweet Cream,1 pt,product,ea,ea,1,10,11.75,15,18
-herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw Fresh Whole Milk,1/2 gal,product,ea,ea,1,10,14,29,40
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw Fresh Whole Milk,1/4 gal,product,ea,ea,1,6,8,25,33
+herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw Fresh Whole Milk,1/2 gal,product,ea,ea,1,10,14,29,40
 herdshare,Deck Family Farm,Dry Goods,"Raw Honey, 1 pint",1 pt,product,ea,ea,1,16.9,23.32,28,38
 herdshare,Deck Family Farm,Dry Goods,"Raw Honey, 1 quart",1 quart,product,ea,ea,1,30.88,42.61,28,38
 herdshare,Deck Family Farm,Dry Goods,"Raw Honey, 1/2 pint",1/2 pt,product,ea,ea,1,11.05,15.25,28,38
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Raw Whey,1 quart,product,ea,ea,1,7,10.2,31,46
 herdshare,OGC,Organic Vegetables - Onions/Garlic,Red Onion,2 lb bag,product,lb,lb,1,3.1,4.15,25,34
 herdshare,OGC,Organic Vegetables - Roots,Red Skinned Daikon Radish,lb,product,lb,lb,1,3.7,4.92,25,33
-herdshare,Deck Family Farms Hyland Artisinal Meats,Organ Meat & Lard,"Rendered Beef Tallow, 16 oz",16 oz,product,ea,ea,1,13,17.94,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Organ Meat & Lard,"Rendered Beef Tallow, 8 oz",8 oz,product,ea,ea,1,7,9.66,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Pasture-raised Pork,"Rendered Pork Back Fat, 8 oz",16 oz,product,ea,ea,1,5,6.9,28,38
 herdshare,Deck Family Farms Hyland Artisinal Meats,Organ Meat & Lard,Rendered Pork Leaf Lard 16 oz.,16 oz.,product,ea,ea,1,10.4,14.35,28,38
@@ -207,7 +198,6 @@ herdshare,RL Plants,Home Goods,Sedum Rupestre Blue Spruce,each,product,ea,ea,1,4
 herdshare,Elegant Elephant Baking Co.,Dry Goods,Seven Layer Cookie,each,product,ea,ea,1,2.5,4,38,60
 herdshare,OGC,Organic Vegetables - Mushrooms,Shiitake Mushrooms,1/2 lb,product,1/2 lb,1/2 lb,1,4.08,5.43,25,33
 herdshare,Deck Family Farm,Grass-fed Beef,Short Ribs,1.3-2.1 lbs.,product,ea,ea,1,18.23,25.16,28,38
-herdshare,Deck Family Farm,Grass-fed Beef,"Skirt Steak, Small",.3 - .5 lbs.,product,pk,pk,1,10.06,13.88,28,38
 herdshare,"Creamy Cow, LLC",Raw Dairy (Unpasteurized),Sour Cream,12 oz,product,ea,ea,1,12,15.96,25,33
 herdshare,Sourdough Bliss,Dry Goods,Sourdough Artisan Wheat,ea,product,ea,ea,1,9,11.97,25,33
 herdshare,Sourdough Bliss,Dry Goods,Sourdough Cinnamon Swirl Loaf,ea,product,ea,ea,1,7.5,9.98,25,33
@@ -215,12 +205,12 @@ herdshare,Sourdough Bliss,Dry Goods,Sourdough Honey Oat Artisan,ea,product,ea,ea
 herdshare,Sourdough Bliss,Dry Goods,Sourdough Seed Bread,ea,product,ea,ea,1,8,10.64,25,33
 herdshare,Sourdough Bliss,Dry Goods,Sourdough Wheat Sandwich Loaf,ea,product,ea,ea,1,7,9.31,25,33
 herdshare,Deck Family Farm,Pasture-raised Pork,Spare Ribs,2-3 lb,product,pk,pk,1,19.5,26.91,28,38
+herdshare,Little Wings,Organic Vegetables - Leafy Greens,Spinach  1/2 Lb.,each,product,bag,bag,1,3.9,5.19,25,33
 herdshare,Small is Beautiful Farm,Organic Vegetables - Leafy Greens,Spinach  1/2 Lb.,each,product,bag,bag,1,4,5.32,25,33
 herdshare,Deck Family Farm,Pasture-raised Poultry,Stewing Hen,Stewing Hen,product,ea,ea,1,12.03,16.6,28,38
 herdshare,Sweet Creek,Dry Goods,Strawberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5,24,32
 herdshare,Camas Country Mill,Dry Goods,Sues Soup Mix,3 lbs,product,ea,ea,1,17.4,22.62,23,30
 herdshare,River Ranch Oregon Olive OIl,Home Goods,Summer Day Olive Oil Sugar Scrub,ea 4 oz jar,product,ea,ea,1,5,6.7,25,34
-herdshare,OGC,Organic Vegetables - Roots,Sunchokes,1 lb,product,lb,lb,1,4.18,5.56,25,33
 herdshare,Deck Family Farm,Sausages & Cured Meats,Sweet Italian Sausage Links,12 oz 4 count,product,pk,pk,1,11.7,16.15,28,38
 herdshare,Sweet Creek,Dry Goods,Sweet Relish,12. 6 oz,product,ea,ea,1,4,5.32,25,33
 herdshare,Deck Family Farm,Sausages & Cured Meats,Tamari Pressed Beef Jerky,3 oz,product,pk,pk,1,11.7,16.15,28,38
@@ -231,24 +221,20 @@ herdshare,Camas Country Mill,Dry Goods,Three Sisters Porridge,4 lbs,product,ea,e
 herdshare,Sweet Creek,Dry Goods,Tomatillo Salsa,16 oz,product,ea,ea,1,4.4,5.94,26,35
 herdshare,Deck Family Farm,Grass-fed Beef,Top Sirloin Steak,1.3-1.6 Lbs,product,ea,ea,1,23.56,32.51,28,38
 herdshare,Full Farm CSA,Home Goods,Tote Bag,ea,product,ea,ea,1,13,17.29,25,33
-herdshare,Deck Family Farm,Grass-fed Beef,Tri-Tip,1.6 - 2 lbs.,product,ea,ea,1,27.98,38.61,28,38
 herdshare,Deck Family Farm,Organ Meat & Lard,Unrendered Beef Tallow,2-3.7 Lb pk,product,pk,pk,1,9.26,12.78,28,38
-herdshare,Lonesome Whistle,Dry Goods,Up & At Em Pancake Mix,1.6 lbs,product,ea,ea,1,5.33,7.09,25,33
 herdshare,Radiant Coffee Roasters,Dry Goods,Vietnam Lotus - Light Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
 herdshare,Reality Kitchen Nonprofit,Dry Goods,Wholewheat Multigrain Sandwich Loaf,each,product,ea,ea,1,5.25,7.09,26,35
 herdshare,Full Farm CSA,Dry Goods,Wildcraft Hot Sauce,ea,product,ea,ea,1,8,11,27,38
-herdshare,Small is Beautiful Farm,Organic Vegetables - Roots,Winter Carrots,2# bag,product,bag,bag,1,4,5.32,25,33
 herdshare,RL Plants,Home Goods,Yellow Iris Rhizome,each,product,ea,ea,1,5,6.65,25,33
 guest,River Ranch Oregon Olive OIl,Dry Goods,2022 Arbequina  Olive Oil 100mL,Ea.,product,ea,ea,1,8.95,12.8,30,43
 guest,River Ranch Oregon Olive OIl,Dry Goods,2022 Arbequina  Olive Oil 250mL,Ea.,product,ea,ea,1,16.75,24.12,31,44
-guest,Red Tail Growers,Organic Vegetables - Leafy Greens,Baby Bok Choi,each,product,bu,bu,1,2,2.9,31,45
+guest,Sweet Creek,Dry Goods,Apricot Fruit Spread,10 oz,product,ea,ea,1,3.8,5.51,31,45
 guest,Deck Family Farm,Sausages & Cured Meats,Bacon Ends & Pieces,8 oz,product,pk,pk,1,9.43,14.52,35,54
 guest,Sweet Creek,,Basil Tomato Sauce,16 oz,product,ea,ea,1,3.76,5.45,31,45
+guest,Deck Family Farm,Grass-fed Beef,Bavette Steak,0.9 to 1.6,product,pk,pk,1,16.9,26.03,35,54
 guest,Deck Family Farm,Grass-fed Beef,Beef Back Ribs,2.4-3.1 Lbs,product,ea,ea,1,35.36,54.45,35,54
 guest,Deck Family Farm,Grass-fed Beef,Beef Bones,3-5 Lbs,product,pk,pk,1,3.5,5.39,35,54
 guest,Deck Family Farm,Grass-fed Beef,Beef Chuck Roast,2.3-2.9 lbs.,product,ea,ea,1,27.04,41.64,35,54
-guest,Deck Family Farm,Grass-fed Beef,Beef Flank Steak,1.1-1.4  lbs.,product,ea,ea,1,21.13,32.54,35,54
-guest,Deck Family Farm,Grass-fed Beef,Beef Flat Iron Steak,.7-1.1 lbs.,product,ea,ea,1,15.21,23.42,35,54
 guest,Deck Family Farm,Organs/Lard/Bones,Beef Kidney,0.8 - 1 Lbs,product,pk,pk,1,12.87,18.79,32,46
 guest,Deck Family Farm,Grass-fed Beef,Beef Liver,0.9-1.3 Lb. pk,product,pk,pk,1,18.59,28.63,35,54
 guest,Deck Family Farm,Grass-fed Beef,Beef Shank Osso Buco,2.1-2.4  lbs.,product,ea,ea,1,27.06,41.67,35,54
@@ -257,19 +243,13 @@ guest,Deck Family Farm,Grass-fed Beef,Beef Tenderloin,0.3-0.6 lbs.,product,pk,pk
 guest,Deck Family Farm,Grass-fed Beef,Beef Tongue,2.5-3  Lbs,product,pk,pk,1,16.98,26.15,35,54
 guest,Sweet Creek,,Blackberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5.75,34,51
 guest,Elegant Elephant Baking Co.,,Blackberry Hand Pie,each,product,ea,ea,1,2.95,4.22,30,43
-guest,Spoiled Rotten Vinegar,Dry Goods,Blackstrap Vinegar,8 fl. oz,product,ea,ea,1,8,11.44,30,43
-guest,Camas Country Mill,Dry Goods,Blue Cornmeal,3 lb bag,product,bag,bag,1,10.2,14.59,30,43
 guest,Sweet Creek,,Blueberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5.43,30,43
 guest,Elegant Elephant Baking Co.,,Box of 5 Cupcakes,each,product,ea,ea,1,6,8.58,30,43
 guest,Reality Kitchen Nonprofit,,Braided Challah (plain),each,product,ea,ea,1,5.25,8.93,41,70
 guest,Reality Kitchen Nonprofit,,Braided Challah (seeded),each,product,ea,ea,1,5.25,8.93,41,70
-guest,Red Tail Growers,Organic Vegetables - Leafy Greens,Braising mix,1/2 lb,product,bag,bag,1,4.25,6.08,30,43
 guest,Deck Family Farm,Sausages & Cured Meats,Bratwurst Sausage,12 oz.,product,ea,ea,1,13,20.02,35,54
-guest,Radiant Coffee Roasters,Dry Goods,Brazil Cerrado Miniero - Dark Roast Coffee Beans,12 oz,product,ea,ea,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Dry Goods,Brazil Cerrado Miniero - Dark Roast Ground Coffee,12 oz,product,ea,ea,1,11,15.73,30,43
 guest,Deck Family Farm,Grass-fed Beef,"Brisket, Large","Large, 4.0 - 5 lbs.",product,ea,ea,1,46.75,68.26,32,46
-guest,Deck Family Farm,Grass-fed Beef,"Brisket, Medium","Medium, 3.00 - 3.99 lbs",product,ea,ea,1,38.62,56.39,32,46
-guest,Deck Family Farm,Grass-fed Beef,"Brisket, Small","Small, 2.3 - 2.99 lbs",product,ea,ea,1,30.42,44.41,32,46
 guest,Lone Wolf Ranch,Organic Vegetables - Leafy Greens,Broccoli Microgreens,1 oz. pk,product,pk,pk,1,2.5,3.58,30,43
 guest,Camas Country Mill,Dry Goods,Brown Teff Flour,3 lbs,product,ea,ea,1,11.05,15.8,30,43
 guest,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Bulk Cajun Chaurice Sausage,12 oz. pk,product,pk,pk,1,10.73,15.67,32,46
@@ -282,9 +262,10 @@ guest,OGC,Organic Vegetables - Other,Celeriac,1 lb,product,pound,pound,1,1.7,2.4
 guest,Reality Kitchen Nonprofit,,Challah Sandwich Loaf,each,product,ea,ea,1,6,8.58,30,43
 guest,Deck Family Farm,Pasture-raised Poultry,Chicken Liver,1/2 lb,product,ea,ea,1,7.8,11.39,32,46
 guest,Deck Family Farm,Pasture-raised Poultry,Chicken Wings,1 - 1.5 lbs,product,ea,ea,1,8.12,11.86,32,46
-guest,Red Tail Growers,Organic Vegetables - Herbs,Chives,each,product,bu,bu,1,1.75,2.5,30,43
 guest,Elegant Elephant Baking Co.,,Chocolate Donut,each,product,ea,ea,1,2.35,4,41,70
+guest,Little Wings,Organic Vegetables - Herbs,Cilantro,each,product,bu,bu,1,3.5,5.01,30,43
 guest,Sweet Creek,Dry Goods,Cinnamon Apple Sauce,23 oz,product,ea,ea,1,4.54,6.58,31,45
+guest,Full Farm CSA,Organic Vegetables - Leafy Greens,Collard Raab,bu,product,bu,bu,1,2.5,3.58,30,43
 guest,River Ranch Oregon Olive OIl,Home Goods,Colliding Rivers Olive Oil Sugar Scrub,ea 4 oz jar,product,ea,ea,1,5,7.2,31,44
 guest,Deck Family Farm,Sausages & Cured Meats,Country Sausage,12 oz,product,ea,ea,1,10.08,14.72,32,46
 guest,OGC,Organic Vegetables - Mushrooms,Crimini Mushrooms,1 lb,product,lb,lb,1,3.95,5.65,30,43
@@ -317,7 +298,6 @@ guest,River Ranch Oregon Olive OIl,Dry Goods,Flavor Infused Olive Oil- Rosemary 
 guest,River Ranch Oregon Olive OIl,Dry Goods,Flavor Infused Olive Oil- Rosemary and Basil 250mL,250mL,product,ea,ea,1,21.95,31.61,31,44
 guest,Deck Family Farm,Sausages & Cured Meats,Fresh Garlic Sausage Links,12 oz / 4 count,product,pk,pk,1,11.7,17.08,31,46
 guest,OGC,Organic Fruit,Gala Apple,ea,product,ea,ea,1,0.5,1,50,100
-guest,Camas Country Mill,Dry Goods,"Garbanzo Beans/ Chickpeas, Organic",3 lbs,product,ea,ea,1,12.5,17.88,30,43
 guest,Elegant Elephant Baking Co.,,Gluten Free Apple Pie,6,product,ea,ea,1,7.5,11.25,33,50
 guest,Elegant Elephant Baking Co.,,Gluten Free Banana Cream Pie,6,product,ea,ea,1,8,14,43,75
 guest,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Blueberry Scone,each,product,ea,ea,1,2.9,4.75,39,64
@@ -333,14 +313,16 @@ guest,Elegant Elephant Baking Co.,,Gluten Free Potato Loaf with Teff,each,produc
 guest,Camas Country Mill,Dry Goods,Golden Flax Seed,3 lb. bag,product,bag,bag,1,14.5,20.74,30,43
 guest,OGC,Organic Fruit,Granny Smith Apple,ea,product,ea,ea,1,0.55,1,45,82
 guest,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,Grass-Fed Organ Blend,1lb. Pack,product,ea,ea,1,9.75,15.02,35,54
-guest,OGC,Organic Vegetables  - Broccoli/Cauliflower/Cabbage,Green Cabbage,each,product,ea,ea,1,2,2.86,30,43
 guest,Sweet Creek,,Green Enchilada Sauce,each,product,ea,ea,1,3.9,5.58,30,43
+guest,Red Tail Growers,Organic Vegetables - Onions/Garlic,Green Garlic,bu,product,bu,bu,1,2.35,3.38,30,44
+guest,Little Wings,Organic Vegetables - Leafy Greens,Green Mizuna,each,product,bu,bu,1,2,2.68,25,34
 guest,Deck Family Farm,Grass-fed Beef,Ground Beef,1 lb,product,ea,ea,1,7.8,12.01,35,54
 guest,Deck Family Farm,Grass-fed Beef,Ground Beef - Organic,1 lb,product,ea,ea,1,7.8,12.01,35,54
 guest,Deck Family Farm,Spring Lamb,Ground Lamb,1 lb,product,ea,ea,1,13,20.02,35,54
 guest,Deck Family Farm,Pasture-raised Pork,Ground Pork,1 lb,product,ea,ea,1,11.05,16.13,31,46
+guest,Little Wings,Organic Vegetables - Roots,Hakurei Turnips,1 bunch,product,bu,bu,1,2.25,3.22,30,43
 guest,Kiko Denzer,Home Goods,Handcrafted Fancy Wooden Eating Spoons,each,product,ea,ea,1,20,28.6,30,43
-guest,Deck Family Farm,Grass-fed Beef,Hanger Steak,.4 - .7 Lbs.,product,ea,ea,1,9.3,14.32,35,54
+guest,Full Farm CSA,Organic Vegetables - Leafy Greens,Hardy Kale Mix,1/2 lb,product,ea,ea,1,3.5,5.5,36,57
 guest,RL Plants,Flowers,Hen and Chicks Succulents,each,product,ea,ea,1,4,5.72,30,43
 guest,Deck Family Farm,Sausages & Cured Meats,Hikers Pepperoni Sticks,pk,product,pk,pk,1,5.85,8.54,31,46
 guest,Camas Country Mill,Dry Goods,Hollys Dog Biscuit Mix,3 lb bag,product,bag,bag,1,10,15.5,35,55
@@ -348,6 +330,7 @@ guest,Spoiled Rotten Vinegar,Dry Goods,Honey Vinegar,8 fl. oz,product,ea,ea,1,8,
 guest,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Hot Italian Linked Sausage,14 oz packs 4 links/pk,product,pk,pk,1,13,18.98,32,46
 guest,Sweet Creek,Dry Goods,Jalapeno Relish,each,product,ea,ea,1,10.5,10.5,0,0
 guest,Sweet Creek,,Just Apple Apple Sauce,26.5 oz,product,ea,ea,1,4.54,6.58,31,45
+guest,Full Farm CSA,Organic Vegetables - Leafy Greens,Kale Raab,bu,product,bu,bu,1,2.5,3.58,30,43
 guest,Deck Family Farm,Grass-fed Beef,Korean Beef Short Ribs,1.2-1.4 lbs,product,ea,ea,1,16.48,24.06,32,46
 guest,Deck Family Farm,Spring Lamb,Lamb Bones,3 - 5 Lbs,product,pk,pk,1,3.5,5.39,35,54
 guest,Deck Family Farm,Spring Lamb,Lamb Chops 2 Pack,2 Pack .7-1.1 Lbs,product,ea,ea,1,14.04,21.62,35,54
@@ -360,7 +343,6 @@ guest,Deck Family Farm,Spring Lamb,Lamb Stew Meat,.9-1.1 lbs,product,ea,ea,1,13.
 guest,Deck Family Farm,Sausages & Cured Meats,Landjaeger Jerky,3 count / 3 oz,product,pk,pk,1,10.73,15.67,32,46
 guest,River Ranch Oregon Olive OIl,Home Goods,Lavender Olive Oil Sugar Scrub,ea  4oz. jar,product,ea,ea,1,5,7.2,31,44
 guest,Red Tail Growers,Organic Vegetables - Onions/Garlic,Leeks,1 bunch,product,bu,bu,1,2.5,3.58,30,43
-guest,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Farm Made Chorizo Sausage,4 Links/pack  14oz Packages,product,pk,pk,1,13,20.02,35,54
 guest,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Greek Loukaniko Sausage,14 oz. pk/4 links,product,pk,pk,1,13,18.98,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Thai Curry Sausage (Sai Ua),"14oz, Pack",product,ea,ea,1,13,20.02,35,54
 guest,Sourdough Bliss,Dry Goods,Mini Sourdough Glazed Lemon Loaf Cake,ea,product,ea,ea,1,4,5.72,30,43
@@ -400,9 +382,8 @@ guest,Deck Family Farm,Pasture-raised Pork,"Pork Shoulder Roast, Large",2.8 - 3.
 guest,Deck Family Farm,Pasture-raised Pork,"Pork Shoulder Roast, Small",2-2.7 lbs,product,ea,ea,1,30.36,47.06,35,55
 guest,OGC,Organic Vegetables - Roots,Purple Daikon Radish,1 pound,product,lb,lb,1,3.7,5.29,30,43
 guest,Lone Wolf Ranch,Organic Vegetables - Leafy Greens,Purple Radish Microgreens,1 oz. pk,product,pk,pk,1,2.5,3.58,30,43
-guest,Spoiled Rotten Vinegar,Dry Goods,Quince Vinegar,8 fl oz,product,ea,ea,1,8,11.44,30,43
+guest,Full Farm CSA,Organic Vegetables - Leafy Greens,Purple Sprouting Broccoli,each,product,bu,bu,1,3,4.29,30,43
 guest,Radiant Coffee Roasters,Dry Goods,Radiant Balanced Blend - Medium Roast Ground Coffee,12 oz,product,ea,ea,1,11,15.73,30,43
-guest,Radiant Coffee Roasters,Dry Goods,Radiant Breakfast Blend - Light Roast Coffee Beans,12 oz,product,ea,ea,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Dry Goods,Radiant Breakfast Blend - Light Roast Ground Coffee,12 oz,product,ea,ea,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Dry Goods,Radiant Decaf Columbia Coffee Beans,12 oz,product,ea,ea,1,11,15.73,30,43
 guest,Radiant Coffee Roasters,Dry Goods,Radiant Decaf Columbia Ground Coffee,12 oz,product,ea,ea,1,11,15.73,30,43
@@ -414,7 +395,6 @@ guest,Deck Family Farm,Dry Goods,"Raw Honey, 1 quart",1 quart,product,ea,ea,1,30
 guest,Deck Family Farm,Dry Goods,"Raw Honey, 1/2 pint",1/2 pt,product,ea,ea,1,11.05,16.13,31,46
 guest,OGC,Organic Vegetables - Onions/Garlic,Red Onion,2 lb bag,product,lb,lb,1,3.1,4.46,30,44
 guest,OGC,Organic Vegetables - Roots,Red Skinned Daikon Radish,lb,product,lb,lb,1,3.7,5.29,30,43
-guest,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,"Rendered Beef Tallow, 16 oz",16 oz,product,ea,ea,1,13,18.98,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,"Rendered Beef Tallow, 8 oz",8 oz,product,ea,ea,1,7,10.22,32,46
 guest,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,"Rendered Pork Back Fat, 8 oz",16 oz,product,ea,ea,1,5,7.7,35,54
 guest,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,Rendered Pork Leaf Lard 16 oz.,16 oz.,product,ea,ea,1,10.4,16.02,35,54
@@ -434,19 +414,18 @@ guest,RL Plants,Flowers,Sedum Rupestre Blue Spruce,each,product,ea,ea,1,4,5.72,3
 guest,Elegant Elephant Baking Co.,,Seven Layer Cookie,each,product,ea,ea,1,2.5,4.5,44,80
 guest,OGC,Organic Vegetables - Mushrooms,Shiitake Mushrooms,1/2 lb,product,1/2 lb,1/2 lb,1,4.08,5.83,30,43
 guest,Deck Family Farm,Grass-fed Beef,Short Ribs,1.3-2.1 lbs.,product,ea,ea,1,18.23,26.62,32,46
-guest,Deck Family Farm,Grass-fed Beef,"Skirt Steak, Small",.3 - .5 lbs.,product,pk,pk,1,10.06,15.49,35,54
 guest,Sourdough Bliss,Dry Goods,Sourdough Artisan Wheat,ea,product,ea,ea,1,9,12.87,30,43
 guest,Sourdough Bliss,Dry Goods,Sourdough Cinnamon Swirl Loaf,ea,product,ea,ea,1,7.5,10.73,30,43
 guest,Sourdough Bliss,Dry Goods,Sourdough Honey Oat Artisan,ea,product,ea,ea,1,10,14.3,30,43
 guest,Sourdough Bliss,Dry Goods,Sourdough Seed Bread,ea,product,ea,ea,1,8,11.44,30,43
 guest,Sourdough Bliss,Dry Goods,Sourdough Wheat Sandwich Loaf,ea,product,ea,ea,1,7,10.01,30,43
 guest,Deck Family Farm,Pasture-raised Pork,Spare Ribs,2-3 lb,product,pk,pk,1,19.5,30.03,35,54
+guest,Little Wings,Organic Vegetables - Leafy Greens,Spinach  1/2 Lb.,each,product,bag,bag,1,3.9,5.58,30,43
 guest,Small is Beautiful Farm,Organic Vegetables - Leafy Greens,Spinach  1/2 Lb.,each,product,bag,bag,1,4,5.72,30,43
 guest,Deck Family Farm,Pasture-raised Poultry,Stewing Hen,Stewing Hen,product,ea,ea,1,12.03,18.53,35,54
 guest,Sweet Creek,,Strawberry Fruit Spread,10 oz,product,ea,ea,1,3.8,6,37,58
 guest,Camas Country Mill,Dry Goods,Sues Soup Mix,3 lbs,product,ea,ea,1,17.4,24.36,29,40
 guest,River Ranch Oregon Olive OIl,Home Goods,Summer Day Olive Oil Sugar Scrub,ea 4 oz jar,product,ea,ea,1,5,7.2,31,44
-guest,OGC,Organic Vegetables - Roots,Sunchokes,1 lb,product,lb,lb,1,4.18,5.98,30,43
 guest,Deck Family Farm,Sausages & Cured Meats,Sweet Italian Sausage Links,12 oz 4 count,product,pk,pk,1,11.7,17.08,31,46
 guest,Sweet Creek,,Sweet Relish,12. 6 oz,product,ea,ea,1,4,5.72,30,43
 guest,Deck Family Farm,Sausages & Cured Meats,Tamari Pressed Beef Jerky,3 oz,product,pk,pk,1,11.7,17.08,31,46
@@ -457,24 +436,20 @@ guest,Camas Country Mill,Dry Goods,Three Sisters Porridge,4 lbs,product,ea,ea,1,
 guest,Sweet Creek,,Tomatillo Salsa,16 oz,product,ea,ea,1,4.4,6.38,31,45
 guest,Deck Family Farm,Grass-fed Beef,Top Sirloin Steak,1.3-1.6 Lbs,product,ea,ea,1,23.56,36.28,35,54
 guest,Full Farm CSA,Home Goods,Tote Bag,ea,product,ea,ea,1,13,18.59,30,43
-guest,Deck Family Farm,Grass-fed Beef,Tri-Tip,1.6 - 2 lbs.,product,ea,ea,1,27.98,43.09,35,54
 guest,Deck Family Farm,Organs/Lard/Bones,Unrendered Beef Tallow,2-3.7 Lb pk,product,pk,pk,1,9.26,14.63,37,58
-guest,Lonesome Whistle,Dry Goods,Up & At Em Pancake Mix,1.6 lbs,product,ea,ea,1,5.33,7.62,30,43
 guest,Radiant Coffee Roasters,Dry Goods,Vietnam Lotus - Light Roast Ground Coffee,12 oz,product,ea,ea,1,11,15.73,30,43
 guest,Reality Kitchen Nonprofit,,Wholewheat Multigrain Sandwich Loaf,each,product,ea,ea,1,5.25,7.61,31,45
 guest,Full Farm CSA,Dry Goods,Wildcraft Hot Sauce,ea,product,ea,ea,1,8,12,33,50
-guest,Small is Beautiful Farm,Organic Vegetables - Roots,Winter Carrots,2# bag,product,bag,bag,1,4,5.72,30,43
 guest,RL Plants,Flowers,Yellow Iris Rhizome,each,product,ea,ea,1,5,7.15,30,43
 members,River Ranch Oregon Olive OIl,Dry Goods,2022 Arbequina  Olive Oil 100mL,Ea.,product,ea,ea,1,8.95,11.9,25,33
 members,River Ranch Oregon Olive OIl,Dry Goods,2022 Arbequina  Olive Oil 250mL,Ea.,product,ea,ea,1,16.75,22.45,25,34
-members,Red Tail Growers,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Baby Bok Choi,each,product,bu,bu,1,2,2.7,26,35
+members,Sweet Creek,Dry Goods,Apricot Fruit Spread,10 oz,product,ea,ea,1,3.8,5.13,26,35
 members,Deck Family Farm,Sausages & Cured Meats,Bacon Ends & Pieces,8 oz,product,pk,pk,1,9.43,13.01,28,38
 members,Sweet Creek,Dry Goods,Basil Tomato Sauce,16 oz,product,ea,ea,1,3.76,5.08,26,35
+members,Deck Family Farm,Grass-fed Beef,Bavette Steak,0.9 to 1.6,product,pk,pk,1,16.9,23.32,28,38
 members,Deck Family Farm,Grass-fed Beef,Beef Back Ribs,2.4-3.1 Lbs,product,ea,ea,1,35.36,48.8,28,38
 members,Deck Family Farm,Grass-fed Beef,Beef Bones,3-5 Lbs,product,pk,pk,1,3.5,4.83,28,38
 members,Deck Family Farm,Grass-fed Beef,Beef Chuck Roast,2.3-2.9 lbs.,product,ea,ea,1,27.04,37.32,28,38
-members,Deck Family Farm,Grass-fed Beef,Beef Flank Steak,1.1-1.4  lbs.,product,ea,ea,1,21.13,29.16,28,38
-members,Deck Family Farm,Grass-fed Beef,Beef Flat Iron Steak,.7-1.1 lbs.,product,ea,ea,1,15.21,20.99,28,38
 members,Deck Family Farm,Organs/Lard/Bones,Beef Kidney,0.8 - 1 Lbs,product,pk,pk,1,12.87,17.76,28,38
 members,Deck Family Farm,Grass-fed Beef,Beef Liver,0.9-1.3 Lb. pk,product,pk,pk,1,18.59,25.65,28,38
 members,Deck Family Farm,Grass-fed Beef,Beef Shank Osso Buco,2.1-2.4  lbs.,product,ea,ea,1,27.06,37.34,28,38
@@ -483,19 +458,13 @@ members,Deck Family Farm,Grass-fed Beef,Beef Tenderloin,0.3-0.6 lbs.,product,pk,
 members,Deck Family Farm,Grass-fed Beef,Beef Tongue,2.5-3  Lbs,product,pk,pk,1,16.98,23.43,28,38
 members,Sweet Creek,Dry Goods,Blackberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5,24,32
 members,Elegant Elephant Baking Co.,Dry Goods,Blackberry Hand Pie,each,product,ea,ea,1,2.95,3.92,25,33
-members,Spoiled Rotten Vinegar,Dry Goods,Blackstrap Vinegar,8 fl. oz,product,ea,ea,1,8,10.64,25,33
-members,Camas Country Mill,Dry Goods,Blue Cornmeal,3 lb bag,product,bag,bag,1,10.2,13.57,25,33
 members,Sweet Creek,Dry Goods,Blueberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5.05,25,33
 members,Elegant Elephant Baking Co.,Dry Goods,Box of 5 Cupcakes,each,product,ea,ea,1,6,7.98,25,33
 members,Reality Kitchen Nonprofit,Dry Goods,Braided Challah (plain),each,product,ea,ea,1,5.25,7.72,32,47
 members,Reality Kitchen Nonprofit,Dry Goods,Braided Challah (seeded),each,product,ea,ea,1,5.25,7.09,26,35
-members,Red Tail Growers,Organic Vegetables - Leafy Greens,Braising mix,1/2 lb,product,bag,bag,1,4.25,5.65,25,33
 members,Deck Family Farm,Sausages & Cured Meats,Bratwurst Sausage,12 oz.,product,ea,ea,1,13,17.94,28,38
-members,Radiant Coffee Roasters,Dry Goods,Brazil Cerrado Miniero - Dark Roast Coffee Beans,12 oz,product,ea,ea,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Dry Goods,Brazil Cerrado Miniero - Dark Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
 members,Deck Family Farm,Grass-fed Beef,"Brisket, Large","Large, 4.0 - 5 lbs.",product,ea,ea,1,46.75,64.52,28,38
-members,Deck Family Farm,Grass-fed Beef,"Brisket, Medium","Medium, 3.00 - 3.99 lbs",product,ea,ea,1,38.62,53.3,28,38
-members,Deck Family Farm,Grass-fed Beef,"Brisket, Small","Small, 2.3 - 2.99 lbs",product,ea,ea,1,30.42,41.98,28,38
 members,Lone Wolf Ranch,Organic Vegetables - Leafy Greens,Broccoli Microgreens,1 oz. pk,product,pk,pk,1,2.5,3.33,25,33
 members,Camas Country Mill,Dry Goods,Brown Teff Flour,3 lbs,product,ea,ea,1,11.05,14.7,25,33
 members,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Bulk Cajun Chaurice Sausage,12 oz. pk,product,pk,pk,1,10.73,14.81,28,38
@@ -508,9 +477,10 @@ members,OGC,Organic Vegetables - Roots,Celeriac,1 lb,product,pound,pound,1,1.7,2
 members,Reality Kitchen Nonprofit,Dry Goods,Challah Sandwich Loaf,each,product,ea,ea,1,6,7.98,25,33
 members,Deck Family Farm,Pasture-raised Poultry,Chicken Liver,1/2 lb,product,ea,ea,1,7.8,10.76,28,38
 members,Deck Family Farm,Pasture-raised Poultry,Chicken Wings,1 - 1.5 lbs,product,ea,ea,1,8.12,11.21,28,38
-members,Red Tail Growers,Organic Vegetables - Herbs,Chives,each,product,bu,bu,1,1.75,2.33,25,33
 members,Elegant Elephant Baking Co.,Dry Goods,Chocolate Donut,each,product,ea,ea,1,2.35,3.5,33,49
+members,Little Wings,Organic Vegetables - Herbs,Cilantro,each,product,bu,bu,1,3.5,4.66,25,33
 members,Sweet Creek,Dry Goods,Cinnamon Apple Sauce,23 oz,product,ea,ea,1,4.54,6.13,26,35
+members,Full Farm CSA,Organic Vegetables - Leafy Greens,Collard Raab,bu,product,bu,bu,1,2.5,3.33,25,33
 members,River Ranch Oregon Olive OIl,Home Goods,Colliding Rivers Olive Oil Sugar Scrub,ea 4 oz jar,product,ea,ea,1,5,6.7,25,34
 members,Deck Family Farm,Sausages & Cured Meats,Country Sausage,12 oz,product,ea,ea,1,10.08,13.91,28,38
 members,OGC,Organic Vegetables - Mushrooms,Crimini Mushrooms,1 lb,product,lb,lb,1,3.95,5.25,25,33
@@ -543,7 +513,6 @@ members,River Ranch Oregon Olive OIl,Dry Goods,Flavor Infused Olive Oil- Rosemar
 members,River Ranch Oregon Olive OIl,Dry Goods,Flavor Infused Olive Oil- Rosemary and Basil 250mL,250mL,product,ea,ea,1,21.95,29.41,25,34
 members,Deck Family Farm,Sausages & Cured Meats,Fresh Garlic Sausage Links,12 oz / 4 count,product,pk,pk,1,11.7,16.15,28,38
 members,OGC,Organic Fruit,Gala Apple,ea,product,ea,ea,1,0.5,0.75,33,50
-members,Camas Country Mill,Dry Goods,"Garbanzo Beans/ Chickpeas, Organic",3 lbs,product,ea,ea,1,12.5,16.63,25,33
 members,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Apple Pie,6,product,ea,ea,1,7.5,10.5,29,40
 members,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Banana Cream Pie,6,product,ea,ea,1,8,12,33,50
 members,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Blueberry Scone,each,product,ea,ea,1,2.9,4,28,38
@@ -559,14 +528,16 @@ members,Elegant Elephant Baking Co.,Dry Goods,Gluten Free Potato Loaf with Teff,
 members,Camas Country Mill,Dry Goods,Golden Flax Seed,3 lb. bag,product,bag,bag,1,14.5,19.29,25,33
 members,OGC,Organic Fruit,Granny Smith Apple,ea,product,ea,ea,1,0.55,0.75,27,36
 members,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,Grass-Fed Organ Blend,1lb. Pack,product,ea,ea,1,9.75,13.46,28,38
-members,OGC,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Green Cabbage,each,product,ea,ea,1,2,2.66,25,33
 members,Sweet Creek,Dry Goods,Green Enchilada Sauce,each,product,ea,ea,1,3.9,5.19,25,33
+members,Red Tail Growers,Organic Vegetables - Onions/Garlic,Green Garlic,bu,product,bu,bu,1,2.35,3.15,25,34
+members,Little Wings,Organic Vegetables - Leafy Greens,Green Mizuna,each,product,bu,bu,1,2,2.68,25,34
 members,Deck Family Farm,Grass-fed Beef,Ground Beef,1 lb,product,ea,ea,1,7.8,10.76,28,38
 members,Deck Family Farm,Grass-fed Beef,Ground Beef - Organic,1 lb,product,ea,ea,1,7.8,10.76,28,38
 members,Deck Family Farm,Spring Lamb,Ground Lamb,1 lb,product,ea,ea,1,13,17.94,28,38
 members,Deck Family Farm,Pasture-raised Pork,Ground Pork,1 lb,product,ea,ea,1,11.05,15.25,28,38
+members,Little Wings,Organic Vegetables - Roots,Hakurei Turnips,1 bunch,product,bu,bu,1,2.25,2.99,25,33
 members,Kiko Denzer,Home Goods,Handcrafted Fancy Wooden Eating Spoons,each,product,ea,ea,1,20,26.6,25,33
-members,Deck Family Farm,Grass-fed Beef,Hanger Steak,.4 - .7 Lbs.,product,ea,ea,1,9.3,12.83,28,38
+members,Full Farm CSA,Organic Vegetables - Leafy Greens,Hardy Kale Mix,1/2 lb,product,ea,ea,1,3.5,5,30,43
 members,RL Plants,Home Goods,Hen and Chicks Succulents,each,product,ea,ea,1,4,5.32,25,33
 members,Deck Family Farm,Sausages & Cured Meats,Hikers Pepperoni Sticks,pk,product,pk,pk,1,5.85,8.07,28,38
 members,Camas Country Mill,Dry Goods,Hollys Dog Biscuit Mix,3 lb bag,product,bag,bag,1,10,13.3,25,33
@@ -574,6 +545,7 @@ members,Spoiled Rotten Vinegar,Dry Goods,Honey Vinegar,8 fl. oz,product,ea,ea,1,
 members,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Hot Italian Linked Sausage,14 oz packs 4 links/pk,product,pk,pk,1,13,17.94,28,38
 members,Sweet Creek,Dry Goods,Jalapeno Relish,each,product,ea,ea,1,10.5,10.5,0,0
 members,Sweet Creek,Dry Goods,Just Apple Apple Sauce,26.5 oz,product,ea,ea,1,4.54,6.13,26,35
+members,Full Farm CSA,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Kale Raab,bu,product,bu,bu,1,2.5,3.33,25,33
 members,Deck Family Farm,Grass-fed Beef,Korean Beef Short Ribs,1.2-1.4 lbs,product,ea,ea,1,16.48,22.74,28,38
 members,Deck Family Farm,"Organs/Lard/Bones, Spring Lamb",Lamb Bones,3 - 5 Lbs,product,pk,pk,1,3.5,4.83,28,38
 members,Deck Family Farm,Spring Lamb,Lamb Chops 2 Pack,2 Pack .7-1.1 Lbs,product,ea,ea,1,14.04,19.38,28,38
@@ -586,7 +558,6 @@ members,Deck Family Farm,Spring Lamb,Lamb Stew Meat,.9-1.1 lbs,product,ea,ea,1,1
 members,Deck Family Farm,Sausages & Cured Meats,Landjaeger Jerky,3 count / 3 oz,product,pk,pk,1,10.73,14.81,28,38
 members,River Ranch Oregon Olive OIl,Home Goods,Lavender Olive Oil Sugar Scrub,ea  4oz. jar,product,ea,ea,1,5,6.7,25,34
 members,Red Tail Growers,Organic Vegetables - Onions/Garlic,Leeks,1 bunch,product,bu,bu,1,2.5,3.33,25,33
-members,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Farm Made Chorizo Sausage,4 Links/pack  14oz Packages,product,pk,pk,1,13,17.94,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Greek Loukaniko Sausage,14 oz. pk/4 links,product,pk,pk,1,13,17.94,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Sausages & Cured Meats,Linked Thai Curry Sausage (Sai Ua),"14oz, Pack",product,ea,ea,1,13,17.94,28,38
 members,Sourdough Bliss,Dry Goods,Mini Sourdough Glazed Lemon Loaf Cake,ea,product,ea,ea,1,4,5.32,25,33
@@ -627,9 +598,8 @@ members,Deck Family Farm,Pasture-raised Pork,"Pork Shoulder Roast, Large",2.8 - 
 members,Deck Family Farm,Pasture-raised Pork,"Pork Shoulder Roast, Small",2-2.7 lbs,product,ea,ea,1,30.36,41.9,28,38
 members,OGC,Organic Vegetables - Roots,Purple Daikon Radish,1 pound,product,lb,lb,1,3.7,4.92,25,33
 members,Lone Wolf Ranch,Organic Vegetables - Leafy Greens,Purple Radish Microgreens,1 oz. pk,product,pk,pk,1,2.5,3.33,25,33
-members,Spoiled Rotten Vinegar,Dry Goods,Quince Vinegar,8 fl oz,product,ea,ea,1,8,10.64,25,33
+members,Full Farm CSA,Organic Vegetables - Broccoli/Cauliflower/Cabbage,Purple Sprouting Broccoli,each,product,bu,bu,1,3,3.99,25,33
 members,Radiant Coffee Roasters,Dry Goods,Radiant Balanced Blend - Medium Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
-members,Radiant Coffee Roasters,Dry Goods,Radiant Breakfast Blend - Light Roast Coffee Beans,12 oz,product,ea,ea,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Dry Goods,Radiant Breakfast Blend - Light Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Dry Goods,Radiant Decaf Columbia Coffee Beans,12 oz,product,ea,ea,1,11,14.63,25,33
 members,Radiant Coffee Roasters,Dry Goods,Radiant Decaf Columbia Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
@@ -641,7 +611,6 @@ members,Deck Family Farm,Dry Goods,"Raw Honey, 1 quart",1 quart,product,ea,ea,1,
 members,Deck Family Farm,Dry Goods,"Raw Honey, 1/2 pint",1/2 pt,product,ea,ea,1,11.05,15.25,28,38
 members,OGC,Organic Vegetables - Onions/Garlic,Red Onion,2 lb bag,product,lb,lb,1,3.1,4.15,25,34
 members,OGC,Organic Vegetables - Roots,Red Skinned Daikon Radish,lb,product,lb,lb,1,3.7,4.92,25,33
-members,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,"Rendered Beef Tallow, 16 oz",16 oz,product,ea,ea,1,13,17.94,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,"Rendered Beef Tallow, 8 oz",8 oz,product,ea,ea,1,7,9.66,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,"Rendered Pork Back Fat, 8 oz",16 oz,product,ea,ea,1,5,6.9,28,38
 members,Deck Family Farms Hyland Artisinal Meats,Organs/Lard/Bones,Rendered Pork Leaf Lard 16 oz.,16 oz.,product,ea,ea,1,10.4,14.35,28,38
@@ -661,19 +630,18 @@ members,RL Plants,Home Goods,Sedum Rupestre Blue Spruce,each,product,ea,ea,1,4,5
 members,Elegant Elephant Baking Co.,Dry Goods,Seven Layer Cookie,each,product,ea,ea,1,2.5,4,38,60
 members,OGC,Organic Vegetables - Mushrooms,Shiitake Mushrooms,1/2 lb,product,1/2 lb,1/2 lb,1,4.08,5.43,25,33
 members,Deck Family Farm,Grass-fed Beef,Short Ribs,1.3-2.1 lbs.,product,ea,ea,1,18.23,25.16,28,38
-members,Deck Family Farm,Grass-fed Beef,"Skirt Steak, Small",.3 - .5 lbs.,product,pk,pk,1,10.06,13.88,28,38
 members,Sourdough Bliss,Dry Goods,Sourdough Artisan Wheat,ea,product,ea,ea,1,9,11.97,25,33
 members,Sourdough Bliss,Dry Goods,Sourdough Cinnamon Swirl Loaf,ea,product,ea,ea,1,7.5,9.98,25,33
 members,Sourdough Bliss,Dry Goods,Sourdough Honey Oat Artisan,ea,product,ea,ea,1,10,13.3,25,33
 members,Sourdough Bliss,Dry Goods,Sourdough Seed Bread,ea,product,ea,ea,1,8,10.64,25,33
 members,Sourdough Bliss,Dry Goods,Sourdough Wheat Sandwich Loaf,ea,product,ea,ea,1,7,9.31,25,33
 members,Deck Family Farm,Pasture-raised Pork,Spare Ribs,2-3 lb,product,pk,pk,1,19.5,26.91,28,38
+members,Little Wings,Organic Vegetables - Leafy Greens,Spinach  1/2 Lb.,each,product,bag,bag,1,3.9,5.19,25,33
 members,Small is Beautiful Farm,Organic Vegetables - Leafy Greens,Spinach  1/2 Lb.,each,product,bag,bag,1,4,5.32,25,33
 members,Deck Family Farm,Pasture-raised Poultry,Stewing Hen,Stewing Hen,product,ea,ea,1,12.03,16.6,28,38
 members,Sweet Creek,Dry Goods,Strawberry Fruit Spread,10 oz,product,ea,ea,1,3.8,5,24,32
 members,Camas Country Mill,Dry Goods,Sues Soup Mix,3 lbs,product,ea,ea,1,17.4,22.62,23,30
 members,River Ranch Oregon Olive OIl,Home Goods,Summer Day Olive Oil Sugar Scrub,ea 4 oz jar,product,ea,ea,1,5,6.7,25,34
-members,OGC,Organic Vegetables - Roots,Sunchokes,1 lb,product,lb,lb,1,4.18,5.56,25,33
 members,Deck Family Farm,Sausages & Cured Meats,Sweet Italian Sausage Links,12 oz 4 count,product,pk,pk,1,11.7,16.15,28,38
 members,Sweet Creek,Dry Goods,Sweet Relish,12. 6 oz,product,ea,ea,1,4,5.32,25,33
 members,Deck Family Farm,Sausages & Cured Meats,Tamari Pressed Beef Jerky,3 oz,product,pk,pk,1,11.7,16.15,28,38
@@ -684,11 +652,8 @@ members,Camas Country Mill,Dry Goods,Three Sisters Porridge,4 lbs,product,ea,ea,
 members,Sweet Creek,Dry Goods,Tomatillo Salsa,16 oz,product,ea,ea,1,4.4,5.94,26,35
 members,Deck Family Farm,Grass-fed Beef,Top Sirloin Steak,1.3-1.6 Lbs,product,ea,ea,1,23.56,32.51,28,38
 members,Full Farm CSA,Home Goods,Tote Bag,ea,product,ea,ea,1,13,17.29,25,33
-members,Deck Family Farm,Grass-fed Beef,Tri-Tip,1.6 - 2 lbs.,product,ea,ea,1,27.98,38.61,28,38
 members,Deck Family Farm,Organs/Lard/Bones,Unrendered Beef Tallow,2-3.7 Lb pk,product,pk,pk,1,9.26,12.78,28,38
-members,Lonesome Whistle,Dry Goods,Up & At Em Pancake Mix,1.6 lbs,product,ea,ea,1,5.33,7.09,25,33
 members,Radiant Coffee Roasters,Dry Goods,Vietnam Lotus - Light Roast Ground Coffee,12 oz,product,ea,ea,1,11,14.63,25,33
 members,Reality Kitchen Nonprofit,Dry Goods,Wholewheat Multigrain Sandwich Loaf,each,product,ea,ea,1,5.25,7.09,26,35
 members,Full Farm CSA,Dry Goods,Wildcraft Hot Sauce,ea,product,ea,ea,1,8,11,27,38
-members,Small is Beautiful Farm,Organic Vegetables - Roots,Winter Carrots,2# bag,product,bag,bag,1,4,5.32,25,33
 members,RL Plants,Home Goods,Yellow Iris Rhizome,each,product,ea,ea,1,5,6.65,25,33
