@@ -7,6 +7,161 @@ const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
 
+
+// Load or initialize drop site colors
+function loadDropSiteColors(filePath) {
+    if (fs.existsSync(filePath)) {
+        return JSON.parse(fs.readFileSync(filePath));
+    }
+    return {};
+}
+
+// Save updated drop site colors
+function saveDropSiteColors(filePath, colors) {
+    fs.writeFileSync(filePath, JSON.stringify(colors, null, 2));
+}
+
+// Generate random pastel color
+function generateRandomPastelColor() {
+    const r = Math.floor((Math.random() * 127) + 127);
+    const g = Math.floor((Math.random() * 127) + 127);
+    const b = Math.floor((Math.random() * 127) + 127);
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
+async function writeLabelPDF(csvFilePath) {
+    return new Promise((resolve, reject) => {
+        console.log("Starting writeLabelPDF...");
+
+        const labelSet = new Map();
+        const dropSiteColorsPath = path.join(__dirname, 'drop_site_colors.json');
+        let dropSiteColors = {};
+
+        // 1️⃣ Load existing drop site colors
+        if (fs.existsSync(dropSiteColorsPath)) {
+            try {
+                dropSiteColors = JSON.parse(fs.readFileSync(dropSiteColorsPath, 'utf8'));
+            } catch (err) {
+                console.error("Error reading drop_site_colors.json:", err);
+                dropSiteColors = {};
+            }
+        }
+
+        // 2️⃣ Read CSV and group labels
+        fs.createReadStream(csvFilePath)
+            .pipe(fastcsv.parse({ headers: true }))
+            .on('data', (row) => {
+                const firstName = row['First Name']?.trim();
+                const lastName = row['Last Name']?.trim();
+                const dropSiteRaw = row['Fulfillment Name']?.trim();
+
+                if (firstName && lastName && dropSiteRaw && dropSiteRaw !== 'Membership Purchase - Fulfilled Electronically every 30 days!') {
+                    const normalizedDropSite = dropSiteRaw.toLowerCase();
+
+                    // Unique key per customer + drop site
+                    const key = `${firstName.toLowerCase()}|${lastName.toLowerCase()}|${normalizedDropSite}`;
+
+                    if (!labelSet.has(key)) {
+                        labelSet.set(key, {
+                            firstName,
+                            lastName,
+                            dropSite: normalizedDropSite
+                        });
+
+                        // Assign color if needed
+                        if (!dropSiteColors[normalizedDropSite]) {
+                            dropSiteColors[normalizedDropSite] = generateRandomPastelColor();
+                        }
+                    }
+                }
+            })
+            .on('end', () => {
+                const labels = Array.from(labelSet.values());
+                console.log(`Parsed ${labels.length} unique labels`);
+
+                // 3️⃣ Sort by Last Name, First Name
+labels.sort((a, b) => {
+    const dropSiteCompare = a.dropSite.localeCompare(b.dropSite);
+    if (dropSiteCompare !== 0) return dropSiteCompare;
+
+    const lastNameCompare = a.lastName.localeCompare(b.lastName);
+    if (lastNameCompare !== 0) return lastNameCompare;
+
+    return a.firstName.localeCompare(b.firstName);
+});
+
+                // 4️⃣ Generate PDF
+              console.log("generating PDF")
+                const doc = new PDFDocument({ margin: 0 });
+                const outputPath = path.join('data', 'labels.pdf');
+              const writeStream = fs.createWriteStream(outputPath);
+
+doc.pipe(writeStream);
+
+                const labelWidth = 180;
+                const labelHeight = 72;
+                const marginLeft = 18;
+                const marginTop = 36;
+                const horizontalGap = 12;
+
+labels.forEach((label, index) => {
+    const row = Math.floor(index / 3) % 10;
+    const col = index % 3;
+
+    const x = marginLeft + col * (labelWidth + horizontalGap);
+    const y = marginTop + row * labelHeight;
+
+    if (index > 0 && index % 30 === 0) doc.addPage();
+
+    const footerHeight = labelHeight * 0.5;  // Bottom half for Drop Site
+
+    // 1️⃣ Print Customer Name (Top Half)
+    doc.font('Helvetica-Bold')
+        .fillColor('black')
+        .fontSize(12)
+        .text(`${label.lastName}, ${label.firstName}`, x, y + 15, {
+            width: labelWidth,
+            align: 'center'
+        });
+
+    // 2️⃣ Draw pastel background for Drop Site (Bottom Half)
+    doc.fillColor(dropSiteColors[label.dropSite])
+        .rect(x, y + footerHeight, labelWidth, footerHeight)
+        .fill();
+
+    // 3️⃣ Print Drop Site name over pastel
+    doc.fillColor('black')
+        .font('Helvetica-Bold')
+        .fontSize(10)
+        .text(label.dropSite, x, y + footerHeight + (footerHeight / 2) - 5, {
+            width: labelWidth,
+            align: 'center'
+        });
+});
+
+
+writeStream.on('finish', () => {
+    console.log("Labels PDF generated:", outputPath);
+
+    fs.writeFileSync(dropSiteColorsPath, JSON.stringify(dropSiteColors, null, 2), 'utf8');
+    console.log("drop_site_colors.json updated.");
+
+    resolve(outputPath);
+});
+
+writeStream.on('error', (err) => {
+    console.error("PDF generation error:", err);
+    reject(err);
+});
+
+// Now finalize PDF
+console.log("Ending PDF generation...");
+doc.end();
+
+            });
+    });
+}
+
 // Function to read CSV and return a promise with the ordered vendor list
 // Function to read a list of vendors from a file and return a promise with the ordered vendor list
 function readVendorOrder(filePath) {
@@ -98,14 +253,14 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
             })
             .on('end', () => {
                 // Sort the data by "Customer Name"
-                sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
-                //sortedData.sort((a, b) => { return a['Last Name'].localeCompare(b['Last Name']); });
+                //sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+                sortedData.sort((a, b) => { return a['Last Name'].localeCompare(b['Last Name']); });
 
 
                 // Process the sorted data
                 sortedData.forEach((row) => {
-                    const customerName = row['Customer'];
-                    //const customerName = `${row['Last Name']}, ${row['First Name']}`;
+                    //const customerName = row['Customer'];
+                    const customerName = `${row['Last Name']}, ${row['First Name']}`;
                     const customerNote = row['Customer Note'];
                     const priceList = row['Price List'];
 
@@ -383,14 +538,14 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
       })
       .on('end', () => {
         // Sort the data by "Customer Name"
-        sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
-        //sortedData.sort((a, b) => { return a['Last Name'].localeCompare(b['Last Name']); });
+        //sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
+        sortedData.sort((a, b) => { return a['Last Name'].localeCompare(b['Last Name']); });
 
 
         // Process the sorted data
         sortedData.forEach((row) => {
-          const customerName = row['Customer'];
-          //const customerName = `${row['Last Name']}, ${row['First Name']}`;
+          //const customerName = row['Customer'];
+          const customerName = `${row['Last Name']}, ${row['First Name']}`;
           const product = row['Product'] + ' - ' + row['Package Name'];
           let quantity = Math.round(parseFloat(row['Quantity']));
           const numItems = Math.round(parseFloat(row['# of Items']));
@@ -645,6 +800,29 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 							console.error("Error in writeDeliveryOrderPDF:", error);
 							utilities.sendErrorEmail(error)
 						});
+
+          console.log("starting writeLabelPDF")
+          writeLabelPDF(orders_file_path)
+            .then((labelPdfPath) => {
+              console.log("HERE");
+              console.log(labelPdfPath);
+              const emailOptions = {
+                from: "jdeck88@gmail.com",
+                to: "fullfarmcsa@deckfamilyfarm.com",
+                cc: "jdeck88@gmail.com",
+                subject: 'FFCSA Reports: Labels for ' + fullfillmentDateEnd,
+                text: "Attached are the delivery labels.",
+                attachments: [
+                {
+                    filename: 'labels.pdf',
+                    content: fs.readFileSync(labelPdfPath),
+                },
+                ],
+              };
+              console.log("HERE2");
+              utilities.sendEmail(emailOptions);
+            }).catch(console.error);
+
 				})
 				.catch((error) => {
 					console.error('Error:', error);
