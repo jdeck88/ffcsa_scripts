@@ -129,13 +129,18 @@ labels.forEach((label, index) => {
             align: 'center'
         });
 
-    // 2️⃣ Draw pastel background for Drop Site (Bottom Half)
+    // 2️⃣ Draw background for Drop Site (Bottom Half)
     doc.fillColor(dropSiteColors[label.dropSite])
         .rect(x, y + footerHeight, labelWidth, footerHeight)
         .fill();
 
     // 3️⃣ Print Drop Site name over pastel
-    doc.fillColor('black')
+    dropsiteColor = 'black'
+    // lcfm defaults to dark color so make text white just for this one
+    if (label.dropSite.trim().toLowerCase() === 'lcfm') {
+      dropsiteColor = 'white';
+    }
+    doc.fillColor(dropsiteColor)
         .font('Helvetica-Bold')
         .fontSize(10)
         .text(label.dropSite, x, y + footerHeight + (footerHeight / 2) - 5, {
@@ -704,7 +709,6 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
         // Temporary async method for finishing PDF creation
         setTimeout(() => {
-          console.log("Success!");
           resolve(pdf_file); // Promise is resolved with "Success!"
         }, 1000);
       });
@@ -809,8 +813,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
           console.log("starting writeLabelPDF")
           writeLabelPDF(orders_file_path)
             .then((labelPdfPath) => {
-              console.log("HERE");
-              console.log(labelPdfPath);
               const emailOptions = {
                 from: "jdeck88@gmail.com",
                 to: "fullfarmcsa@deckfamilyfarm.com",
@@ -824,7 +826,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
                 },
                 ],
               };
-              console.log("HERE2");
               utilities.sendEmail(emailOptions);
             }).catch(console.error);
 
