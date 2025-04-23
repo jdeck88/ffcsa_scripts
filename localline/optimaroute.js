@@ -77,7 +77,9 @@ async function writeOptimarouteXLSX(dairyFilePath, frozenFilePath, deliveryOrder
 function groupOrdersByCustomer(updatedData) {
     const customerGroups = {};
     updatedData.forEach(row => {
-        const customerName = row['Customer'].trim();
+        //const customerName = row['Customer'].trim();
+        const customerName = `${row['Last Name']?.trim() || ''}, ${row['First Name']?.trim() || ''}`;
+
         const deliveryAddress = row['Fulfillment Address'].trim();
         const key = `${customerName} - ${deliveryAddress}`.toLowerCase();
 
