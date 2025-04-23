@@ -105,6 +105,11 @@ doc.pipe(writeStream);
                 const horizontalGap = 12;
 
 labels.forEach((label, index) => {
+  // Temporary don't print label for home delivery.
+  // We need to pass these into optimaroute first
+  if (label.dropSite === 'home delivery - eugene/springfield/junction city') {
+        return;  // 🚫 Skip this label
+    }
     const row = Math.floor(index / 3) % 10;
     const col = index % 3;
 
