@@ -9,45 +9,45 @@ const utilities = require('./utilities');
 const ExcelJS = require('exceljs');
 
 function formatPhoneNumber(phoneNumber) {
-    // Remove all non-digit characters
-    const digits = phoneNumber.replace(/\D/g, '');
+  // Remove all non-digit characters
+  const digits = phoneNumber.replace(/\D/g, '');
 
-    // Format into (XXX) XXX-XXXX
-    return `(${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6)}`;
+  // Format into (XXX) XXX-XXXX
+  return `(${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6)}`;
 }
 
 async function readLocalExcelAndExtractColumnData(filePath) {
   try {
-      // Load the Excel workbook from the local file
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.readFile(filePath);
+    // Load the Excel workbook from the local file
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
 
-      // Get the first worksheet
-      const worksheet = workbook.worksheets[0]; // Assuming the first worksheet
+    // Get the first worksheet
+    const worksheet = workbook.worksheets[0]; // Assuming the first worksheet
 
-      // Find the column index for "Local Line Product ID"
-      const headerRow = worksheet.getRow(1);
-      let columnIndex = -1;
-      headerRow.eachCell((cell, colNumber) => {
-          if (cell.value === 'Local Line Product ID') {
-              columnIndex = colNumber;
-          }
-      });
-
-      if (columnIndex === -1) {
-          throw new Error('Column "Local Line Product ID" not found');
+    // Find the column index for "Local Line Product ID"
+    const headerRow = worksheet.getRow(1);
+    let columnIndex = -1;
+    headerRow.eachCell((cell, colNumber) => {
+      if (cell.value === 'Local Line Product ID') {
+        columnIndex = colNumber;
       }
+    });
 
-      // Populate an array with the values in the "Local Line Product ID" column
-      const localLineProductIDs = [];
-      for (let i = 2; i <= worksheet.rowCount; i++) {
-          const cell = worksheet.getCell(i, columnIndex);
-          localLineProductIDs.push(cell.value.toString());
-      }
+    if (columnIndex === -1) {
+      throw new Error('Column "Local Line Product ID" not found');
+    }
 
-      return localLineProductIDs;
+    // Populate an array with the values in the "Local Line Product ID" column
+    const localLineProductIDs = [];
+    for (let i = 2; i <= worksheet.rowCount; i++) {
+      const cell = worksheet.getCell(i, columnIndex);
+      localLineProductIDs.push(cell.value.toString());
+    }
+
+    return localLineProductIDs;
   } catch (error) {
-      throw new Error(error)
+    throw new Error(error)
   }
 }
 
@@ -97,7 +97,7 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                 updatedData.sort((a, b) => {
                   const nameComparison = a['Fulfillment Name'].localeCompare(b['Fulfillment Name']);
                   if (nameComparison === 0) {
-                    // If the 'Fulfillment Name' is the same, sort by 'Customer' column
+                // If the 'Fulfillment Name' is the same, sort by 'Customer' column
                     return a['Customer'].localeCompare(b['Customer']);
                   }
                   return nameComparison;
@@ -112,7 +112,7 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                   return lastA.localeCompare(lastB);
                 });
 
-//console.log(updatedData)
+                //console.log(updatedData)
                 // We want to create an array of dropsites that contains an array of customers (the dropsite)
                 // contains just the dropsite name and the customers contain the Customer, Phone
                 updatedData.forEach((row) => {
@@ -199,48 +199,49 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                 }
 
                 count = 0
-for (const dropsiteName in dropsites) {
-  const tableData = Object.entries(dropsites[dropsiteName].customers).map(([name, values]) => ({
-    name,
-    tote: values.tote || '',
-    dairy: values.dairy || '',
-    frozen: values.frozen || ''
-  }));
+                for (const dropsiteName in dropsites) {
+                  const tableData = Object.entries(dropsites[dropsiteName].customers).map(([name, values]) => ({
+                    name,
+                    tote: values.tote || '',
+                    dairy: values.dairy || '',
+                    frozen: values.frozen || ''
+                  }));
 
-  masterdropsites[dropsiteName] = tableData;
+                  masterdropsites[dropsiteName] = tableData;
 
-  // Define the number of rows per page
-  const rowsPerPage = 22; // Adjust if needed
-  const totalPages = Math.ceil(tableData.length / rowsPerPage);
+                  // Define the number of rows per page
+                  const rowsPerPage = 22; // Adjust if needed
+                  const totalPages = Math.ceil(tableData.length / rowsPerPage);
 
-  let page = 1;
-  for (let i = 0; i < tableData.length; i += rowsPerPage) {
-    if (dropsiteName.toLowerCase().includes("membership purchase")) {
-        continue; // Skip this iteration
-    }
-    //if (i > 0) {
-    //  doc.addPage(); // Add a new page after the first
-   // }
+                  let page = 1;
+                  for (let i = 0; i < tableData.length; i += rowsPerPage) {
+                    if (dropsiteName.toLowerCase().includes("membership purchase")) {
+                      continue; // Skip this iteration
+                    }
+                    //if (i > 0) {
+                    //  doc.addPage(); // Add a new page after the first
+                    // }
 
-    // Print fulfillment date in the top right
-    doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
+                    // Print fulfillment date in the top right
+                    doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
 
-    // Print title with pagination
-    const title = `${dropsiteName} Manifest - Page ${page} of ${totalPages}`;
-    doc.fontSize(16).text(title, { bold: true });
-    //doc.moveDown(2);
+                    // Print title with pagination
+                    const title = `${dropsiteName} Manifest - Page ${page} of ${totalPages}`;
+                    doc.fontSize(16).text(title, { bold: true });
+                    //doc.moveDown(2);
 
-    // Print table for current page
-    const tableOptions = {
-      headers: ['Name', 'Tote', 'Dairy', 'Frozen'],
-      rows: tableData.slice(i, i + rowsPerPage).map((row) => [row.name, row.tote, row.dairy, row.frozen]),
-    };
-    doc.table(tableOptions);
+                    // Print table for current page
+                    const tableOptions = {
+                     headers: ['Name', 'Tote', 'Dairy', 'Frozen'],
+                    rows: tableData.slice(i, i + rowsPerPage).map((row) => [row.name, row.tote, row.dairy, row.frozen]),
+                    };
 
-    doc.addPage();
-    page++; // Increment page number
-  }
-}
+                    doc.table(tableOptions);
+
+                    doc.addPage();
+                    page++; // Increment page number
+                  }
+                }
 
 
                 // Master Checklist Table
@@ -315,62 +316,74 @@ for (const dropsiteName in dropsites) {
 }
 
 function productSpecificPackList(doc, dropsitesAll, disposition) {
-  let firstPage = true; // Track whether it's the first page (avoid unnecessary page breaks)
+    for (const dropsiteName in dropsitesAll) {
+        const selectedCustomers = {};
 
-  for (const dropsiteName in dropsitesAll) {
-    const selectedCustomers = {};
-    for (const customerName in dropsitesAll[dropsiteName].customers) {
-      const customerData = dropsitesAll[dropsiteName].customers[customerName];
-      const frozenProducts = customerData.filter((product) => product.disposition === disposition);
+        // 1️⃣ Filter customers with the specified disposition
+        for (const customerName in dropsitesAll[dropsiteName].customers) {
+            const customerData = dropsitesAll[dropsiteName].customers[customerName];
+            const filteredProducts = customerData.filter(item => item.disposition === disposition);
 
-      if (frozenProducts.length > 0) {
-        selectedCustomers[customerName] = frozenProducts;
-      }
-    }
-
-    // Only print dropsites that have the desired product
-    if (Object.keys(selectedCustomers).length > 0) {
-      let allCustomersTable = [];
-      for (const customerName in selectedCustomers) {
-        const customerData = selectedCustomers[customerName];
-
-        const tableData = customerData.map((values) => [
-          customerName,
-          values.product,
-          values.itemUnit,
-          values.quantity,
-        ]);
-
-        allCustomersTable.push(...tableData);
-      }
-
-      const rowsPerPage = 22; // Adjust based on your PDF layout
-      const totalPages = Math.ceil(allCustomersTable.length / rowsPerPage);
-
-      let page = 1;
-      for (let i = 0; i < allCustomersTable.length; i += rowsPerPage) {
-        if (!firstPage) {
-          doc.addPage(); // Start a new page if it's NOT the first dropsite
+            if (filteredProducts.length > 0) {
+                selectedCustomers[customerName] = filteredProducts;
+            }
         }
-        firstPage = false; // Set flag to false after the first page
 
-        // Print title with pagination
-        const title = `${dropsiteName} ${disposition.charAt(0).toUpperCase() + disposition.slice(1)} Product Packlist, Page ${page} of ${totalPages}`;
-       doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
-        doc.fontSize(14).text(title, { bold: true });
+        // 2️⃣ Skip dropsites without matching products
+        if (Object.keys(selectedCustomers).length === 0) continue;
 
-        // Print table data for the current page
-        const tableOptions = {
-          headers: ['Name', 'Product', 'Unit', 'Quantity'],
-          rows: allCustomersTable.slice(i, i + rowsPerPage),
-        };
-        doc.table(tableOptions);
+        // 3️⃣ Build full table with dividers
+        let allCustomersTable = [];
+        for (const customerName in selectedCustomers) {
+            const customerData = selectedCustomers[customerName];
 
-        page++;
-      }
+            const customerRows = customerData.map(item => [
+                customerName,
+                item.product,
+                item.itemUnit,
+                item.quantity,
+            ]);
+
+            if (allCustomersTable.length > 0) {
+                allCustomersTable.push([' ', '', '', '']);  // Solid line before new customer
+            }
+
+            allCustomersTable.push(...customerRows);
+        }
+
+        // 4️⃣ Pagination logic
+        const rowsPerPage = 22;
+        const totalPages = Math.ceil(allCustomersTable.length / rowsPerPage);
+
+        let page = 1;
+        for (let i = 0; i < allCustomersTable.length; i += rowsPerPage) {
+            if (i > 0) doc.addPage();  // Add page after first
+
+            // Header Info
+            doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
+
+            const title = `${dropsiteName} ${capitalize(disposition)} Product Packlist, Page ${page} of ${totalPages}`;
+            doc.fontSize(14).text(title, { bold: true });
+
+            // Table
+            const tableOptions = {
+                headers: ['Name', 'Product', 'Unit', 'Quantity'],
+                rows: allCustomersTable.slice(i, i + rowsPerPage),
+            };
+
+            doc.table(tableOptions);
+
+            page++;
+        }
+
+        // 5️⃣ Add a page break AFTER finishing each dropsite packlist
+        doc.addPage();
     }
-  }
+}
 
+// Helper to capitalize disposition
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 
