@@ -135,7 +135,7 @@ async function run() {
         </html>`;
 
         // Write the HTML file
-        const outputPathHTML = '../docs/delivery_data.html';
+        const outputPathHTML = '../../dff/docs/delivery_data.html';
         fs.writeFileSync(outputPathHTML, htmlContent, 'utf8');
         console.log(`HTML data written to ${outputPathHTML}`);
 
