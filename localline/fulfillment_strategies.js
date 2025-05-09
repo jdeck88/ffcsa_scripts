@@ -64,7 +64,16 @@ async function run() {
             `).join("");
 
             return dayRows ? `
-                <h2 style="margin-top: 20px;">${day} Dropsites</h2>
+                <h2 style="margin-top: 20px;">
+  ${day} Dropsites
+  ${
+    day === "Tuesday"
+      ? "(order window Thursday through Sunday)"
+      : (day === "Saturday" || day === "Friday")
+      ? "(order window Monday through Wednesday)"
+      : ""
+  }
+</h2>
                 <table>
                     <thead>
                         <tr>
@@ -135,7 +144,7 @@ async function run() {
         </html>`;
 
         // Write the HTML file
-        const outputPathHTML = '../../dff/docs/delivery_data.html';
+        const outputPathHTML = '../../killdeer/docs/delivery_data.html';
         fs.writeFileSync(outputPathHTML, htmlContent, 'utf8');
         console.log(`HTML data written to ${outputPathHTML}`);
 
