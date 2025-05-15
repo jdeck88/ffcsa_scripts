@@ -109,7 +109,7 @@ async function writeLabelPDF(csvFilePath) {
           // Temporary don't print label for home delivery.
           // We need to pass these into optimaroute first
           //if (label.dropSite === 'home delivery - eugene/springfield/junction city') {
-           // return;  // 🚫 Skip this label
+          // return;  // 🚫 Skip this label
           //}
           const row = Math.floor(index / 3) % 10;
           const col = index % 3;
@@ -121,7 +121,7 @@ async function writeLabelPDF(csvFilePath) {
 
           const footerHeight = labelHeight * 0.5;  // Bottom half for Drop Site
 
-           console.log(`${label.lastName}, ${label.firstName}`)
+          //console.log(`${label.lastName}, ${label.firstName}`)
           // 1️⃣ Print Customer Name (Top Half)
           doc.font('Helvetica-Bold')
             .fillColor('black')
@@ -543,21 +543,32 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
     const sortedData = [];
 
     // Read the CSV file and sort by "Customer Name" before processing
+    //
+    let rowCount = 0;
     fs.createReadStream(filename)
-      .pipe(fastcsv.parse({ headers: true }))
+      .pipe(fastcsv.parse({ headers: true, ignoreEmpty: true }))
+      .on('error', error => console.error('🚨 Stream Error:', error))
+      .on('data-invalid', (row, rowNumber) => {
+        console.warn(`⚠️ Invalid row at ${rowNumber}:`, row);
+      })
       .on('data', (row) => {
+        //console.log(`✅ Row ${row['Email']}`);
+        rowCount++
         sortedData.push(row);
       })
       .on('end', () => {
-        // Sort the data by "Customer Name"
-        //sortedData.sort((a, b) => a['Customer'].localeCompare(b['Customer']));
-        sortedData.sort((a, b) => { return a['Last Name'].localeCompare(b['Last Name']); });
-
+        console.log(`Finished parsing. ${rowCount} total rows processed.`);
+        sortedData.sort((a, b) =>
+          a['Last Name'].localeCompare(b['Last Name']) ||
+          a['First Name'].localeCompare(b['First Name']) ||
+          a['Email'].localeCompare(b['Email'])
+        );
 
         // Process the sorted data
         sortedData.forEach((row) => {
           //const customerName = row['Customer'];
           const customerName = `${row['Last Name']}, ${row['First Name']}`;
+          const email = `${row['Email']}`;
           const product = row['Product'] + ' - ' + row['Package Name'];
           let quantity = Math.round(parseFloat(row['Quantity']));
           const numItems = Math.round(parseFloat(row['# of Items']));
@@ -584,10 +595,10 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           }
 
           // If the customerName changes, start a new section
-          if (customerName !== currentCustomerName) {
-            currentCustomerName = customerName;
-            customers[customerName] = {
+          if (!customers[email]) {
+            customers[email] = {
               products: [],
+              customerName: customerName,
               phone: customerPhone,
               company: company,
               fullfillmentName: fullfillmentName,
@@ -599,7 +610,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           }
 
           if (category !== 'Membership') {
-            customers[customerName].products.push({
+            customers[email].products.push({
               product,
               quantity,
               itemUnit,
@@ -609,8 +620,8 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
         });
 
         // Iterate through items and generate the PDF content
-        for (const customerName in customers) {
-          const customerData = customers[customerName];
+        for (const email in customers) {
+          const customerData = customers[email];
 
           if (customerData.products.length > 0) {
             // Load the image (replace with the path to your image)
@@ -635,7 +646,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             textY += lineSpacing;
 
             // Customer details
-            doc.fontSize(12).text(`Name:        ${customerName}`, textX, textY);
+            doc.fontSize(12).text(`Name:        ${customerData.customerName}`, textX, textY);
             textY += lineSpacing;
             doc.fontSize(12).text(`Phone:       ${customerData.phone}`, textX, textY);
             textY += lineSpacing;
@@ -913,6 +924,13 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 }
 
 // Run the delivery_order script
-//fullfillmentDate = '2023-10-31'
+/*
+const fullfillmentDateObject = {
+  start: '2025-05-13',
+  end: '2025-05-13',
+  date: '2025-05-13'
+};
+delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
+*/
 fullfillmentDateObject = utilities.getNextFullfillmentDate()
-delivery_order(utilities.getNextFullfillmentDate().start, utilities.getNextFullfillmentDate().end);
+delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
