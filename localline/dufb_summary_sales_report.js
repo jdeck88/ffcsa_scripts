@@ -74,8 +74,9 @@ async function writeAndEmailReport(report, overall, beginDate, endDate) {
   // Wait for file then email
   stream.on('finish', () => {
     const emailOptions = {
-      from: "jdeck88@gmail.com",
-      to: "jdeck88@gmail.com",
+      from: "fullfarmcsa@deckfamilyfarm.com",
+      to: "fullfarmcsa@deckfamilyfarm.com",
+      cc: "jdeck88@gmail.com",
       subject: `FFCSA Report: Customer Purchase Summary ${beginDate} - ${endDate}`,
       text: "Attached is your PDF summary of customer purchases by category.",
       attachments: [
