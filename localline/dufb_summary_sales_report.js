@@ -73,16 +73,27 @@ async function writeAndEmailReport(report, overall, beginDate, endDate) {
 
   // Wait for file then email
   stream.on('finish', () => {
+
     const emailOptions = {
       from: "fullfarmcsa@deckfamilyfarm.com",
       to: "fullfarmcsa@deckfamilyfarm.com",
       cc: "jdeck88@gmail.com",
-      subject: `FFCSA Report: Customer Purchase Summary ${beginDate} - ${endDate}`,
-      text: "Attached is your PDF summary of customer purchases by category.",
+      subject: `FFCSA Report: DUFB Purchase Summary ${beginDate} - ${endDate}`,
+      text: [
+        "Attached is your PDF summary of 'DUFB' member purchases by category for Full Farm CSA Orders.",
+        "This report includes all members tagged with 'DUFB' in Local Line and summarizes their monthly purchases, grouped by product category.",
+        "",
+        "It highlights total spending, total dollars spent on vegetables and fruits, and the percentage of DUFB-eligible items per member.",
+        "Members who meet or exceed the 50% requirement for DUFB-eligible purchases are highlighted in green.",
+        "Members who fall below the 50% threshold are highlighted in red to support program oversight and follow-up.",
+        "This report is automatically generated at the start of each month from our fulfillment system.",
+        "",
+        "For questions, please reach out to FFCSA staff at 541-998-4697."
+      ].join("\n"),
       attachments: [
         {
           filename: `dufb_summary_sales_${endDate}.pdf`,
-          path: pdfPath, // ✅ use `path:` instead of `content: fs.readFileSync(...)`
+          path: pdfPath,
         },
       ],
     };
