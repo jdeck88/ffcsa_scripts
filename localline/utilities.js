@@ -287,7 +287,6 @@ async function sendErrorEmail(error) {
 sendEmail passes in emailOptions as argument
 */
 async function sendEmail(emailOptions) {
-    console.log('sendEmail function')
     // Create a Nodemailer transporter
     const transporter = nodemailer.createTransport({
         service: "Gmail", // e.g., "Gmail" or use your SMTP settings

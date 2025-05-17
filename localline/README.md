@@ -32,52 +32,81 @@ ENVIRONMENT=PRODUCTION | DEVELOPMENT
 
 ```
 ##################################################
+# killdeer cron job
+##################################################
+# Run on Tuesdays at 04:16 PT which is 12:15 UTC
+16 12 * * 2 /home/exouser/code/killdeer/scripts/run.sh square_inventory_report.js
+# Run everyday at 04:12 PT which is 12:16 UTC
+16 11 * * * /home/exouser/code/killdeer/scripts/run.sh square_locations.js
+# Run everyday at 04:11 PT which is 12:11 UTC
+16 11 * * * /home/exouser/code/killdeer/scripts/run.sh exportPricelistForViewing.js
+
+##################################################
+# dff cron jobs
+##################################################
+# export pricelist everyday at 4am
+# Update history of inventory changes on friday mornings
+#16 11 * * 4 /home/exouser/code/dff/scripts/run.sh update
+
+##################################################
 # Local Line Scripts (NOTE: UTC is +8 hours)
 ##################################################
-# Run Subscriptions script at 6pm
+# Run Subscriptions script daily at 6:01 PM PT / 01:01 UTC (next day)
 1 1 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
-# Run Subscriptions script at 12am
+# Run Subscriptions script daily at 12:01 AM PT / 07:01 UTC
 1 7 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
-# Run Subscriptions script at 6am
+# Run Subscriptions script daily at 6:01 AM PT / 13:01 UTC
 1 13 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
-# Run Subscriptions script at 12pm
+# Run Subscriptions script daily at 12:01 PM PT / 19:01 UTC
 1 19 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
-# download the subscriber metabase report from local line every day which keeps a log of
-# all upcoming subscriptions.  logging changes in git allows us to look back in time
+
+# Download the subscriber metabase report daily at 03:02 AM PT / 10:02 UTC
+# This keeps a log of all upcoming subscriptions — changes are logged in git for auditing.
 2 10 * * * /home/exouser/code/ffcsa_scripts/localline/download_subscriber_meta_report.sh
 
-# Run all on Monday at 03:00 PT which is 11:00 UTC
+# MONDAY RUNS at 03:00 PT / 11:00 UTC
+# Run delivery orders
 0 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh delivery_orders.js
+# Run checklists
 4 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh checklists.js
+# Run vendors report
 11 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh vendors.js
+# Run weekly KPIs
 12 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh weekly_kpi.js
+# Run weekly benefits
 13 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh weekly_benefits.js
+# Run route optimization
 15 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh optimaroute.js
 
-# Run on Tuesday at 03:05 PT which is 11:00 UTC
+# TUESDAY at 03:05 AM PT / 11:05 UTC
+# Run status change checker
 5 11 * * 2  /home/exouser/code/ffcsa_scripts/localline/run.sh status_change.js
 
-# Run all on Thursday at 03:00 PT which is 11:00 UTC
+# THURSDAY RUNS at 03:00 PT / 11:00 UTC
+# Run delivery orders
 0 11 * * 4 /home/exouser/code/ffcsa_scripts/localline/run.sh delivery_orders.js
+# Run checklists
 4 11 * * 4 /home/exouser/code/ffcsa_scripts/localline/run.sh checklists.js
+# Run vendors report
 11 11 * * 4 /home/exouser/code/ffcsa_scripts/localline/run.sh vendors.js
+# Run route optimization
 15 11 * * 4 /home/exouser/code/ffcsa_scripts/localline/run.sh optimaroute.js
-# dff
-16 11 * * 4 /home/exouser/code/dff/scripts/run.sh exportPricelistForViewing.js
 
-# Update history of inventory changes on friday mornings
-# dff
-16 11 * * 4 /home/exouser/code/dff/scripts/run.sh update
-# Update fulfillment strategies on Friday mornings
+# FRIDAY at 03:15 AM PT / 11:15 UTC
+# Update fulfillment strategies
 15 11 * * 5 /home/exouser/code/ffcsa_scripts/localline/run.sh fulfillment_strategies.js
 
-# Run pricelist check script to print results every morning 03:20 PT which is 11:20 UTC
+# DAILY at 03:20 AM PT / 11:20 UTC
+# Run pricelist checker
 20 11 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh pricelist_checker.js
 
-# Run monthly_customers report on the 1st of the month at 01:01 PT which is 09:00 UTC
-1 9 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh monthly_customers.js
-# Run monthly_vendors report on the 1st of the month at 04:01 PT which is 12:00 UTC
-1 12 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh monthly_vendors.js
+# MONTHLY on the 1st of the month at 05:00 AM PT / 12:00 UTC
+# Run monthly_customers
+1 12 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh monthly_customers.js
+# Run monthly_vendors
+3 12 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh monthly_vendors.js
+# Run dufb_summary_sales_report
+5 12 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh dufb_summary_sales_report.js
 ```
 
 `run.sh` sets up the node environment using NVM. It is important that we point to both
