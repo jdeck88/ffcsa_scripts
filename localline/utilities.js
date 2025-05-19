@@ -134,7 +134,7 @@ async function pollStatus(id, accessToken) {
     let pollingStartTime = Date.now();
 
     const pollInterval = 5000; // 5 seconds
-    const maxPollingTime = 60000; // 1 minutes
+    const maxPollingTime = 90000; // 1.5 minutes
 
     while (status !== "COMPLETE") {
         const data = await checkRequestId(id, accessToken);
@@ -253,26 +253,27 @@ async function sendSubscribersEmail(results, filename, subject) {
     });
 }*/
 
+
 async function sendErrorEmail(error) {
-    console.log('function here to email an error'+ error)
-    // Create a Nodemailer transporter
+    const callerScript = path.basename(require.main.filename);
+
+    console.log(`[${callerScript}] Error occurred: ${error}`);
+
     const transporter = nodemailer.createTransport({
-        service: "Gmail", // e.g., "Gmail" or use your SMTP settings
+        service: "Gmail",
         auth: {
             user: process.env.MAIL_USER,
             pass: process.env.MAIL_ACCESS,
         },
     });
 
-    // Email information
     const emailOptions = {
         from: "jdeck88@gmail.com",
         to: "jdeck88@gmail.com",
-        subject: "FFCSA Reports: Error Message",
-        text: "Error Message: " + error,
+        subject: `FFCSA Reports: Error in ${callerScript}`,
+        text: `Script: ${callerScript}\n\nError Message:\n${error}`,
     };
 
-    // Send the email with the attachment
     transporter.sendMail(emailOptions, (error, info) => {
         if (error) {
             console.error("Error sending email:", error);
@@ -280,7 +281,6 @@ async function sendErrorEmail(error) {
             console.log("Email sent:", info.response);
         }
     });
-    //process.exit()
 }
 
 /*
