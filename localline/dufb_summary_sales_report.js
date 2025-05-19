@@ -194,7 +194,7 @@ if (require.main === module) {
     [beginDate, endDate] = process.argv.slice(2);
   } else {
     // Default to last month
-    const { first, last } = utilities.getLastMonth();
+    const { first, last } = utilities.getDUFBRange();
     beginDate = first;
     endDate = last;
     console.log(`📆 No dates provided. Defaulting to last month: ${beginDate} to ${endDate}`);

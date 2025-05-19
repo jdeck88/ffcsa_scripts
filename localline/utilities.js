@@ -416,6 +416,30 @@ function getLastMonth() {
         last: lastDate,
     };
 }
+// Return date range for DUFB reporting: 26th of prior month 25th of current month
+function getDUFBRange() {
+    const today = new Date();
+    const currentDay = today.getDate();
+
+    let start, end;
+
+    if (currentDay < 26) {
+        // Example: May 19 → Mar 26 to Apr 25
+        start = new Date(today.getFullYear(), today.getMonth() - 2, 26);
+        end = new Date(today.getFullYear(), today.getMonth() - 1, 25);
+    } else {
+        // Example: May 26 → Apr 26 to May 25
+        start = new Date(today.getFullYear(), today.getMonth() - 1, 26);
+        end = new Date(today.getFullYear(), today.getMonth(), 25);
+    }
+
+    const format = (date) => date.toISOString().split('T')[0];
+
+    return {
+        first: format(start),
+        last: format(end),
+    };
+}
 
 // * Order day is one day previous
 function getOrderDay() {
