@@ -7,7 +7,6 @@ const fastcsv = require('fast-csv');
 const utilities = require('./utilities');
 const ExcelJS = require('exceljs');
 
-
 async function writeVendorsPDF(products_file_path, vendors_file_path, filename, fullfillmentDate) {
   return new Promise((resolve, reject) => {
     const pdf_file = 'data/vendors.pdf'
@@ -46,11 +45,6 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename, 
                   const price = (parseFloat(row['Product Subtotal']) / quantity).toFixed(2);
                   const totalPrice = row['Product Subtotal']
                   const category = row['Category']
-                  //const fullfillmentDate = row['Fulfillment Date']
-                  // If # of Items is > 1 and quantity is 1, then update quantity to be numItems
-                  //if (numItems > 1 && quantity == 1) {
-                  //quantity = numItems
-                  //}
 
                   // If the customerName changes, start a new section
                   if (vendorName !== currentVendorName) {
@@ -96,7 +90,6 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename, 
                       itemRow.totalPrice = quantity * itemRow.price;
                     }
 
-                    //console.log(fullfillmentDate)
                     formattedDate = fullfillmentDate
                     doc.fontSize(16).text(formattedDate, { align: 'right' });
                     doc.fontSize(16).text(vendorName, { bold: true });
@@ -166,7 +159,6 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename, 
                     // You can use this new array in your PDF generation code
 
                     // Additional code for handling total price, new pages, and vendorDoc if needed
-
                     const pageWidth = 600
 
                     const table = {
@@ -207,7 +199,6 @@ async function writeVendorsPDF(products_file_path, vendors_file_path, filename, 
                         console.log("Waiting for emails to process")
                       }, 2000);
                     }
-
                   }
                 }
 
@@ -300,14 +291,11 @@ async function readVendorsExcel(filePath) {
       dataArray.push(obj);
     }
 
-    //console.log('dataArray')
-    //console.log(dataArray);
     return dataArray
 
   } catch (error) {
     throw new Error(error)
   }
-
 }
 
 // Build all check-lists
@@ -323,9 +311,6 @@ async function vendors(fullfillmentDate) {
 
     products_url = 'https://localline.ca/api/backoffice/v2/products/export/?direct=true'
     products_file = 'data/products.xlsx'
-
-
-
     vendors_url = 'https://localline.ca/api/backoffice/v2/vendors/export/?direct=true'
     vendors_file = 'data/vendors.csv'
     utilities.downloadBinaryData(vendors_url, vendors_file, accessToken)
