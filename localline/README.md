@@ -98,13 +98,13 @@ ENVIRONMENT=PRODUCTION | DEVELOPMENT
 # Run pricelist checker
 20 11 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh pricelist_checker.js
 
-# MONTHLY on the 1st of the month at 05:00 AM PT / 12:00 UTC
-# Run monthly_customers
+# MONTHLY
+# Run dufb_summary_sales_report on the 26th at 05:00am PT / 12:00 UTC
+0 12 26 * * /home/exouser/code/ffcsa_scripts/localline/run.sh dufb_summary_sales_report.js
+# Run monthly_customers on the 1st of the month at 05:00 AM PT / 12:00 UTC
 1 12 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh monthly_customers.js
-# Run monthly_vendors
+# Run monthly_vendors on the 1st of the month at 05:03 AM PT / 12:00 UTC
 3 12 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh monthly_vendors.js
-# Run dufb_summary_sales_report
-5 12 1 * * /home/exouser/code/ffcsa_scripts/localline/run.sh dufb_summary_sales_report.js
 ```
 
 `run.sh` sets up the node environment using NVM. It is important that we point to both
