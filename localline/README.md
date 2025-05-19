@@ -36,8 +36,6 @@ ENVIRONMENT=PRODUCTION | DEVELOPMENT
 ##################################################
 # Run on Tuesdays at 04:16 PT which is 12:15 UTC
 16 12 * * 2 /home/exouser/code/killdeer/scripts/run.sh square_inventory_report.js
-# Run everyday at 04:12 PT which is 12:16 UTC
-16 11 * * * /home/exouser/code/killdeer/scripts/run.sh square_locations.js
 # Run everyday at 04:11 PT which is 12:11 UTC
 16 11 * * * /home/exouser/code/killdeer/scripts/run.sh exportPricelistForViewing.js
 
