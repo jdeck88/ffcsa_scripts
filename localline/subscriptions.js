@@ -6,6 +6,7 @@ const fastcsv = require('fast-csv');
 const PDFDocument = require('pdfkit-table');
 const axios = require('axios');
 const utilities = require('./utilities');
+const { DateTime } = require('luxon');  // At top of file, if not already
 
 require('dotenv').config();
 
@@ -92,17 +93,18 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
             if (row['Payment Method'] == 'SNAP') {
               statusString = 'SNAP';
               successString = 'PENDING';
+            } else {
+              subscribers_issues.push({
+                Success: successString,
+                Status: statusString,
+                Date: row['Date'],
+                Customer: row['Customer'],
+                email: row['Email'],
+                'Product': row['Product'],
+                'Product Subtotal': row['Product Subtotal'],
+                'Order': row['Order']
+              });
             }
-            subscribers_issues.push({
-              Success: successString,
-              Status: statusString,
-              Date: row['Date'],
-              Customer: row['Customer'],
-              email: row['Email'],
-              'Product': row['Product'],
-              'Product Subtotal': row['Product Subtotal'],
-              'Order': row['Order']
-            });
           }
         }
       })
@@ -111,7 +113,6 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
         subscribers_issues.sort((a, b) => a['Product'].localeCompare(b['Product']));
 
         // Combine the two arrays based on the "email" field and add "id" to the subscribers array
-        //console.log(customerData)
         const combinedData = subscribers.map(subscriber => {
           const customer = customerData.find(cust => cust.email === subscriber.email);
           return {
@@ -223,17 +224,6 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
           rows: nonSnapData.map(item => [item.success, item.status, item.id, item.order, item.customer, item.email, item.subscription_date, item.level, item.amount]),
         };
 
-        // Filter the data for the second table (only SNAP)
-        const snapData = allCombinedData.filter(item => item.status === 'SNAP');
-
-        // Define the second table
-        const snapTable = {
-          title: 'SNAP Subscriptions',
-          headers: ['Credit Balance', 'Status', 'CustomerID', 'OrderID', 'Customer', 'Email', 'Subscription Date', 'Level', 'Total'],
-          rows: snapData.map(item => [item.success, item.status, item.id, item.order, item.customer, item.email, item.subscription_date, item.level, item.amount]),
-        };
-
-
         try {
           doc.font('Times-Bold');
           doc.fontSize(14);  
@@ -248,10 +238,6 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
 
           doc.table(nonSnapTable);
 
-          doc.moveDown(2);
-
-          doc.table(snapTable);
-
         } catch (error) {
           console.error('Error creating table:', error);
           throw new Error(error);
@@ -262,6 +248,12 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
         // sort allbombined data on success field in reverse alphabetical order
         allCombinedData.sort((a, b) => String(b.success).localeCompare(String(a.success)));
 
+        // Build summaryText
+        /*
+        let titleText = `<pre>FFCSA Subscribers Report\n`;
+         const pacificTime = DateTime.now().setZone('America/Los_Angeles').toFormat('yyyy-MM-dd HH:mm');
+        titleText += `Generated on ${pacificTime}\n`;
+
         const results = {
           count: num_subscriptions,
           pdf_file: pdf_file,
@@ -270,6 +262,33 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
             headers: ['Credit Balance', 'Status', 'CustomerID', 'OrderID', 'Customer', 'Email', 'Subscription Date', 'Level', 'Total'],
             rows: allCombinedData.map(item => [ item.success, item.status, item.id, item.order, item.customer, item.email, item.subscription_date, item.level, item.amount, ]),
           })
+        };
+        */
+        // Build titleText with <pre> block
+        let bodyText = `FFCSA Subscribers Report\n`;
+        const pacificTime = DateTime.now().setZone('America/Los_Angeles').toFormat('yyyy-MM-dd HH:mm');
+        bodyText += `Generated on ${pacificTime}\n`;
+
+        // Create body text table
+        bodyText += formatTextTable({
+          headers: ['Credit Balance', 'Status', 'CustomerID', 'OrderID', 'Customer', 'Email', 'Subscription Date', 'Level', 'Total'],
+          rows: allCombinedData.map(item => [
+            item.success,
+            item.status,
+            item.id,
+            item.order,
+            item.customer,
+            item.email,
+            item.subscription_date,
+            item.level,
+            item.amount,
+          ]),
+        });
+
+        const results = {
+          count: num_subscriptions,
+          pdf_file: pdf_file,
+          body_text: `<pre>${bodyText}</pre>`
         };
 
         // TODO: figure out appropriate aync methods to enable finishing PDF creation
@@ -365,10 +384,9 @@ async function subscriptions(yesterday,lastweek) {
                 .then((results) => {
                   try {
 
-                    //bodytext = "Please see the attached file.  Subscribers report is run daily."
                     bodytext = results.body_text
                     if (parseInt(results.count) < 1) {
-                      bodytext = "No new subscribers this day. No file to attach"
+                      bodytext = "<pre>No new subscribers this day. No file to attach</pre>"
                     }
 
                     // Email information
@@ -377,7 +395,7 @@ async function subscriptions(yesterday,lastweek) {
                       to: "jdeck88@gmail.com",
                       cc: "fullfarmcsa@deckfamilyfarm.com",
                       subject: 'Subscriptions made on ... ' + lastweek + ' to ' + yesterday,
-                      text: bodytext,
+                      html: bodytext,
                     };
 
                     if (results.count > 0) {
@@ -461,7 +479,7 @@ async function storeCredit(customerID, amount, accessToken) {
         if (error) {
           reject(error);
         } else {
-          console.log(response.body);
+          //console.log(response.body);
           resolve();
         }
       });
@@ -483,7 +501,7 @@ function formatTextTable({ title, headers, rows }) {
   const formatRow = (row) =>
     row.map((cell, i) => String(cell ?? '').padEnd(colWidths[i])).join('');
 
-  let output = title + '\n\n';
+  let output = '\n\n';
   output += formatRow(headers) + '\n';
   output += colWidths.map(w => '-'.repeat(w)).join('') + '\n';
   for (const row of rows) {
@@ -504,21 +522,21 @@ function formatTextTable({ title, headers, rows }) {
 
 // Main logic for handling command-line arguments or default calls
 if (require.main === module) {
-    const args = process.argv.slice(2); // Get command-line arguments
+  const args = process.argv.slice(2); // Get command-line arguments
 
-    if (args[0] === 'today') {
-        // Handle the "today" argument
-        const today = new Date();
-        const priorDate = new Date(today);
-        priorDate.setDate(today.getDate() - 1);
+  if (args[0] === 'today') {
+    // Handle the "today" argument
+    const today = new Date();
+    const priorDate = new Date(today);
+    priorDate.setDate(today.getDate() - 1);
 
-        const todayString = today.toISOString().split('T')[0];
-        const priorDateString = priorDate.toISOString().split('T')[0]; 
+    const todayString = today.toISOString().split('T')[0];
+    const priorDateString = priorDate.toISOString().split('T')[0]; 
 
-        //console.log(`testing with ${todayString}, ${priorDateString}`)
-        subscriptions(todayString, priorDateString);
-    } else {
-       //console.log(`testing with ${utilities.getOrderDay()}, ${utilities.getOrderDayMinusTwentyOne()}`)
-       subscriptions(utilities.getOrderDay(), utilities.getOrderDayMinusTwentyOne());
-    }
+    //console.log(`testing with ${todayString}, ${priorDateString}`)
+    subscriptions(todayString, priorDateString);
+  } else {
+    //console.log(`testing with ${utilities.getOrderDay()}, ${utilities.getOrderDayMinusTwentyOne()}`)
+    subscriptions(utilities.getOrderDay(), utilities.getOrderDayMinusTwentyOne());
+  }
 }
