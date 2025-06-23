@@ -69,20 +69,23 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
           if (row['Payment Status'] === "PAID" || row['Payment Status'] === "AUTHORIZED") {
             let statusString = row['Payment Status']
             successString = 'SUCCESS';
+            // JBD change 6/23/2025 -- IGNORE SNAP payments, we no longer are processing through
+            // the subscription system
             if (row['Payment Method'] == 'SNAP') {
               successString = 'PENDING';
               statusString = 'SNAP';
+            } else {
+              subscribers.push({
+                Success: successString,
+                Status: statusString,
+                Date: row['Date'],
+                Customer: row['Customer'],
+                email: row['Email'],
+                'Product': row['Product'],
+                'Product Subtotal': row['Product Subtotal'],
+                'Order': row['Order']
+              });
             }
-            subscribers.push({
-              Success: successString,
-              Status: statusString,
-              Date: row['Date'],
-              Customer: row['Customer'],
-              email: row['Email'],
-              'Product': row['Product'],
-              'Product Subtotal': row['Product Subtotal'],
-              'Order': row['Order']
-            });
           } else {
             let statusString = row['Payment Status']
             successString = 'FAIL';
