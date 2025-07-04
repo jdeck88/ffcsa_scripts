@@ -4,8 +4,8 @@
 # and then execute particular node scripts
 
 # use NVM to get latest node
-export NVM_DIR=$HOME/.nvm;
-source $NVM_DIR/nvm.sh;
+#export NVM_DIR=$HOME/.nvm;
+#source $NVM_DIR/nvm.sh;
 
 # Change to the current location
 cd "$(dirname "$0")"
@@ -56,16 +56,6 @@ if [ "$1" == "weekly_kpi.js" ]; then
     git add data/weekly_kpi.json
     #git add data/fulfillment_kpi.json
     git commit -m "Update weekly kpi files"
-    git push
-    echo "Changes pushed to GitHub."
-  else
-    echo "No changes in data files."
-  fi
-fi
-if [ "$1" == "fulfillment_kpi.js" ]; then
-  if [[ -n $(git status -s data/fulfillment_summary_kpi.json) ]]; then
-    git add data/fulfillment_summary_kpi.json
-    git commit -m "Update fulfillment summary kpi file"
     git push
     echo "Changes pushed to GitHub."
   else
