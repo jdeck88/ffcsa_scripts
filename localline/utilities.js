@@ -306,6 +306,37 @@ async function sendEmail(emailOptions) {
     });
 }
 
+/*
+// SENDGRID TRANSPORT
+async function sendEmail(emailOptions) {
+    const transporter = require('nodemailer').createTransport({
+        host: 'smtp.sendgrid.net',
+        port: 2525,
+        secure: false, // 2525 is typically non-TLS
+        auth: {
+            user: 'apikey', // This literal string is required by SendGrid
+            pass: process.env.SENDGRID_API_KEY, // Make sure this is set
+        },
+    });
+	console.log(process.env.SENDGRID_API_KEY)
+
+    // Ensure from and replyTo are set if not provided
+    const mailData = {
+        from: 'Full Farm CSA <fullfarmcsa@m.deckfamilyfarm.com>',
+        replyTo: 'fullfarmcsa@deckfamilyfarm.com',
+        ...emailOptions,
+    };
+
+    try {
+        const info = await transporter.sendMail(mailData);
+        console.log('Email sent:', info.response);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+}
+*/
+
+
 function getNextTuesdayOrSaturday() {
     const today = new Date();
 
