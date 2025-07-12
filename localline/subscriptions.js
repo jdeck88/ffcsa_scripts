@@ -524,19 +524,24 @@ function formatTextTable({ title, headers, rows }) {
 if (require.main === module) {
   const args = process.argv.slice(2); // Get command-line arguments
 
+
+  const now = new Date();
+  const adjusted = new Date(now.getTime() - 8 * 60 * 60 * 1000);  // subtract 8 hours
+  const todayString = adjusted.toISOString().split('T')[0];
+
+
   if (args[0] === 'today') {
-    // Handle the "today" argument
-    const today = new Date();
     const priorDate = new Date(today);
     priorDate.setDate(today.getDate() - 1);
-
-    const todayString = today.toISOString().split('T')[0];
     const priorDateString = priorDate.toISOString().split('T')[0]; 
 
     //console.log(`testing with ${todayString}, ${priorDateString}`)
     subscriptions(todayString, priorDateString);
   } else {
     //console.log(`testing with ${utilities.getOrderDay()}, ${utilities.getOrderDayMinusTwentyOne()}`)
-    subscriptions(utilities.getOrderDay(), utilities.getOrderDayMinusTwentyOne());
+    console.log(`testing with ${todayString}, ${utilities.getOrderDayMinusTwentyOne()}`)
+    subscriptions(todayString, utilities.getOrderDayMinusTwentyOne());
+    // OLD method was minus one day but changed to above, which is today to be more current
+    //subscriptions(utilities.getOrderDay(), utilities.getOrderDayMinusTwentyOne());
   }
 }
