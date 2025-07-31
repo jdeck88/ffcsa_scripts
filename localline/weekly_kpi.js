@@ -354,7 +354,6 @@ const salesData = {
 // $node weekly_kpi.js 2024-07-10
 // can build a shell script to back populate all data
 
-//console.log(priorWeek.start, priorWeek.end);
-//run(priorWeek.start, priorWeek.end);
 console.log(priorWeek.start, priorWeek.end);
-//run('2025-07-07', '2025-07-13')
+run(priorWeek.start, priorWeek.end);
+//run('2025-07-21', '2025-07-27')
