@@ -9178,8 +9178,8 @@
         "numGuestOrders": 19,
         "averageItemsPerOrder": 10,
         "averageOrderAmount": "122.05",
-        "totalActiveSubscribers": 259,
-        "projectedMonthlySubscriptionRevenue": 57950,
+        "totalActiveSubscribers": 262,
+        "projectedMonthlySubscriptionRevenue": 58550,
         "vendors": {
           "Creamy Cow, LLC": 2014.28,
           "Deck Family Farm": 7668.63,
@@ -9271,47 +9271,48 @@
           "Friendly": 1540.06,
           "Corvallis": 136.24,
           "Beaverton": 71.24
-        }
+        },
+        "skippedSubscribers": 20,
+        "feedAFriendSubscribers": 17
       }
     },
     {
       "dateRange": "2025-07-14 to 2025-07-20",
       "data": {
-        "totalSales": "16480.03",
-        "numOrders": 140,
-        "numSubscriberOrders": 131,
+        "totalSales": "16117.48",
+        "numOrders": 139,
+        "numSubscriberOrders": 130,
         "numGuestOrders": 9,
-        "averageItemsPerOrder": 11,
-        "averageOrderAmount": "118.57",
-        "totalActiveSubscribers": 259,
-        "projectedMonthlySubscriptionRevenue": 57950,
+        "averageItemsPerOrder": 10,
+        "averageOrderAmount": "116.82",
+        "totalActiveSubscribers": 262,
+        "projectedMonthlySubscriptionRevenue": 58550,
         "vendors": {
           "Full Farm CSA": 487.3,
-          "Deck Family Farm": 7277.2,
+          "Deck Family Farm": 7179.46,
           "OGC": 1593.84,
           "Red Tail Growers": 756.16,
           "Grazier's Garden": 422.7,
           "Camas Swale Farm": 938.03,
           "Creamy Cow, LLC": 2107.05,
           "Reality Kitchen Nonprofit": 45.21,
-          "River Ranch Oregon Olive OIl": 188.73,
+          "River Ranch Oregon Olive OIl": 168.63,
           "Deck Family Farm's Hyland Artisinal Meats": 381.92,
           "Little Wings": 730.43,
           "Sweet Creek": 110.71,
-          "Elegant Elephant Baking Co.": 151.18,
+          "Elegant Elephant Baking Co.": 142.93,
           "Small is Beautiful Farm": 223.98,
-          "BNF Kombucha and Jun": 181.71,
-          "Creole Me Up": 27.38,
-          "My Brothers Farm": 12.16,
-          "Jar Joy Goods": 202.75,
           "Camas Country Mill": 61.7,
+          "BNF Kombucha and Jun": 172.35,
           "Sourdough Bliss": 197.7,
           "Radiant Coffee Roasters": 292.6,
-          "Lonesome Whistle": 89.59
+          "Lonesome Whistle": 89.59,
+          "My Brothers Farm": 6.08,
+          "Creole Me Up": 9.11
         },
         "category": {
           "Organic Fruit": 1380.9,
-          "Sausages & Cured Meats": 1705.92,
+          "Sausages & Cured Meats": 1608.18,
           "Organic Vegetables - Roots": 232.11,
           "Organic Vegetables - Peppers": 236.67,
           "Organic Vegetables - Squash": 173.98,
@@ -9322,7 +9323,7 @@
           "Pasture-raised Poultry": 1413.76,
           "Raw Dairy (Unpasteurized)": 2107.05,
           "Pasture-raised Pork": 1041.75,
-          "Dry Goods": 1630.55,
+          "Dry Goods": 1588.59,
           "Organic Vegetables - Onions/Garlic": 211.38,
           "Organic Vegetables - Herbs": 242.86,
           "Organic Vegetables - Mushrooms": 294.94,
@@ -9331,7 +9332,7 @@
           "Organic Vegetables - Potatoes": 190.1,
           "Organic Vegetables - Leafy Greens": 549.72,
           "Organic Vegetables  - Broccoli/Cauliflower/Cabbage": 40.03,
-          "Home Goods": 342.55,
+          "Home Goods": 119.7,
           "Organs/Lard/Bones": 15.02,
           "Organ Meat & Lard": 13.46
         },
@@ -9359,7 +9360,7 @@
         },
         "dropsite": {
           "Hollywood Farmers Market": 2301.2,
-          "PSU Farmers Market": 2136.4,
+          "PSU Farmers Market": 1773.85,
           "St Johns Farmers Market": 1152.96,
           "Woodstock": 739.17,
           "Corvallis": 118.26,
@@ -9375,7 +9376,9 @@
           "Main St Market- Springfield": 134.65,
           "Springfield": 483.03,
           "Beaverton": 540.94
-        }
+        },
+        "skippedSubscribers": 20,
+        "feedAFriendSubscribers": 17
       }
     },
     {
@@ -9387,8 +9390,8 @@
         "numGuestOrders": 11,
         "averageItemsPerOrder": 10,
         "averageOrderAmount": "113.07",
-        "totalActiveSubscribers": 261,
-        "projectedMonthlySubscriptionRevenue": 58450,
+        "totalActiveSubscribers": 262,
+        "projectedMonthlySubscriptionRevenue": 58550,
         "vendors": {
           "Elegant Elephant Baking Co.": 172.08,
           "BNF Kombucha and Jun": 454.59,
@@ -9483,7 +9486,9 @@
           "Main St Market- Springfield": 364.07,
           "Beaverton": 118.17,
           "Springfield": 358.26
-        }
+        },
+        "skippedSubscribers": 20,
+        "feedAFriendSubscribers": 17
       }
     }
   ]
