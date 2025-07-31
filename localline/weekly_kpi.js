@@ -9,37 +9,51 @@ const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
 const { createObjectCsvWriter } = require('csv-writer');
 
-async function subscribers(filename ) {
+async function subscribers(filename) {
 	return new Promise((resolve, reject) => {
 		const sortedData = [];
-		// Read the CSV file and sort by "Customer Name" before processing
+
 		fs.createReadStream(filename)
 			.pipe(fastcsv.parse({ headers: true }))
 			.on('data', (row) => {
 				sortedData.push(row);
 			})
 			.on('end', () => {
-				// Initialize variables to store the count and sum
 				let activeMembersCount = 0;
 				let totalAmountForActiveMembers = 0;
+				let skippedCount = 0;
+				let feedAFriendCount = 0;
 
-				// Iterate through sortedData to count active members and sum 'Total' column
 				sortedData.forEach(row => {
-					// Check if the status is 'Active'
 					if (row.Status === 'Active') {
 						activeMembersCount++;
 
-						// Extract the 'Total' column value and add it to the sum
 						const total = parseFloat(row.Total);
 						if (!isNaN(total)) {
 							totalAmountForActiveMembers += total;
+
+							// Feed-a-Friend: Total = 100, 150, 250
+							if ([100, 150, 250].includes(total)) {
+								feedAFriendCount++;
+							}
+						}
+
+						// Skipped: Next Fulfillment Status = skipped
+						if (row['Next Fulfillment Status']?.toLowerCase() === 'skipped') {
+							skippedCount++;
 						}
 					}
 				});
 
+				// Save results to global salesData
 				salesData.totalActiveSubscribers = activeMembersCount;
-				salesData.projectedMonthlySubscriptionRevenue = totalAmountForActiveMembers;				
-			});
+				salesData.projectedMonthlySubscriptionRevenue = totalAmountForActiveMembers;
+				salesData.skippedSubscribers = skippedCount;
+				salesData.feedAFriendSubscribers = feedAFriendCount;
+
+				resolve(); // <-- important to resolve the promise
+			})
+			.on('error', reject);
 	});
 }
 
@@ -174,7 +188,7 @@ async function orders(filename, start, end) {
 
 				// format the salesDataObject
 				const salesDataObject = {
-					dateRange: priorWeek.start + ' to ' + priorWeek.end,
+					dateRange: start + ' to ' + end,
 					data: salesData 
 				};
 				salesResults = salesDataObject;
@@ -232,6 +246,8 @@ async function run(start, end) {
 
 		setTimeout(() => {
 			subjectString =  'FFCSA Reports: Weekly KPIs for ' + start + " to " + end;
+			console.log('appending to json');
+			console.log('for ' + start + ' to '  + end);
 			appendJSON(salesResults, 'data/weekly_kpi.json')
 			//appendJSON(fulfillmentResults, 'data/fulfillment_kpi.json')
 			//console.log(salesResults)
@@ -289,9 +305,11 @@ function appendJSON(dataStructure, filename) {
 
 		if (existingIndex >= 0) {
 			// Replace the existing entry
+			console.log("replacing")
 			jsonData.weeks[existingIndex] = dataStructure;
 		} else {
 			// Append the new data structure
+			console.log("appending")
 			jsonData.weeks.push(dataStructure);
 		}
 
@@ -300,7 +318,7 @@ function appendJSON(dataStructure, filename) {
 			if (writeErr) {
 				console.error('Error writing to the file:', writeErr);
 			} else {
-				console.log('File updated successfully');
+				console.log('File updated successfully: ' + filename);
 			}
 		});
 	});
@@ -336,6 +354,7 @@ const salesData = {
 // $node weekly_kpi.js 2024-07-10
 // can build a shell script to back populate all data
 
+//console.log(priorWeek.start, priorWeek.end);
+//run(priorWeek.start, priorWeek.end);
 console.log(priorWeek.start, priorWeek.end);
-run(priorWeek.start, priorWeek.end);
-//run('2024-07-01', '2024-07-07')
+//run('2025-07-07', '2025-07-13')
