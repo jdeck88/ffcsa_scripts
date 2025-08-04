@@ -6,6 +6,74 @@ const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
 
+
+function groupByCategoryWithSubtotals(items) {
+  const merged = {};
+
+  // Step 1: Merge by product + category
+  for (const item of items) {
+// normalize categories
+item.category = item.category
+  .normalize("NFKC")
+  .replace(/[–—]/g, '-')
+  .replace(/\s+/g, ' ')
+  .replace(/\s*-\s*/g, ' - ')
+  .trim();
+
+    const key = `${item.product}|${item.category}`;
+    if (!merged[key]) {
+      merged[key] = {
+        product: item.product,
+        quantity: 0,
+        price: item.price,
+        totalPrice: 0,
+        category: item.category
+      };
+    }
+    merged[key].quantity += item.quantity;
+    merged[key].totalPrice += item.totalPrice;
+  }
+
+  // Step 2: Sort merged entries by category, then product
+  const mergedItems = Object.values(merged);
+  mergedItems.sort((a, b) => {
+    const catCompare = a.category.localeCompare(b.category);
+    return catCompare !== 0 ? catCompare : a.product.localeCompare(b.product);
+  });
+
+  // Step 3: Build rows grouped by category with subtotals
+  const finalRows = [];
+  let currentCategory = null;
+  let subtotal = 0;
+
+  for (const item of mergedItems) {
+    if (item.category !== currentCategory) {
+      // Add subtotal row for previous category
+      if (currentCategory !== null) {
+        finalRows.push(['', '', `Subtotal: ${currentCategory}`, subtotal.toFixed(2)]);
+      }
+
+      currentCategory = item.category;
+      subtotal = 0;
+    }
+
+    subtotal += item.totalPrice;
+    finalRows.push([
+      item.product,
+      item.quantity,
+      item.price,
+      item.totalPrice.toFixed(2)
+    ]);
+  }
+
+  // Final subtotal row
+  if (currentCategory !== null) {
+    finalRows.push(['', '', `Subtotal: ${currentCategory}`, subtotal.toFixed(2)]);
+  }
+
+  return finalRows;
+}
+
 // Load vendor emails from CSV
 async function readVendorsCSV(filePath) {
   const vendors = {};
@@ -103,12 +171,7 @@ async function generateSummaryPDF(vendorOrders, outputFile) {
       doc.fontSize(16).text(items[0].fulfillmentDate, { align: 'right' });
       doc.fontSize(16).text(vendor, { bold: true });
 
-      const rows = items.map(item => [
-        item.product,
-        item.quantity,
-        item.price,
-        item.totalPrice.toFixed(2)
-      ]);
+      const rows = groupByCategoryWithSubtotals(items);
 
       const table = {
         headers: ['Product', 'Quantity', 'Price', 'Total Price'],
@@ -151,7 +214,7 @@ async function sendVendorEmails(vendorOrders, vendorEmails, productData, fulfill
     doc.fontSize(16).text(utilities.getToday(), { align: 'right' });
     doc.fontSize(16).text(vendor, { bold: true });
 
-    const rows = items.map(item => [item.product, item.quantity, item.price, item.totalPrice.toFixed(2)]);
+    const rows = groupByCategoryWithSubtotals(items);
     const table = {
       headers: ['Product', 'Quantity', 'Price', 'Total Price'],
       rows
