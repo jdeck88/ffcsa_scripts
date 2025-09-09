@@ -3,6 +3,37 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const nodemailer = require("nodemailer");
+// --- Shared pooled transporter (Gmail) ---
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_ACCESS },
+  pool: true,
+  maxConnections: 1,        // keep it gentle with Gmail
+  maxMessages: 200,         // recycle after some messages
+  rateDelta: 60_000,        // window for rateLimit (ms)
+  rateLimit: 20,            // max messages per rateDelta (<= 20/min)
+  connectionTimeout: 30_000,
+  greetingTimeout: 20_000,
+  socketTimeout: 60_000,
+});
+
+// Retry wrapper for transient 4xx
+async function sendWithRetry(mailData, attempts = 5) {
+  let delay = 30_000; // 30s → 60s → 120s → 300s…
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await transporter.sendMail(mailData);
+    } catch (err) {
+      const soft4xx = [421, 450, 451, 452].includes(err.responseCode);
+      if (!soft4xx || i === attempts - 1) throw err;
+      await new Promise(r => setTimeout(r, delay));
+      delay *= 2;
+    }
+  }
+}
+
 
 function getJsonFromUrl(url, accessToken) {
     return new Promise((resolve, reject) => {
@@ -287,24 +318,16 @@ async function sendErrorEmail(error) {
 sendEmail passes in emailOptions as argument
 */
 async function sendEmail(emailOptions) {
-    // Create a Nodemailer transporter
-    const transporter = nodemailer.createTransport({
-        service: "Gmail", // e.g., "Gmail" or use your SMTP settings
-        auth: {
-            user: process.env.MAIL_USER,
-            pass: process.env.MAIL_ACCESS,
-        },
-    });
-
-    // Send the email with the attachment
-    transporter.sendMail(emailOptions, (error, info) => {
-        if (error) {
-            console.error("Error sending email:", error);
-        } else {
-            console.log("Email sent:", info.response);
-        }
-    });
+  const from = process.env.MAIL_FROM || process.env.MAIL_USER; // prefer a verified alias or the Gmail user
+  const mailData = {
+    from,                            // keep From aligned with the authenticated account/alias
+    replyTo: emailOptions.replyTo || 'fullfarmcsa@deckfamilyfarm.com',
+    ...emailOptions,
+  };
+  return sendWithRetry(mailData);
 }
+
+
 
 /*
 // SENDGRID TRANSPORT
@@ -560,30 +583,32 @@ function getTomorrow() {
 }
 
 function mailADocument(doc, mailOptions, fileName) {
-    // Create a buffer to store the PDF in-memory
+  return new Promise((resolve, reject) => {
     let pdfBuffer = Buffer.from([]);
-    doc.on('data', chunk => {
-      pdfBuffer = Buffer.concat([pdfBuffer, chunk]);
+
+    doc.on('data', chunk => { pdfBuffer = Buffer.concat([pdfBuffer, chunk]); });
+
+    doc.on('end', async () => {
+      try {
+        const mailWithAttachment = {
+          ...mailOptions,
+          attachments: [{
+            filename: fileName,
+            content: pdfBuffer,   // Buffer is fine
+            // no 'encoding' for Buffers
+          }],
+        };
+        const info = await sendEmail(mailWithAttachment);
+        resolve(info);
+      } catch (err) {
+        reject(err);
+      }
     });
-  
-    // Event handler for when the PDF document is finished
-    doc.on('end', () => {
-      // Add the PDF attachment to mailOptions
-      mailOptions.attachments = [
-        {
-          filename: fileName,
-          content: pdfBuffer,
-          encoding: 'base64'
-        }
-      ];
-  
-      // Send the email with the attached PDF
-      sendEmail(mailOptions);
-    });
-  
-    // Close the PDF document
+
+    doc.on('error', reject);
     doc.end();
-  }
+  });
+}
 
 module.exports = {
     formatDate,
