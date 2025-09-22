@@ -46,13 +46,13 @@ ENVIRONMENT=PRODUCTION | DEVELOPMENT
 ##################################
 # DAILY
 # Runs at 6:01 AM PT daily
-1 6 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+15 6 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
 # Runs at 12:01 PM PT daily
-1 12 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+15 12 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
 # Runs at 6:01 PM PT daily
-1 18 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+15 18 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
 # Runs at 12:01 AM PT daily
-1 0 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
+15 0 * * * /home/exouser/code/ffcsa_scripts/localline/run.sh subscriptions.js
 # Runs at 3:02 AM PT daily
 2 3 * * * /home/exouser/code/ffcsa_scripts/localline/download_subscriber_meta_report.sh
 
