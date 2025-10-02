@@ -1,4 +1,5 @@
 // Using the following get  the "access" property
+require('dotenv').config();
 var request = require('request');
 const fs = require('fs');
 const path = require('path');
@@ -8,7 +9,6 @@ const axios = require('axios');
 const utilities = require('./utilities');
 const { DateTime } = require('luxon');  // At top of file, if not already
 
-require('dotenv').config();
 
 function readExistingEntries(filePath) {
   try {

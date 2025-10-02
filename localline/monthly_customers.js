@@ -1,146 +1,158 @@
-// Using the following get  the "access" property
-var request = require('request');
+// monthly_customers.js
+'use strict';
+
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const utilities = require('./utilities');
-require('dotenv').config();
 const PDFDocument = require('pdfkit-table');
-const axios = require('axios');
 const fastcsv = require('fast-csv');
+const utilities = require('./utilities');
 
-pdf_file_name = '';
-pdf_file = '';
-
-
-async function run(filename, lastDay, yesterday) {
-    return new Promise((resolve, reject) => {
-
-        // Create a new PDF document
-        pdf_file_name = 'customers_' + yesterday + '.pdf';
-        pdf_file = 'data/' + pdf_file_name
-
-        const doc = new PDFDocument();
-        doc.pipe(fs.createWriteStream(pdf_file));
-
-        const customers = [];
-
-        fs.createReadStream(filename)
-            .pipe(fastcsv.parse({ headers: true }))
-            .on('data', (row) => {
-                customers.push({
-                    name: row['Customer'], // Assuming 'Customer Name' is a column in your CSV
-                    amount: parseFloat(row['Store Credit'])
-                });
-            })
-            .on('end', () => {
-
-                all_customer_sales = 0
-                let customerData = [];
-
-                customers.sort((a, b) => b.amount - a.amount);
-
-                customers.forEach((item) => {
-                    const { amount } = item;
-                    all_customer_sales = all_customer_sales + parseFloat(amount)
-                    customerData.push([item.name, item.amount.toFixed(2)])
-                });
-
-                formattedBalance = all_customer_sales.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-
-				doc.text('Total member balances = ' + formattedBalance + ' as of ' + yesterday + ' 11:59pm')
-
-   				table = {
-                            title: 'Customer Balances',
-                            widths: [600], // Set the width to the page width
-                            headers: ['customer', 'balance'],
-                            rows: customerData,
-                };
-
-                doc.table(table);
-
-                doc.end();
-
-
-                // TODO: figure out appropriate aync methods to enable finishing PDF creation
-                setTimeout(() => {
-                    console.log("Success!")
-                    resolve(formattedBalance); // Promise is resolved with "Success!"
-                }, 1000);
-            })
-            .on('error', (error) => {
-                reject(error);
-            });
-    });
-}
-
-// Build customer delivery orders (picklists)
-async function customers(today, yesterday) {
+/**
+ * Build the Customers PDF from a CSV file and resolve with:
+ * { pdfPath, pdfFileName, totalBalanceStr }
+ */
+async function buildCustomersPdf(csvFile, asOfDate) {
+  return new Promise((resolve, reject) => {
     try {
-        console.log("running monthly customer balance report")
+      const pdfFileName = `customers_${asOfDate}.pdf`;
+      const pdfPath = path.join('data', pdfFileName);
+      fs.mkdirSync(path.dirname(pdfPath), { recursive: true });
 
-        url = 'https://localline.ca/api/backoffice/v2/customers/export/?direct=true'
-        console.log(url)
-        data = {}
+      const doc = new PDFDocument();
+      const out = fs.createWriteStream(pdfPath);
 
-        // Login
-        data = await utilities.getAccessToken();
-        const accessToken = JSON.parse(data).access;
+      out.on('finish', () => {
+        console.log('PDF created successfully:', pdfPath);
+        resolve({ pdfPath, pdfFileName, totalBalanceStr });
+      });
+      out.on('error', (err) => {
+        console.error('PDF write error:', err);
+        reject(err);
+      });
+      doc.on('error', (err) => {
+        console.error('PDF creation error:', err);
+        reject(err);
+      });
 
-        // Call the function and wait for the response
-        (async () => {
-            try {
-                console.log("fetching customers ...")
+      doc.pipe(out);
 
-                // Download File
-                if (url !== "") {
-                    utilities.downloadBinaryData(url, 'data/customers_' + today + '.csv', accessToken)
-                        .then((customer_file_path) => {
-                            console.log('Downloaded file path:', customer_file_path);
-                            run(customer_file_path, today, yesterday).then((balance) => {
-                                try {
-                                    const emailOptions = {
-                                        from: "jdeck88@gmail.com",
-                                        //to: "fullfarmcsa@deckfamilyfarm.com",
-                                        to: "jdeck88@gmail.com",
-										cc: "mhobart@bworcpas.com",
-                                        subject: 'FFCSA Reports: Monthly Customer Balance Report for ' + yesterday,
-                                        text: "Total Member Balance as of " + yesterday+ " = " + balance,
-                                    };
-                                   
-                            		emailOptions.attachments = [
-                                	{
-                                    	filename: pdf_file_name, // Change the filename as needed
-                                    	content: fs.readFileSync(pdf_file) // Attach the file buffer
-                            		}];
-                                    utilities.sendEmail(emailOptions)
+      const customers = [];
+      let totalBalance = 0;
+      let totalBalanceStr = '0.00';
 
-                                } catch (error) {
-                                    console.error('Error:', error);
-                                    utilities.sendErrorEmail(error)
-                                }
-                            }).catch((error) => {
-                                console.error('Error:', error);
-                                utilities.sendErrorEmail(error)
-                            })
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                            utilities.sendErrorEmail(error)
-                        });
-                } else {
-                    console.error('file generation not completed in 1 minute')
-                    utilities.sendErrorEmail("file generation not completed in 1 minute")
-                }
-            } catch (error) {
-                console.error('Error in the main function:', error);
-                utilities.sendErrorEmail(error)
-            }
-        })();
-    } catch (error) {
-        console.error('An error occurred:', error);
-        utilities.sendErrorEmail(error)
+      fs.createReadStream(csvFile)
+        .pipe(fastcsv.parse({ headers: true }))
+        .on('data', (row) => {
+          const name = row['Customer'];
+          const amount = parseFloat(row['Store Credit'] || 0) || 0;
+          customers.push({ name, amount });
+        })
+        .on('end', () => {
+          // Sort by balance (desc)
+          customers.sort((a, b) => b.amount - a.amount);
+
+          const rows = customers.map(({ name, amount }) => {
+            totalBalance += amount;
+            return [
+              name,
+              amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+            ];
+          });
+
+          totalBalanceStr = totalBalance
+            .toFixed(2)
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+          doc.fontSize(14).text(
+            `Total member balances = $${totalBalanceStr} as of ${asOfDate} 11:59pm`
+          );
+          doc.moveDown(1);
+
+          const table = {
+            title: 'Customer Balances',
+            headers: ['customer', 'balance'],
+            rows,
+          };
+
+          doc.table(table);
+          doc.end(); // triggers 'finish' on the write stream
+        })
+        .on('error', reject);
+    } catch (err) {
+      reject(err);
     }
+  });
 }
 
-//today = '2023-10-31'
-customers(utilities.getToday(), utilities.getYesterday());
+/**
+ * Main workflow
+ */
+async function customers(today, yesterday) {
+  console.log('running monthly customer balance report');
+
+  const url = 'https://localline.ca/api/backoffice/v2/customers/export/?direct=true';
+  console.log(url);
+
+  // Login → access token
+  const tokenResp = await utilities.getAccessToken();
+  const accessToken = JSON.parse(tokenResp).access;
+
+  console.log('fetching customers ...');
+
+  // Download CSV (binary)
+  const csvPath = await utilities.downloadBinaryData(
+    url,
+    path.join('data', `customers_${today}.csv`),
+    accessToken
+  );
+  console.log('Downloaded file path:', csvPath);
+
+  // Build PDF (resolves after write stream 'finish')
+  const { pdfPath, pdfFileName, totalBalanceStr } = await buildCustomersPdf(
+    csvPath,
+    yesterday
+  );
+
+  // Email — do NOT set `from` here; let utilities.sendEmail use the verified sender.
+  const emailOptions = {
+    // adjust recipients as desired:
+    to: 'jdeck88@gmail.com',
+    // to: 'fullfarmcsa@deckfamilyfarm.com',
+    // cc: 'mhobart@bworcpas.com',
+    replyTo: 'fullfarmcsa@deckfamilyfarm.com',
+    subject: `FFCSA Reports: Monthly Customer Balance Report for ${yesterday}`,
+    text: `Total Member Balance as of ${yesterday} = $${totalBalanceStr}`,
+    attachments: [
+      {
+        filename: pdfFileName,
+        path: pdfPath,
+        contentType: 'application/pdf',
+      },
+    ],
+  };
+
+  await utilities.sendEmail(emailOptions);
+  console.log('Email sent.');
+}
+
+// ---- Run and ensure the process exits (SMTP pool can keep event loop alive) ----
+(async () => {
+  const HARD_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes hard stop
+  const timeout = setTimeout(() => {
+    console.error(`Global timeout (${HARD_TIMEOUT_MS} ms) — forcing exit.`);
+    process.exit(2);
+  }, HARD_TIMEOUT_MS);
+
+  try {
+    await customers(utilities.getToday(), utilities.getYesterday());
+    clearTimeout(timeout);
+    setTimeout(() => process.exit(0), 10);
+  } catch (err) {
+    clearTimeout(timeout);
+    console.error('Fatal error:', err && err.stack || err);
+    try { await utilities.sendErrorEmail(err && err.stack || String(err)); } catch (_) {}
+    setTimeout(() => process.exit(1), 10);
+  }
+})();
+

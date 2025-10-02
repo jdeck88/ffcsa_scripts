@@ -1,188 +1,202 @@
-// Using the following get  the "access" property
-var request = require('request');
+// monthly_vendors.js
+'use strict';
+
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const utilities = require('./utilities');
-require('dotenv').config();
 const PDFDocument = require('pdfkit-table');
-const axios = require('axios');
 const fastcsv = require('fast-csv');
+const utilities = require('./utilities');
 
-
-async function run(filename, lastDay) {
-    return new Promise((resolve, reject) => {
-        const pdf_file = 'data/vendors_' + lastDay + '.pdf';
-        const doc = new PDFDocument();
-
-        doc.on('finish', () => {
-            console.log('PDF created successfully.');
-        });
-
-        doc.on('error', (error) => {
-            console.error('PDF creation error:', error);
-            reject(error);
-        });
-
-        doc.pipe(fs.createWriteStream(pdf_file));
-        const vendors = [];
-
-        fs.createReadStream(filename)
-            .pipe(fastcsv.parse({ headers: true }))
-            .on('data', (row) => {
-                if (row['Category'] !== 'Membership') {
-                    vendors.push({
-                        date: row['Fulfillment Date'],
-                        vendor: row['Vendor'],
-                        amount: row['Product Subtotal'],
-                    });
-                }
-            })
-            .on('end', () => {
-                vendors.sort((a, b) => a['vendor'].localeCompare(b['vendor']));
-                month = ''
-                const months = [
-                    'January', 'February', 'March', 'April', 'May', 'June', 'July',
-                    'August', 'September', 'October', 'November', 'December'
-                ];
-                const grouped = {};
-                all_vendor_sales = 0
-                vendors.forEach((item) => {
-                    const { date, vendor, amount } = item;
-
-                    // Parse the date to get the month value and convert it to a full month name
-                    const monthAbbreviation = date.split(' ')[1];
-                    month = months[new Date(monthAbbreviation + ' 1, 2000').getMonth()];
-
-                    if (!grouped[vendor]) {
-                        // Initialize the vendor entry if it doesn't exist
-                        grouped[vendor] = {
-                            date: month,
-                            vendor,
-                            amount: parseFloat(amount),
-                        };
-                    } else {
-                        // Add the amount to the existing vendor entry
-                        grouped[vendor].amount += parseFloat(amount);
-                    }
-                    all_vendor_sales = all_vendor_sales + parseFloat(amount)
-                });
-
-
-                // Convert the result object into an array of values
-                output = Object.values(grouped);
-                output = output.sort((a, b) => b.amount - a.amount);
-
-                const formattedRows = output.map(item => [item.vendor, '$' + item.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')]);
-
-                doc.text(month + ' Vendor Reports')
-                doc.text('Total Sales = ' + all_vendor_sales.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','))
-                const table = {
-                    title: '',
-                    headers: ['vendor', 'amount'],
-                    rows: formattedRows,
-                };
-                doc.table(table);
-                doc.end();
-
-                // TODO: figure out appropriate aync methods to enable finishing PDF creation
-                setTimeout(() => {
-                    console.log("Success!")
-                    resolve(pdf_file); // Promise is resolved with "Success!"
-                }, 1000);
-
-
-            })
-            .on('error', (error) => {
-                reject(error);
-            });
-    });
-}
-
-// Build customer delivery orders (picklists)
-async function vendor(lastMonth) {
+/**
+ * Build the Vendors PDF from a CSV file and resolve with the PDF file path
+ */
+async function buildVendorsPdf(csvFile, lastDay) {
+  return new Promise((resolve, reject) => {
     try {
-        console.log("running monthly vendor report updater")
+      const pdfFile = path.join('data', `vendors_${lastDay}.pdf`);
+      fs.mkdirSync(path.dirname(pdfFile), { recursive: true });
 
-        url = 'https://localline.ca/api/backoffice/v2/orders/export/?' +
-            'file_type=orders_list_view&send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&' +
-            `fulfillment_date_start=${lastMonth.first}&` +
-            `fulfillment_date_end=${lastMonth.last}&` +
-            '&status=OPEN&status=NEEDS_APPROVAL&status=CANCELLED&status=CLOSED'
+      const doc = new PDFDocument();
+      const out = fs.createWriteStream(pdfFile);
 
-        console.log(url)
-        data = {}
+      out.on('finish', () => {
+        console.log('PDF created successfully:', pdfFile);
+        resolve(pdfFile);
+      });
+      out.on('error', (err) => {
+        console.error('PDF write error:', err);
+        reject(err);
+      });
 
-        // Login
-        data = await utilities.getAccessToken();
-        const accessToken = JSON.parse(data).access;
+      doc.on('error', (err) => {
+        console.error('PDF creation error:', err);
+        reject(err);
+      });
 
-        // Call the function and wait for the response
-        (async () => {
-            try {
-                console.log("fetching vendors ...")
-                data = await utilities.getRequestID(url, accessToken);
-                const id = JSON.parse(data).id;
+      doc.pipe(out);
 
-                // Wait for report to finish
-                const vendor_result_url = await utilities.pollStatus(id, accessToken);
+      const vendors = [];
+      fs.createReadStream(csvFile)
+        .pipe(fastcsv.parse({ headers: true }))
+        .on('data', (row) => {
+          if (row['Category'] !== 'Membership') {
+            vendors.push({
+              date: row['Fulfillment Date'],
+              vendor: row['Vendor'],
+              amount: row['Product Subtotal'],
+            });
+          }
+        })
+        .on('end', () => {
+          // Sort for stable grouping
+          vendors.sort((a, b) => String(a.vendor).localeCompare(String(b.vendor)));
 
-                // Download File
-                if (vendor_result_url !== "") {
-                    utilities.downloadData(vendor_result_url, 'vendors_' + lastMonth.last + ".csv", accessToken)
-                        .then((vendor_file_path) => {
-                            console.log('Downloaded file path:', vendor_file_path);
-                            run(vendor_file_path, lastMonth.last).then((vendors_pdf) => {
-                                try {
-                                    //utilities.sendEmail(vendors_pdf, 'vendors_' + lastMonth.last+'.pdf', 'FFCSA Reports: Monthly Vendor Report for ' + lastMonth.last)
-                                    const emailOptions = {
-                                        from: "jdeck88@gmail.com",
-                                        to: "fullfarmcsa@deckfamilyfarm.com",
-                                        cc: "jdeck88@gmail.com",
-                                        subject: 'FFCSA Reports: Monthly Vendor Report for ' + lastMonth.last,
-                                        text: "Please see the attached file.",
-                                    };
+          const months = [
+            'January', 'February', 'March', 'April', 'May', 'June', 'July',
+            'August', 'September', 'October', 'November', 'December'
+          ];
 
-                                    emailOptions.attachments = [
-                                        {
-                                            filename: 'vendors_' + lastMonth.last + '.pdf', // Change the filename as needed
-                                            content: fs.readFileSync(vendors_pdf), // Attach the file buffer
-                                        },
-                                    ];
+          const grouped = {};
+          let allVendorSales = 0;
+          let monthLabel = '';
 
-                                    utilities.sendEmail(emailOptions)
-
-                                } catch (error) {
-                                    console.error('Error:', error);
-                                    utilities.sendErrorEmail(error)
-                                }
-                            }).catch((error) => {
-                                console.error('Error:', error);
-                                utilities.sendErrorEmail(error)
-                            })
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                            utilities.sendErrorEmail(error)
-                        });
-                } else {
-                    console.error('file generation not completed in 1 minute')
-                    utilities.sendErrorEmail("file generation not completed in 1 minute")
-                }
-            } catch (error) {
-                console.error('Error in the main function:', error);
-                utilities.sendErrorEmail(error)
+          vendors.forEach(({ date, vendor, amount }) => {
+            // Robust month parsing
+            let mIdx = NaN;
+            if (date) {
+              const d = new Date(date);
+              if (!isNaN(d)) {
+                mIdx = d.getMonth();
+              } else {
+                const parts = String(date).split(/\s+/); // e.g., ["Fri","Sep","13","2024"] or ["13","Sep","24"]
+                const maybeMonth = parts[1] || parts[0] || '';
+                const probe = new Date(`${maybeMonth} 1, 2000`);
+                if (!isNaN(probe)) mIdx = probe.getMonth();
+              }
             }
-        })();
-    } catch (error) {
-        console.error('An error occurred:', error);
-        utilities.sendErrorEmail(error)
+            if (!isNaN(mIdx) && mIdx >= 0) monthLabel = months[mIdx];
+
+            const amt = parseFloat(amount || 0) || 0;
+            if (!grouped[vendor]) {
+              grouped[vendor] = { vendor, amount: amt, date: monthLabel };
+            } else {
+              grouped[vendor].amount += amt;
+            }
+            allVendorSales += amt;
+          });
+
+          let output = Object.values(grouped).sort((a, b) => b.amount - a.amount);
+          const formattedRows = output.map(item => [
+            item.vendor,
+            '$' + item.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+          ]);
+
+          doc.fontSize(16).text(`${monthLabel} Vendor Reports`);
+          doc.moveDown(0.5);
+          doc.fontSize(12).text(
+            'Total Sales = $' + allVendorSales.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+          );
+          doc.moveDown(1);
+
+          const table = {
+            title: '',
+            headers: ['vendor', 'amount'],
+            rows: formattedRows,
+          };
+
+          doc.table(table);
+          doc.end(); // triggers 'finish' on the write stream
+        })
+        .on('error', reject);
+    } catch (err) {
+      reject(err);
     }
+  });
 }
 
-// Run the delivery_order script
-//yesterdayFormatted = '2023-10-31'
+/**
+ * Main workflow
+ */
+async function vendor(lastMonth) {
+  console.log('running monthly vendor report updater');
 
-vendor(utilities.getLastMonth());
+  const url =
+    'https://localline.ca/api/backoffice/v2/orders/export/?' +
+    'file_type=orders_list_view&send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&' +
+    `fulfillment_date_start=${lastMonth.first}&` +
+    `fulfillment_date_end=${lastMonth.last}&` +
+    '&status=OPEN&status=NEEDS_APPROVAL&status=CANCELLED&status=CLOSED';
 
+  console.log(url);
 
+  // Login → access token
+  const tokenResp = await utilities.getAccessToken();
+  const accessToken = JSON.parse(tokenResp).access;
+
+  console.log('fetching vendors ...');
+  const reqIdResp = await utilities.getRequestID(url, accessToken);
+  const id = JSON.parse(reqIdResp).id;
+
+  // wait for export to complete → get file path
+  const vendorResultUrl = await utilities.pollStatus(id, accessToken);
+  if (!vendorResultUrl) {
+    const msg = 'file generation not completed in 1 minute';
+    console.error(msg);
+    await utilities.sendErrorEmail(msg);
+    throw new Error(msg);
+  }
+
+  // Download CSV
+  const csvPath = await utilities.downloadData(
+    vendorResultUrl,
+    `vendors_${lastMonth.last}.csv`,
+    accessToken
+  );
+  console.log('Downloaded file path:', csvPath);
+
+  // Build PDF (resolves after write stream 'finish')
+  const pdfPath = await buildVendorsPdf(csvPath, lastMonth.last);
+
+  // Prepare email — do NOT set `from` here; let utilities.sendEmail enforce verified sender.
+  const emailOptions = {
+    to: 'fullfarmcsa@deckfamilyfarm.com',
+    cc: 'jdeck88@gmail.com',
+    replyTo: 'fullfarmcsa@deckfamilyfarm.com',
+    subject: `FFCSA Reports: Monthly Vendor Report for ${lastMonth.last}`,
+    text: 'Please see the attached file.',
+    attachments: [
+      {
+        filename: `vendors_${lastMonth.last}.pdf`,
+        path: pdfPath,
+        contentType: 'application/pdf',
+      },
+    ],
+  };
+
+  await utilities.sendEmail(emailOptions);
+  console.log('Email sent.');
+}
+
+// ---- Run and make sure the process actually exits ----
+(async () => {
+  // Global kill switch so a stuck SMTP pool or network op can’t hang forever
+  const HARD_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+  const timeout = setTimeout(() => {
+    console.error(`Global timeout (${HARD_TIMEOUT_MS} ms) — forcing exit.`);
+    process.exit(2);
+  }, HARD_TIMEOUT_MS);
+
+  try {
+    await vendor(utilities.getLastMonth());
+    clearTimeout(timeout);
+    // Give a brief tick for any final console flushes, then exit
+    setTimeout(() => process.exit(0), 10);
+  } catch (err) {
+    clearTimeout(timeout);
+    console.error('Fatal error:', err && err.stack || err);
+    try { await utilities.sendErrorEmail(err && err.stack || String(err)); } catch (_) {}
+    setTimeout(() => process.exit(1), 10);
+  }
+})();
 
