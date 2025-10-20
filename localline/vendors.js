@@ -134,7 +134,12 @@ async function groupOrdersByVendor(orderFile, productData, fulfillmentDate) {
           }
 
           if (row['Category'] !== 'Membership') {
-            const quantity = Math.round(parseFloat(row['Quantity']));
+            // Account for two different methods of quantifying orders
+            let quantity = Math.round(parseFloat(row['Quantity']));
+            const numItems = Math.round(parseFloat(row['# of Items']));
+            if (numItems > 1 && quantity == 1) {
+                quantity = numItems
+            }
             const price = lookupPackagePrice(parseInt(row['Product ID'], 10), row['Package Name'], productData);
             const totalPrice = price * quantity;
 

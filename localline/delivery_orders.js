@@ -378,6 +378,7 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
           const itemUnit = row['Item Unit']
           const vendor = row['Vendor']
           const category = row['Category']
+          // account for two different methods of counting items
           if (numItems > 1 && quantity == 1) {
             quantity = numItems
           }
@@ -926,9 +927,9 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 // Run the delivery_order script
 /*
 const fullfillmentDateObject = {
-  start: '2025-05-13',
-  end: '2025-05-13',
-  date: '2025-05-13'
+  start: '2025-10-18',
+  end: '2025-10-18',
+  date: '2025-10-18'
 };
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
 */

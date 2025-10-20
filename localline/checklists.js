@@ -133,6 +133,12 @@ async function writeChecklistPDF(dairy_file_path, frozen_file_path, delivery_ord
                   //product = row['Product'];
                   product = row['Product'] + ' - ' + row['Package Name'];
 
+                  // Account for two different methods of adding vegetables
+                  const numItems = Math.round(parseFloat(row['# of Items']));
+                  if (numItems > 1 && quantity == 1) {
+                    quantity = numItems
+                  }
+
                   itemUnit = row['Item Unit']
                   vendor = row['Vendor']
 
@@ -497,7 +503,8 @@ async function checklist(fullfillmentDate) {
 }
 
 // Run the checklist script
-///fullfillmentDate = '2023-10-31'
+//fullfillmentDate = '2025-10-18'
+//checklist(fullfillmentDate);
 fullfillmentDateObject = utilities.getNextFullfillmentDate()
 
 checklist(fullfillmentDateObject.date);
