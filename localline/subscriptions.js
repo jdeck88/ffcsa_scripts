@@ -470,7 +470,8 @@ async function storeCredit(customerID, amount, accessToken) {
         'Authorization': `Bearer ${accessToken}`
       },
       body: JSON.stringify({
-        "amount": amount
+        "amount": amount,
+        "note": "automated monthly subscription addition"
       })
     };
 
