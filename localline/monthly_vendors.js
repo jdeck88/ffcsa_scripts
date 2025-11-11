@@ -160,7 +160,7 @@ async function vendor(lastMonth) {
 
   // Prepare email — do NOT set `from` here; let utilities.sendEmail enforce verified sender.
   const emailOptions = {
-    to: 'fullfarmcsa@deckfamilyfarm.com',
+    to: 'fullfarmcsa@deckfamilyfarm.com,jan.deckfamilyfarm@gmail.com',
     cc: 'jdeck88@gmail.com',
     replyTo: 'fullfarmcsa@deckfamilyfarm.com',
     subject: `FFCSA Reports: Monthly Vendor Report for ${lastMonth.last}`,
