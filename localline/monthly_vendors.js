@@ -84,14 +84,24 @@ async function downloadMonthlyOrdersCsv(fulfillmentDateStart, fulfillmentDateEnd
   }
 }
 
-async function downloadProductsExcel(accessToken) {
-  if (!fs.existsSync('data')) {
-    fs.mkdirSync('data', { recursive: true });
+async function downloadProductsExcel(accessToken, fulfillmentDateEnd) {
+  // Ensure data directory exists
+  if (!fs.existsSync("data")) {
+    fs.mkdirSync("data", { recursive: true });
   }
 
-  const productsFile = 'data/products.xlsx';
+  const productsFile = `data/products_${fulfillmentDateEnd}.xlsx`;
+
+  // ✅ Check if file already exists
+  if (fs.existsSync(productsFile)) {
+    console.log(`⚠️ Products file already exists: ${productsFile}`);
+    console.log("⏭️ Skipping download to avoid overwrite.");
+    return productsFile; // return path without re-downloading
+  }
+
+  // Otherwise, proceed with download
   await utilities.downloadBinaryData(
-    'https://localline.ca/api/backoffice/v2/products/export/?direct=true',
+    "https://localline.ca/api/backoffice/v2/products/export/?direct=true",
     productsFile,
     accessToken
   );
@@ -418,7 +428,7 @@ async function main() {
     const token = JSON.parse(await utilities.getAccessToken()).access;
 
     const [productsFile, ordersCsvPath] = await Promise.all([
-      downloadProductsExcel(token),
+      downloadProductsExcel(token, endStr),
       downloadMonthlyOrdersCsv(startStr, endStr, token)
     ]);
 
@@ -455,7 +465,6 @@ async function main() {
   }
 }
 
-/* CLI entrypoint */
 /* CLI entrypoint */
 main()
   .then(() => {
