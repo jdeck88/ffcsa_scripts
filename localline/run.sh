@@ -73,3 +73,21 @@ if [ "$1" == "fulfillment_strategies.js" ]; then
     echo "No changes in data files."
   fi
 fi
+if [ "$1" == "monthly_vendors.js" ]; then
+  shopt -s nullglob  # prevents literal *.xlsx if no match
+  files=(data/products_*.xlsx)
+
+  if [ ${#files[@]} -gt 0 ]; then
+    if [[ -n $(git status -s "${files[@]}") ]]; then
+      git add "${files[@]}"
+      git commit -m "Update pricelists generated... as a historical record since LL does not maintain them"
+      git push
+      echo "✅ Changes pushed to GitHub."
+    else
+      echo "ℹ️ No changes in data files."
+    fi
+  else
+    echo "⚠️ No product Excel files found in data/."
+  fi
+fi
+
