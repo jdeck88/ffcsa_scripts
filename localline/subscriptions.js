@@ -66,7 +66,7 @@ async function run(filename, customerData, orderDayFormatted, lastWeekFormatted,
         const productSubtotal = parseFloat(row['Product Subtotal']);
 
         // payment__status=PAID&payment__status=AUTHORIZED&' +
-        if ([200.00, 300.00, 500.00, 86.00, 100.00, 150.00, 250.00].includes(productSubtotal)) {
+        if ([200.00, 300.00, 500.00, 86.00, 100.00, 150.00, 250.00, 120.00].includes(productSubtotal)) {
           if (row['Payment Status'] === "PAID" || row['Payment Status'] === "AUTHORIZED") {
             let statusString = row['Payment Status']
             successString = 'SUCCESS';
