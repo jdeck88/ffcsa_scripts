@@ -830,8 +830,9 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((customer_note_pdf) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
+                //to: "fullfarmcsa@deckfamilyfarm.com",
+                //cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
+                to: "jdeck88@gmail.com",
                 subject: 'FFCSA Reports: Customer Notes for ' + fullfillmentDateEnd,
                 text: "Please see the attached file with customer notes.",
               };
@@ -852,8 +853,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((delivery_order_pdf) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com",
+                //to: "fullfarmcsa@deckfamilyfarm.com",
+                to: "jdeck88@gmail.com",
                 subject: 'FFCSA Reports: Delivery Orders for ' + fullfillmentDateEnd,
                 text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
               };
@@ -873,8 +874,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((setup_pdf) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com",
+                //to: "fullfarmcsa@deckfamilyfarm.com",
+                to: "jdeck88@gmail.com",
                 subject: 'FFCSA Reports: Setup Instructions for ' + fullfillmentDateEnd,
                 text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
               };
@@ -895,8 +896,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((labelPdfPath) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com",
+                //to: "fullfarmcsa@deckfamilyfarm.com",
+                to: "jdeck88@gmail.com",
                 subject: 'FFCSA Reports: Labels for ' + fullfillmentDateEnd,
                 text: "Attached are the delivery labels.",
                 attachments: [
