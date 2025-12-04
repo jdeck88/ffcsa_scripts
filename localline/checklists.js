@@ -5,9 +5,24 @@ require('dotenv').config();
 const PDFDocument = require('pdfkit-table');
 const fastcsv = require('fast-csv');
 const utilities = require('./utilities');
+const path = require('path');
+
 
 // Global testing flag (set near bottom before calling checklist)
 let TESTING = false;
+
+// Shared manual dispositions map (from manual_dispositions.json)
+let MANUAL_DISPOSITIONS = {};
+const manualDispositionsPath = path.join(__dirname, 'manual_dispositions.json');
+try {
+  if (fs.existsSync(manualDispositionsPath)) {
+    MANUAL_DISPOSITIONS = JSON.parse(
+      fs.readFileSync(manualDispositionsPath, 'utf8')
+    );
+  }
+} catch (err) {
+  console.error('[optimaroute] Error reading manual_dispositions.json:', err);
+}
 
 // Helper to only log when TESTING is true
 function debugLog(...args) {
@@ -457,18 +472,6 @@ async function checklist(fullfillmentDate, testing = false, manualDispositions =
 
 // ----- CONFIG CONSTANTS (easy to tweak) -----
 
-// Product IDs that should be forced to a disposition, regardless of Packing Tag
-// (add more as needed; values must be 'frozen', 'dairy', or 'tote')
-// Bundles DO NOT have Package Tags yet so here we add them in manually
-const MANUAL_DISPOSITIONS = {
-  '1023667': 'Frozen',
-  '1017942': 'Frozen', 
-  '1017951': 'Frozen', 
-  // add more here, e.g.:
-  // '1234567': 'dairy',
-};
-
-// Run the checklist script
 /*
 const fullfillmentDateObject = {
   start: '2025-12-02',
