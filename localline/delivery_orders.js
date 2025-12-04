@@ -787,134 +787,146 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 }
 
 // Build customer delivery orders (picklists)
-async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
+// Build customer delivery orders (picklists)
+async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testing = false) {
   try {
-    console.log("running delivery_order builder")
+    console.log("running delivery_order builder");
 
-    data = {}
-    delivery_order_pdf = ''
+    // 🔹 Download (or reuse) the orders CSV via utilities helper
+    const overwriteExisting = true; // change to false if you ever want to reuse existing file
+    const orders_file_path = await utilities.downloadOrdersCsv(
+      fullfillmentDateStart,
+      fullfillmentDateEnd,
+      overwriteExisting
+    );
 
-    // Login
-    data = await utilities.getAccessToken();
-    const accessToken = JSON.parse(data).access;
+    console.log('Downloaded file path:', orders_file_path);
 
-    // Download Orders
-    url = 'https://localline.ca/api/backoffice/v2/orders/export/?' +
-      'file_type=orders_list_view&send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&' +
-      `fulfillment_date_start=${fullfillmentDateStart}&` +
-      `fulfillment_date_end=${fullfillmentDateEnd}&` +
-      '&status=OPEN'
-    //'&status=OPEN&status=NEEDS_APPROVAL&status=CANCELLED&status=CLOSED'
-    data = await utilities.getRequestID(url, accessToken);
-    const id = JSON.parse(data).id;
+    // ---------- Customer Notes PDF ----------
+    try {
+      const customer_note_pdf = await writeCustomerNotePDF(orders_file_path, fullfillmentDateEnd);
 
-    // Wait for report to finish
-    const orders_result_url = await utilities.pollStatus(id, accessToken);
+      const emailOptions = {
+        from: "jdeck88@gmail.com",
+        to: "fullfarmcsa@deckfamilyfarm.com",
+        cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
+        subject: 'FFCSA Reports: Customer Notes for ' + fullfillmentDateEnd,
+        text: "Please see the attached file with customer notes.",
+        attachments: [
+          {
+            filename: 'customer_notes.pdf',
+            content: fs.readFileSync(customer_note_pdf),
+          },
+        ],
+      };
 
-    // Download File
-    if (orders_result_url !== "") {
-      utilities.downloadData(orders_result_url, 'orders_list_' + fullfillmentDateEnd + ".csv")
-        .then((orders_file_path) => {
-          console.log('Downloaded file path:', orders_file_path);
+      // 🔹 Testing mode: send ONLY to John
+      if (testing) {
+        emailOptions.to = "jdeck88@gmail.com";
+        delete emailOptions.cc;
+      }
 
-          writeCustomerNotePDF(orders_file_path, fullfillmentDateEnd)
-            .then((customer_note_pdf) => {
-              const emailOptions = {
-                from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
-                subject: 'FFCSA Reports: Customer Notes for ' + fullfillmentDateEnd,
-                text: "Please see the attached file with customer notes.",
-              };
-              emailOptions.attachments = [
-                {
-                  filename: 'customer_notes.pdf', // Change the filename as needed
-                  content: fs.readFileSync(customer_note_pdf), // Attach the file buffer
-                },
-              ];
-              utilities.sendEmail(emailOptions);
-
-            }).catch((error) => {
-              console.error("Error in writeCustomerNotePDF:", error);
-              utilities.sendErrorEmail(error);
-            });
-
-          writeDeliveryOrderPDF(orders_file_path, fullfillmentDateEnd)
-            .then((delivery_order_pdf) => {
-              const emailOptions = {
-                from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com",
-                subject: 'FFCSA Reports: Delivery Orders for ' + fullfillmentDateEnd,
-                text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
-              };
-              emailOptions.attachments = [
-                {
-                  filename: 'delivery_orders.pdf', // Change the filename as needed
-                  content: fs.readFileSync(delivery_order_pdf), // Attach the file buffer
-                },
-              ];
-              utilities.sendEmail(emailOptions)
-            }).catch((error) => {
-              console.error("Error in writeDeliveryOrderPDF:", error);
-              utilities.sendErrorEmail(error)
-            });
-
-          writeSetupPDF(orders_file_path, fullfillmentDateEnd)
-            .then((setup_pdf) => {
-              const emailOptions = {
-                from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com",
-                subject: 'FFCSA Reports: Setup Instructions for ' + fullfillmentDateEnd,
-                text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
-              };
-              emailOptions.attachments = [
-                {
-                  filename: 'setup.pdf', // Change the filename as needed
-                  content: fs.readFileSync(setup_pdf), // Attach the file buffer
-                },
-              ];
-              utilities.sendEmail(emailOptions)
-            }).catch((error) => {
-              console.error("Error in writeDeliveryOrderPDF:", error);
-              utilities.sendErrorEmail(error)
-            });
-
-          console.log("starting writeLabelPDF")
-          writeLabelPDF(orders_file_path)
-            .then((labelPdfPath) => {
-              const emailOptions = {
-                from: "jdeck88@gmail.com",
-                to: "fullfarmcsa@deckfamilyfarm.com",
-                cc: "jdeck88@gmail.com",
-                subject: 'FFCSA Reports: Labels for ' + fullfillmentDateEnd,
-                text: "Attached are the delivery labels.",
-                attachments: [
-                  {
-                    filename: 'labels.pdf',
-                    content: fs.readFileSync(labelPdfPath),
-                  },
-                ],
-              };
-              utilities.sendEmail(emailOptions);
-            }).catch(console.error);
-
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          utilities.sendErrorEmail(error)
-        });
-    } else {
-      console.error('file generation not completed in 1 minute')
-      utilities.sendErrorEmail(error)
+      utilities.sendEmail(emailOptions);
+    } catch (error) {
+      console.error("Error in writeCustomerNotePDF:", error);
+      utilities.sendErrorEmail(error);
     }
+
+    // ---------- Delivery Orders PDF ----------
+    try {
+      const delivery_order_pdf = await writeDeliveryOrderPDF(orders_file_path, fullfillmentDateEnd);
+
+      const emailOptions = {
+        from: "jdeck88@gmail.com",
+        to: "fullfarmcsa@deckfamilyfarm.com",
+        cc: "jdeck88@gmail.com",
+        subject: 'FFCSA Reports: Delivery Orders for ' + fullfillmentDateEnd,
+        text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
+        attachments: [
+          {
+            filename: 'delivery_orders.pdf',
+            content: fs.readFileSync(delivery_order_pdf),
+          },
+        ],
+      };
+
+      if (testing) {
+        emailOptions.to = "jdeck88@gmail.com";
+        delete emailOptions.cc;
+      }
+
+      utilities.sendEmail(emailOptions);
+    } catch (error) {
+      console.error("Error in writeDeliveryOrderPDF:", error);
+      utilities.sendErrorEmail(error);
+    }
+
+    // ---------- Setup PDF ----------
+    try {
+      const setup_pdf = await writeSetupPDF(orders_file_path, fullfillmentDateEnd);
+
+      const emailOptions = {
+        from: "jdeck88@gmail.com",
+        to: "fullfarmcsa@deckfamilyfarm.com",
+        cc: "jdeck88@gmail.com",
+        subject: 'FFCSA Reports: Setup Instructions for ' + fullfillmentDateEnd,
+        text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
+        attachments: [
+          {
+            filename: 'setup.pdf',
+            content: fs.readFileSync(setup_pdf),
+          },
+        ],
+      };
+
+      if (testing) {
+        emailOptions.to = "jdeck88@gmail.com";
+        delete emailOptions.cc;
+      }
+
+      utilities.sendEmail(emailOptions);
+    } catch (error) {
+      console.error("Error in writeSetupPDF:", error);
+      utilities.sendErrorEmail(error);
+    }
+
+    // ---------- Labels PDF ----------
+    try {
+      console.log("starting writeLabelPDF");
+      const labelPdfPath = await writeLabelPDF(orders_file_path);
+
+      const emailOptions = {
+        from: "jdeck88@gmail.com",
+        to: "fullfarmcsa@deckfamilyfarm.com",
+        cc: "jdeck88@gmail.com",
+        subject: 'FFCSA Reports: Labels for ' + fullfillmentDateEnd,
+        text: "Attached are the delivery labels.",
+        attachments: [
+          {
+            filename: 'labels.pdf',
+            content: fs.readFileSync(labelPdfPath),
+          },
+        ],
+      };
+
+      if (testing) {
+        emailOptions.to = "jdeck88@gmail.com";
+        delete emailOptions.cc;
+      }
+
+      utilities.sendEmail(emailOptions);
+    } catch (error) {
+      console.error("Error in writeLabelPDF:", error);
+      utilities.sendErrorEmail(error);
+    }
+
   } catch (error) {
-    console.error('An error occurred:', error);
-    utilities.sendErrorEmail(error)
+    console.error('An error occurred in delivery_order:', error);
+    utilities.sendErrorEmail(error);
   }
 }
-
+   
+  
 // Run the delivery_order script
 /*
 const fullfillmentDateObject = {
@@ -922,7 +934,7 @@ const fullfillmentDateObject = {
   end: '2025-12-02',
   date: '2025-12-02'
 };
-delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
 */
 fullfillmentDateObject = utilities.getNextFullfillmentDate()
-delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
+const TESTING = false;
+delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end, TESTING);

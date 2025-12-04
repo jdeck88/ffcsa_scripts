@@ -223,6 +223,73 @@ async function downloadData(file_path, filename) {
         });
     });
 }
+
+async function downloadOrdersCsv(fullfillmentDateStart, fullfillmentDateEnd, overwrite = true) {
+  // 👉 Where we expect the final file to live
+  const baseName = `orders_list_${fullfillmentDateEnd}.csv`;
+  const targetPath = path.join('data', baseName); // matches how downloadData usually writes
+
+  // If file exists and we don't want to overwrite, just reuse it
+  if (!overwrite && fs.existsSync(targetPath)) {
+    console.log(`📄 Using existing orders file (overwrite=false): ${targetPath}`);
+    return targetPath;
+  }
+
+  // 1️⃣ Login / access token
+  let tokenRaw = await getAccessToken();
+  let tokenPayload;
+  try {
+    tokenPayload = (typeof tokenRaw === 'string') ? JSON.parse(tokenRaw) : tokenRaw;
+  } catch (err) {
+    console.error("❌ Failed to parse getAccessToken() response as JSON:", tokenRaw);
+    throw err;
+  }
+
+  if (!tokenPayload || !tokenPayload.access) {
+    throw new Error(`getAccessToken() did not return an 'access' field: ${JSON.stringify(tokenPayload)}`);
+  }
+  const accessToken = tokenPayload.access;
+
+  // 2️⃣ Build export URL
+  const url =
+    'https://localline.ca/api/backoffice/v2/orders/export/?' +
+    'file_type=orders_list_view&send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&' +
+    `fulfillment_date_start=${fullfillmentDateStart}&` +
+    `fulfillment_date_end=${fullfillmentDateEnd}&` +
+    '&status=OPEN';
+
+  console.log('ℹ️ Requesting orders export:', url);
+
+  // 3️⃣ Kick off export job and get request ID
+  let reqRaw = await getRequestID(url, accessToken);
+  let reqPayload;
+  try {
+    reqPayload = (typeof reqRaw === 'string') ? JSON.parse(reqRaw) : reqRaw;
+  } catch (err) {
+    console.error("❌ Failed to parse getRequestID() response as JSON:", reqRaw);
+    throw err;
+  }
+
+  const id = reqPayload.id;
+  if (!id) {
+    throw new Error(`getRequestID() did not return an 'id': ${JSON.stringify(reqPayload)}`);
+  }
+
+  // 4️⃣ Poll until the export job is ready
+  const orders_result_url = await pollStatus(id, accessToken);
+  if (!orders_result_url) {
+    throw new Error(`pollStatus() returned an empty URL for request id ${id}`);
+  }
+
+  console.log('⬇️ Downloading orders CSV from:', orders_result_url);
+
+  // 5️⃣ Download the file using existing helper
+  const downloadedPath = await downloadData(orders_result_url, baseName);
+
+  console.log('✅ Orders CSV saved to:', downloadedPath);
+  return downloadedPath;
+}
+
 async function downloadBinaryData(url, fileName, accessToken) {
   try {
     const headers = {
@@ -652,5 +719,6 @@ module.exports = {
     getTomorrow,
     getYesterday,
     mailADocument,
-    getJsonFromUrl
+    getJsonFromUrl,
+    downloadOrdersCsv,
 };
