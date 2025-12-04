@@ -539,12 +539,10 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
     // Initialize variables to group items by "Fulfillment Name"
     const customers = {}; // Store customer data including attributes
-    let currentCustomerName = null;
 
     const sortedData = [];
 
     // Read the CSV file and sort by "Customer Name" before processing
-    //
     let rowCount = 0;
     fs.createReadStream(filename)
       .pipe(fastcsv.parse({ headers: true, ignoreEmpty: true }))
@@ -553,8 +551,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
         console.warn(`⚠️ Invalid row at ${rowNumber}:`, row);
       })
       .on('data', (row) => {
-        //console.log(`✅ Row ${row['Email']}`);
-        rowCount++
+        rowCount++;
         sortedData.push(row);
       })
       .on('end', () => {
@@ -565,9 +562,15 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           a['Email'].localeCompare(b['Email'])
         );
 
+        // Prepare vendorOrderMap for sorting items inside sections
+        const vendorOrderMap = {};
+        vendorOrder.forEach((vendorObj, index) => {
+          vendorOrderMap[vendorObj.vendor] = index;
+        });
+        const defaultOrderValue = vendorOrder.length;
+
         // Process the sorted data
         sortedData.forEach((row) => {
-          //const customerName = row['Customer'];
           const customerName = `${row['Last Name']}, ${row['First Name']}`;
           const email = `${row['Email']}`;
           const product = row['Product'] + ' - ' + row['Package Name'];
@@ -585,6 +588,9 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           const startTime = row['Fulfillment - Pickup Start Time'];
           const endTime = row['Fulfillment - Pickup End Time'];
 
+          // 🔹 NEW: Packing Tag (from CSV) – "Frozen", "Dairy", or blank/null
+          const rawPackingTag = (row['Packing Tag'] || '').trim();
+
           let timeRange = '';
           if (startTime && endTime) {
             timeRange = startTime + ' to ' + endTime;
@@ -595,7 +601,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             quantity = numItems;
           }
 
-          // If the customerName changes, start a new section
+          // Initialize customer bucket
           if (!customers[email]) {
             customers[email] = {
               products: [],
@@ -616,6 +622,8 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               quantity,
               itemUnit,
               vendor,
+              // store raw packing tag for grouping later
+              packingTag: rawPackingTag,
             });
           }
         });
@@ -625,7 +633,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           const customerData = customers[email];
 
           if (customerData.products.length > 0) {
-            // Load the image (replace with the path to your image)
+            // Logo + header
             const image = 'logo.png';
             const x = 0; // X-coordinate (left)
             const y = 0; // Y-coordinate (top)
@@ -633,14 +641,12 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             const height = 80; // Image height in pixels
             const lineSpacing = 15;
 
-            // Add the image to the PDF document
             doc.image(image, 10, 10, { width, height });
 
-            // Position the text to appear to the right of the image
             let textX = x + width + 20;
             let textY = 0;
 
-            doc.font('Helvetica'); // Reset to regular font
+            doc.font('Helvetica');
 
             // Fulfillment date
             doc.fontSize(12).text(`${fullfillmentDateEnd}`, textX, textY + 10, { align: 'right' });
@@ -682,63 +688,64 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
             // Add extra space before Items Ordered
             textY += 20;
-
-            // Add "Items Ordered" title
-            //          doc.fontSize(16).text('Items Ordered', textX, textY, { bold: true });
             textY += lineSpacing + 16;
 
-            const items = sortItemsByLocationVendorAndProduct(customerData.products, vendorOrder);
+            // 🔹 Sort products by vendor order then product name (no location)
+            const items = customerData.products.slice().sort((a, b) => {
+              const orderA = vendorOrderMap.hasOwnProperty(a.vendor)
+                ? vendorOrderMap[a.vendor]
+                : defaultOrderValue;
+              const orderB = vendorOrderMap.hasOwnProperty(b.vendor)
+                ? vendorOrderMap[b.vendor]
+                : defaultOrderValue;
 
-            const vendorLocations = {};
-            vendorOrder.forEach(entry => {
-              vendorLocations[entry.vendor] = entry.location;
+              if (orderA !== orderB) return orderA - orderB;
+
+              if (a.product < b.product) return -1;
+              if (a.product > b.product) return 1;
+              return 0;
             });
 
-            const normalizeLocation = (location) => {
-              if (location === 'Dairy') return 'Creamy Cow Dairy Items';
-              if (location === 'Deck Meat & Eggs') return 'Deck Family Farm Items';
-              return 'All Other Items';
-            };
-
-            Object.keys(vendorLocations).forEach(vendor => {
-              vendorLocations[vendor] = normalizeLocation(vendorLocations[vendor]);
-            });
-
-
-
+            // 🔹 Group items by Packing Tag → Frozen/Dairy/Tote
             const groupedItems = {
-              'Deck Family Farm Items': [],
-              'Creamy Cow Dairy Items': [],
-              'All Other Items': []
+              'Frozen Items': [],
+              'Dairy Items': [],
+              'Tote Items': [],
             };
 
-            // Group based on vendorLocations (NOT vendorOrder)
             items.forEach(item => {
-              const location = vendorLocations[item.vendor] || 'All Other Items';
-              groupedItems[location].push(item);
+              const tag = (item.packingTag || '').toLowerCase();
+              let section;
+              if (tag === 'frozen') {
+                section = 'Frozen Items';
+              } else if (tag === 'dairy') {
+                section = 'Dairy Items';
+              } else {
+                // null/blank or anything else
+                section = 'Tote Items';
+              }
+              groupedItems[section].push(item);
             });
 
-            const sectionOrder = ['Deck Family Farm Items', 'Creamy Cow Dairy Items', 'All Other Items'];
+            const sectionOrder = ['Frozen Items', 'Dairy Items', 'Tote Items'];
 
+            // 🔹 Render sections in the desired order
             sectionOrder.forEach(section => {
               const sectionItems = groupedItems[section];
 
               if (sectionItems.length > 0) {
-                // Divider Title
                 doc.moveDown(1);
-                doc.fontSize(14).text(`${section} `, { bold: true });
+                doc.fontSize(14).text(section, { bold: true });
                 textY += lineSpacing + 14;
 
-                // Prepare Table Rows
                 const itemsAsData = sectionItems.map(item => [
                   item.product,
                   item.quantity,
                   item.itemUnit,
                   item.vendor,
-                  ''  // For 'Packed'
+                  '' // Packed column
                 ]);
 
-                // Table Definition
                 const table = {
                   title: '',
                   headers: ['Product', 'Quantity', 'Unit', 'Vendor', 'Packed'],
@@ -748,27 +755,11 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
                 doc.table(table);
               }
             });
-            /*
-              // Render table data
-            const itemsAsData = items.map((item) => [item.product, item.quantity, item.itemUnit, item.vendor]);
 
-            const table = {
-              title: '',
-              widths: [600], // Set the width to the page width
-              headers: ['Product', 'Quantity', 'Unit', 'Vendor', 'Packed'],
-              rows: itemsAsData,
-            };
-
-            doc.table(table);
-            */
             doc.moveDown();
 
-            // Add footer note
-            doc.fontSize(12).font('Helvetica-Oblique').text('Please check for all items on this list in your tote as well as the meat and dairy coolers at your dropsite.  Some items may be stowed in places you may not expect them to be; for example, butter may appear in the meat/frozen cooler and eggs and honey are usually inside the tote with other items.', doc.x, doc.y);
-
-            doc.fontSize(12).font('Helvetica-Oblique').text('***', doc.x, doc.y);
-
-            doc.fontSize(12).font('Helvetica-Oblique').text('Missing an item? Send an email to fullfarmcsa@deckfamilyfarm.com and we\'ll issue you a credit.', doc.x, doc.y);
+            // Footer note
+            doc.fontSize(12).font('Helvetica-Oblique').text("Please check your tote and the meat/dairy coolers for all listed items, and email fullfarmcsa@deckfamilyfarm.com if anything is missing so we can issue you a credit.", doc.x, doc.y);
 
             doc.addPage();
           }
@@ -830,9 +821,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((customer_note_pdf) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                //to: "fullfarmcsa@deckfamilyfarm.com",
-                //cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
-                to: "jdeck88@gmail.com",
+                to: "fullfarmcsa@deckfamilyfarm.com",
+                cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
                 subject: 'FFCSA Reports: Customer Notes for ' + fullfillmentDateEnd,
                 text: "Please see the attached file with customer notes.",
               };
@@ -853,8 +843,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((delivery_order_pdf) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                //to: "fullfarmcsa@deckfamilyfarm.com",
-                to: "jdeck88@gmail.com",
+                to: "fullfarmcsa@deckfamilyfarm.com",
+                cc: "jdeck88@gmail.com",
                 subject: 'FFCSA Reports: Delivery Orders for ' + fullfillmentDateEnd,
                 text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
               };
@@ -874,8 +864,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((setup_pdf) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                //to: "fullfarmcsa@deckfamilyfarm.com",
-                to: "jdeck88@gmail.com",
+                to: "fullfarmcsa@deckfamilyfarm.com",
+                cc: "jdeck88@gmail.com",
                 subject: 'FFCSA Reports: Setup Instructions for ' + fullfillmentDateEnd,
                 text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
               };
@@ -896,8 +886,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
             .then((labelPdfPath) => {
               const emailOptions = {
                 from: "jdeck88@gmail.com",
-                //to: "fullfarmcsa@deckfamilyfarm.com",
-                to: "jdeck88@gmail.com",
+                to: "fullfarmcsa@deckfamilyfarm.com",
+                cc: "jdeck88@gmail.com",
                 subject: 'FFCSA Reports: Labels for ' + fullfillmentDateEnd,
                 text: "Attached are the delivery labels.",
                 attachments: [
@@ -926,13 +916,11 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 }
 
 // Run the delivery_order script
-/*
 const fullfillmentDateObject = {
-  start: '2025-10-18',
-  end: '2025-10-18',
-  date: '2025-10-18'
+  start: '2025-12-02',
+  end: '2025-12-02',
+  date: '2025-12-02'
 };
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
-*/
-fullfillmentDateObject = utilities.getNextFullfillmentDate()
-delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
+//fullfillmentDateObject = utilities.getNextFullfillmentDate()
+//delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
