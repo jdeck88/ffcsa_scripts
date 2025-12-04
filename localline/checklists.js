@@ -425,9 +425,8 @@ function sendEmail(file_location, filename, subject) {
   // Email information
   const emailOptions = {
     from: "jdeck88@gmail.com",
-    //to: "fullfarmcsa@deckfamilyfarm.com",
-    to: "jdeck88@gmail.com",
-    //cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
+    to: "fullfarmcsa@deckfamilyfarm.com",
+    cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
     subject: subject,
     text: "Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.",
   };
@@ -459,11 +458,11 @@ async function checklist(fullfillmentDate) {
     const accessToken = JSON.parse(data).access;
 
     //dairy tags
-    //dairy_url = 'https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2244&direct=true'
-    dairy_url = 'https://localline.ca/api/backoffice/v2/products/export/?packing_tag=85&direct=true'
+    dairy_url = 'https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2244&direct=true'
+    //dairy_url = 'https://localline.ca/api/backoffice/v2/products/export/?packing_tag=85&direct=true'
     // frozen and turkey
-    //frozen_url = 'https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2245,2266&direct=true'
-    frozen_url = 'https://localline.ca/api/backoffice/v2/products/export/?packing_tag=86&direct=true'
+    frozen_url = 'https://localline.ca/api/backoffice/v2/products/export/?internal_tags=2245,2266&direct=true'
+    //frozen_url = 'https://localline.ca/api/backoffice/v2/products/export/?packing_tag=86&direct=true'
 
     dairy_file = 'data/dairy.xlsx'
     frozen_file = 'data/frozen.xlsx'
@@ -506,19 +505,12 @@ async function checklist(fullfillmentDate) {
 }
 
 // Run the checklist script
+/*
 const fullfillmentDateObject = {
   start: '2025-12-02',
   end: '2025-12-02',
   date: '2025-12-02'
 };
-checklist(fullfillmentDateObject.date)
-  .then(() => {
-    console.log("✅ Checklist complete");
-    process.exit(0);
-  })
-  .catch((err) => {
-    console.error("❌ Checklist failed:", err);
-    process.exit(1);
-  });
-//fullfillmentDateObject = utilities.getNextFullfillmentDate()
-//checklist(fullfillmentDateObject.date);
+*/
+fullfillmentDateObject = utilities.getNextFullfillmentDate()
+checklist(fullfillmentDateObject.date);
