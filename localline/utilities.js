@@ -223,21 +223,42 @@ async function downloadData(file_path, filename) {
         });
     });
 }
-
 async function downloadBinaryData(url, fileName, accessToken) {
-    try {
-        const headers = {
-            'Authorization': `Bearer ${accessToken}`
-        };
-        const response = await axios.get(url, { responseType: 'arraybuffer', headers });
-        // Write the binary data to a file
-        fs.writeFileSync(fileName, response.data);
+  try {
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
 
-        return fileName; // Return the path to the downloaded file
-    } catch (error) {
-        throw new Error(error)
-    }
+    // 🔍 Log an equivalent curl command for debugging
+    console.log("\n=== Debug curl for downloadBinaryData ===");
+    console.log(
+      `curl \\`,
+    );
+    console.log(
+      `  -H "Authorization: Bearer ${accessToken}" \\`
+    );
+    console.log(
+      `  -o "${fileName}" \\`
+    );
+    console.log(
+      `  "${url}"`
+    );
+    console.log("=== End debug curl ===\n");
+
+    const response = await axios.get(url, {
+      responseType: "arraybuffer",
+      headers,
+    });
+
+    // Write the binary data to a file
+    fs.writeFileSync(fileName, response.data);
+
+    return fileName; // Return the path to the downloaded file
+  } catch (error) {
+    throw new Error(error);
+  }
 }
+
 /*
 async function sendSubscribersEmail(results, filename, subject) {
     console.log('function here to email the file ' + filename)

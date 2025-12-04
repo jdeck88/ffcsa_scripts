@@ -511,6 +511,14 @@ const fullfillmentDateObject = {
   end: '2025-12-02',
   date: '2025-12-02'
 };
-checklist(fullfillmentDateObject.date);
+checklist(fullfillmentDateObject.date)
+  .then(() => {
+    console.log("✅ Checklist complete");
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error("❌ Checklist failed:", err);
+    process.exit(1);
+  });
 //fullfillmentDateObject = utilities.getNextFullfillmentDate()
 //checklist(fullfillmentDateObject.date);
