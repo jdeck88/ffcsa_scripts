@@ -916,11 +916,13 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd) {
 }
 
 // Run the delivery_order script
+/*
 const fullfillmentDateObject = {
   start: '2025-12-02',
   end: '2025-12-02',
   date: '2025-12-02'
 };
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
-//fullfillmentDateObject = utilities.getNextFullfillmentDate()
-//delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
+*/
+fullfillmentDateObject = utilities.getNextFullfillmentDate()
+delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end);
