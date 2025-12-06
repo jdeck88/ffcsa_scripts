@@ -12,13 +12,18 @@ function groupByCategoryWithSubtotals(items) {
 
   // Step 1: Merge by product + category
   for (const item of items) {
-// normalize categories
-item.category = item.category
-  .normalize("NFKC")
-  .replace(/[–—]/g, '-')
-  .replace(/\s+/g, ' ')
-  .replace(/\s*-\s*/g, ' - ')
-  .trim();
+    // normalize categories & strip emojis / icon chars
+    let category = (item.category || '').toString();
+
+    category = category
+      .normalize("NFKC")
+      .replace(/[^\x00-\x7F]/g, '')             // 🔹 strip non-ASCII (emoji/icons/etc)
+      .replace(/[–—]/g, '-')                    // normalize fancy dashes
+      .replace(/\s+/g, ' ')                     // collapse whitespace
+      .replace(/\s*-\s*/g, ' - ')               // normalize spaces around hyphen
+      .trim();
+
+    item.category = category || 'Uncategorized';
 
     const key = `${item.product}|${item.category}`;
     if (!merged[key]) {
@@ -50,7 +55,7 @@ item.category = item.category
     if (item.category !== currentCategory) {
       // Add subtotal row for previous category
       if (currentCategory !== null) {
-        finalRows.push(['', '', `Subtotal: ${currentCategory}`, subtotal.toFixed(2)]);
+        finalRows.push(['', '', `${currentCategory}`, subtotal.toFixed(2)]);
       }
 
       currentCategory = item.category;
@@ -68,7 +73,7 @@ item.category = item.category
 
   // Final subtotal row
   if (currentCategory !== null) {
-    finalRows.push(['', '', `Subtotal: ${currentCategory}`, subtotal.toFixed(2)]);
+    finalRows.push(['', '', ` ${currentCategory}`, subtotal.toFixed(2)]);
   }
 
   return finalRows;
@@ -138,7 +143,7 @@ async function groupOrdersByVendor(orderFile, productData, fulfillmentDate) {
             let quantity = Math.round(parseFloat(row['Quantity']));
             const numItems = Math.round(parseFloat(row['# of Items']));
             if (numItems > 1 && quantity == 1) {
-                quantity = numItems
+              quantity = numItems;
             }
             const price = lookupPackagePrice(parseInt(row['Product ID'], 10), row['Package Name'], productData);
             const totalPrice = price * quantity;
@@ -209,10 +214,13 @@ async function generateSummaryPDF(vendorOrders, outputFile) {
 }
 
 // Send vendor-specific emails
-async function sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate) {
+async function sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate, testing = false) {
   for (const [vendor, items] of Object.entries(vendorOrders)) {
     let email = vendorEmails[vendor];
-    if (!email || !items.length) continue;
+    if (!items.length) continue;
+
+    // In normal mode, skip vendors without an email
+    if (!email && !testing) continue;
 
     const doc = new PDFDocument();
     doc.fontSize(16).text('Fulfillment Sheet for Full Farm CSA, LLC', { align: 'right' });
@@ -229,13 +237,19 @@ async function sendVendorEmails(vendorOrders, vendorEmails, productData, fulfill
     doc.table(table);
     doc.text('Total Price ' + sumTotal.toFixed(2), { align: 'right', bold: true });
 
+    // 🔹 Testing mode: send ONLY to jdeck88@gmail.com
+    const toAddress = testing ? 'jdeck88@gmail.com' : email;
+    const fromAddress = testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com';
+
     const mailOptions = {
-      from: 'fullfarmcsa@deckfamilyfarm.com',
-      to: email,
-      cc: 'fullfarmcsa@deckfamilyfarm.com',
-      bcc: 'jdeck88@gmail.com',
-      subject: `FFCSA Reports: Vendor Fulfillments for ${vendor} - ${utilities.getToday()}`,
-      text: 'The attached PDF contains the Full Farm CSA Order for the next fulfillment cycle. Please reply with questions.'
+      from: fromAddress,
+      to: toAddress,
+      cc: testing ? undefined : 'fullfarmcsa@deckfamilyfarm.com',
+      bcc: testing ? undefined : 'jdeck88@gmail.com',
+      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: Vendor Fulfillments for ${vendor} - ${utilities.getToday()}`,
+      text: testing
+        ? `TESTING MODE: This fulfillment report would normally go to ${email || '(no email on file)'} for vendor "${vendor}".`
+        : 'The attached PDF contains the Full Farm CSA Order for the next fulfillment cycle. Please reply with questions.'
     };
 
     try {
@@ -249,32 +263,51 @@ async function sendVendorEmails(vendorOrders, vendorEmails, productData, fulfill
 }
 
 // Main
-async function runVendorReports(fulfillmentDate) {
-  const orderFile = `data/orders_list_${fulfillmentDate}.csv`;
+async function runVendorReports(fulfillmentDate, testing = false) {
   const productsFile = 'data/products.xlsx';
   const vendorsFile = 'data/vendors.csv';
   const pdfFile = 'data/vendors.pdf';
 
   try {
+    // 🔹 Get the orders CSV (do NOT overwrite if it already exists)
+    const orderFile = await utilities.downloadOrdersCsv(
+      fulfillmentDate, // fulfillment_date_start
+      fulfillmentDate, // fulfillment_date_end
+      false            // overwrite = false
+    );
+
+    // You can still get a token for the other exports
     const token = JSON.parse(await utilities.getAccessToken()).access;
+
+    // Download products + vendors (these still overwrite as before)
     await Promise.all([
-      utilities.downloadBinaryData('https://localline.ca/api/backoffice/v2/products/export/?direct=true', productsFile, token),
-      utilities.downloadBinaryData('https://localline.ca/api/backoffice/v2/vendors/export/?direct=true', vendorsFile, token)
+      utilities.downloadBinaryData(
+        'https://localline.ca/api/backoffice/v2/products/export/?direct=true',
+        productsFile,
+        token
+      ),
+      utilities.downloadBinaryData(
+        'https://localline.ca/api/backoffice/v2/vendors/export/?direct=true',
+        vendorsFile,
+        token
+      )
     ]);
 
     const vendorEmails = await readVendorsCSV(vendorsFile);
     const productData = await readVendorProductsExcel(productsFile);
     const vendorOrders = await groupOrdersByVendor(orderFile, productData, fulfillmentDate);
 
-    await sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate);
+    await sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate, testing);
     const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile);
 
     const summaryMail = {
       from: 'jdeck88@gmail.com',
-      to: 'fullfarmcsa@deckfamilyfarm.com',
-      cc: 'jdeck88@gmail.com',
-      subject: `FFCSA Reports: All Vendor Data for ${fulfillmentDate}`,
-      text: 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.',
+      to: testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com',
+      cc: testing ? undefined : 'jdeck88@gmail.com',
+      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: All Vendor Data for ${fulfillmentDate}`,
+      text: testing
+        ? 'TESTING MODE: This is the consolidated vendor report. In production this would go to fullfarmcsa@deckfamilyfarm.com.'
+        : 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.',
       attachments: [{ filename: 'vendors.pdf', content: fs.readFileSync(summaryPDF) }]
     };
 
@@ -285,6 +318,9 @@ async function runVendorReports(fulfillmentDate) {
   }
 }
 
+// 🔹 TESTING flag – set to true to send ALL emails ONLY to jdeck88@gmail.com
+const TESTING = false;
+
 // Run it
 const fulfillment = utilities.getNextFullfillmentDate();
-runVendorReports(fulfillment.date);
+runVendorReports(fulfillment.date, TESTING);
