@@ -297,6 +297,7 @@ async function downloadBinaryData(url, fileName, accessToken) {
     };
 
     // 🔍 Log an equivalent curl command for debugging
+	/*
     console.log("\n=== Debug curl for downloadBinaryData ===");
     console.log(
       `curl \\`,
@@ -311,6 +312,7 @@ async function downloadBinaryData(url, fileName, accessToken) {
       `  "${url}"`
     );
     console.log("=== End debug curl ===\n");
+	*/
 
     const response = await axios.get(url, {
       responseType: "arraybuffer",

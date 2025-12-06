@@ -178,7 +178,7 @@ async function generateSummaryPDF(vendorOrders, outputFile) {
       const items = vendorOrders[vendor];
       if (!items || items.length === 0) return;
 
-      doc.fontSize(16).text(items[0].fulfillmentDate, { align: 'right' });
+      doc.fontSize(16).text(items[0].fulfillmentDate.date, { align: 'right' });
       doc.fontSize(16).text(vendor, { bold: true });
 
       const rows = groupByCategoryWithSubtotals(items);
@@ -271,8 +271,8 @@ async function runVendorReports(fulfillmentDate, testing = false) {
   try {
     // 🔹 Get the orders CSV (do NOT overwrite if it already exists)
     const orderFile = await utilities.downloadOrdersCsv(
-      fulfillmentDate, // fulfillment_date_start
-      fulfillmentDate, // fulfillment_date_end
+      fulfillmentDate.start, // fulfillment_date_start
+      fulfillmentDate.end, // fulfillment_date_end
       false            // overwrite = false
     );
 
@@ -295,16 +295,16 @@ async function runVendorReports(fulfillmentDate, testing = false) {
 
     const vendorEmails = await readVendorsCSV(vendorsFile);
     const productData = await readVendorProductsExcel(productsFile);
-    const vendorOrders = await groupOrdersByVendor(orderFile, productData, fulfillmentDate);
+    const vendorOrders = await groupOrdersByVendor(orderFile, productData, fulfillmentDate.date);
 
-    await sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate, testing);
+    await sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate.date, testing);
     const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile);
 
     const summaryMail = {
       from: 'jdeck88@gmail.com',
       to: testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com',
       cc: testing ? undefined : 'jdeck88@gmail.com',
-      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: All Vendor Data for ${fulfillmentDate}`,
+      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: All Vendor Data for ${fulfillmentDate.date}`,
       text: testing
         ? 'TESTING MODE: This is the consolidated vendor report. In production this would go to fullfarmcsa@deckfamilyfarm.com.'
         : 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.',
@@ -323,4 +323,4 @@ const TESTING = false;
 
 // Run it
 const fulfillment = utilities.getNextFullfillmentDate();
-runVendorReports(fulfillment.date, TESTING);
+runVendorReports(fulfillment, TESTING);
