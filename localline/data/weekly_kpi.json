@@ -11729,6 +11729,25 @@
         "skippedSubscribers": 13,
         "feedAFriendSubscribers": 16
       }
+    },
+    {
+      "dateRange": "2025-12-22 to 2025-12-28",
+      "data": {
+        "totalSales": "0.00",
+        "numOrders": 0,
+        "numSubscriberOrders": 0,
+        "numGuestOrders": 0,
+        "averageItemsPerOrder": null,
+        "averageOrderAmount": "NaN",
+        "totalActiveSubscribers": 249,
+        "projectedMonthlySubscriptionRevenue": 55530,
+        "vendors": {},
+        "category": {},
+        "product": {},
+        "dropsite": {},
+        "skippedSubscribers": 15,
+        "feedAFriendSubscribers": 16
+      }
     }
   ]
 }
