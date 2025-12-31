@@ -248,8 +248,14 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
     const pdf_file = 'data/customer_notes.pdf';
 
     // Create a new PDF document
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ bufferPages: true });
     doc.pipe(fs.createWriteStream(pdf_file));
+    const pageNumbering = new Map();
+
+    const currentPageIndex = () => {
+      const range = doc.bufferedPageRange();
+      return range.start + range.count - 1;
+    };
 
     // Initialize variables to group items by "Customer Name"
     const customers = {}; // Store customer data including attributes
@@ -534,8 +540,14 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
     const pdf_file = 'data/delivery_order.pdf';
 
     // Create a new PDF document
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ bufferPages: true });
     doc.pipe(fs.createWriteStream(pdf_file));
+    const pageNumbering = new Map();
+
+    const currentPageIndex = () => {
+      const range = doc.bufferedPageRange();
+      return range.start + range.count - 1;
+    };
 
     // Initialize variables to group items by "Fulfillment Name"
     const customers = {}; // Store customer data including attributes
@@ -554,7 +566,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
         rowCount++;
         sortedData.push(row);
       })
-      .on('end', () => {
+      .on('end', async () => {
         console.log(`Finished parsing. ${rowCount} total rows processed.`);
         sortedData.sort((a, b) =>
           a['Last Name'].localeCompare(b['Last Name']) ||
@@ -629,16 +641,17 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
         });
 
         // Iterate through items and generate the PDF content
-        for (const email in customers) {
+        for (const email of Object.keys(customers)) {
           const customerData = customers[email];
 
           if (customerData.products.length > 0) {
+            const orderStartPage = currentPageIndex();
             // Logo + header
             const image = 'logo.png';
             const x = 0; // X-coordinate (left)
             const y = 0; // Y-coordinate (top)
-            const width = 80; // Image width in pixels
-            const height = 80; // Image height in pixels
+            const width = 60; // Image width in pixels
+            const height = 60; // Image height in pixels
             const lineSpacing = 15;
 
             doc.image(image, 10, 10, { width, height });
@@ -648,8 +661,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
             doc.font('Helvetica');
 
-            // Fulfillment date
-            doc.fontSize(12).text(`${fullfillmentDateEnd}`, textX, textY + 10, { align: 'right' });
+            // Fulfillment date is rendered with page numbering later for consistent alignment.
             textY += lineSpacing;
 
             // Customer details
@@ -686,9 +698,9 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               textY += textHeight + lineSpacing;
             }
 
-            // Add extra space before Items Ordered
-            textY += 20;
-            textY += lineSpacing + 16;
+            const headerBottom = Math.max(textY, y + height + 10);
+            doc.x = doc.page.margins.left;
+            doc.y = headerBottom + 10;
 
             // 🔹 Sort products by vendor order then product name (no location)
             const items = customerData.products.slice().sort((a, b) => {
@@ -730,11 +742,28 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             const sectionOrder = ['Frozen Items', 'Dairy Items', 'Tote Items'];
 
             // 🔹 Render sections in the desired order
-            sectionOrder.forEach(section => {
+            const pageBottom = doc.page.height - doc.page.margins.bottom;
+            const tableWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+
+            for (const section of sectionOrder) {
               const sectionItems = groupedItems[section];
 
               if (sectionItems.length > 0) {
-                doc.moveDown(1);
+                const sectionHeaderHeight = doc.fontSize(14).heightOfString(section, {
+                  width: tableWidth,
+                });
+                const tableHeaderHeight = doc.fontSize(8).heightOfString('Product', {
+                  width: tableWidth,
+                }) + 8;
+                const sampleRowHeight = doc.fontSize(8).heightOfString('A', {
+                  width: tableWidth,
+                }) + 6;
+                const minSectionHeight = sectionHeaderHeight + tableHeaderHeight + sampleRowHeight + 36;
+                if (doc.y + minSectionHeight > pageBottom) {
+                  doc.addPage();
+                }
+
+                doc.moveDown(0.2);
                 doc.fontSize(14).text(section, { bold: true });
                 textY += lineSpacing + 14;
 
@@ -752,17 +781,70 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
                   rows: itemsAsData
                 };
 
-                doc.table(table);
+                const tableStartX = doc.page.margins.left;
+                const tableStartY = doc.y;
+                const productWidth = Math.floor(tableWidth * 0.45);
+                const vendorWidth = Math.floor(tableWidth * 0.25);
+                const smallWidth = Math.floor((tableWidth - productWidth - vendorWidth) / 3);
+                const columnsSize = [
+                  productWidth,
+                  smallWidth,
+                  smallWidth,
+                  vendorWidth,
+                  tableWidth - productWidth - vendorWidth - (smallWidth * 2),
+                ];
+
+                await doc.table(table, {
+                  x: tableStartX,
+                  y: tableStartY,
+                  absolutePosition: true,
+                  columnsSize,
+                  columnSpacing: 2,
+                  padding: 2,
+                });
               }
-            });
+            }
 
             doc.moveDown();
 
             // Footer note
             doc.fontSize(12).font('Helvetica-Oblique').text("Please check your tote and the meat/dairy coolers for all listed items, and email fullfarmcsa@deckfamilyfarm.com if anything is missing so we can issue you a credit.", doc.x, doc.y);
 
+            const orderEndPage = currentPageIndex();
+            const totalOrderPages = orderEndPage - orderStartPage + 1;
+            for (let i = 0; i < totalOrderPages; i++) {
+              pageNumbering.set(orderStartPage + i, {
+                page: i + 1,
+                total: totalOrderPages,
+                date: fullfillmentDateEnd,
+                name: customerData.customerName,
+              });
+            }
+
             doc.addPage();
           }
+        }
+
+        const pageRange = doc.bufferedPageRange();
+        for (let i = pageRange.start; i < pageRange.start + pageRange.count; i++) {
+          const info = pageNumbering.get(i);
+          if (!info) continue;
+          doc.switchToPage(i);
+          const pageLabel = `Page ${info.page} of ${info.total} | ${info.date}`;
+          if (info.page > 1) {
+            doc.fontSize(10)
+              .fillColor('black')
+              .text(`Name: ${info.name}`, doc.page.margins.left, 10, {
+                width: (doc.page.width - doc.page.margins.left - doc.page.margins.right) / 2,
+                align: 'left',
+              });
+          }
+          doc.fontSize(9)
+            .fillColor('gray')
+            .text(pageLabel, doc.page.margins.left, 10, {
+              width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+              align: 'right',
+            });
         }
 
         doc.end();
@@ -787,13 +869,16 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 }
 
 // Build customer delivery orders (picklists)
-// Build customer delivery orders (picklists)
 async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testing = false) {
   try {
     console.log("running delivery_order builder");
 
     // 🔹 Download (or reuse) the orders CSV via utilities helper
-    const overwriteExisting = true; // change to false if you ever want to reuse existing file
+    let overwriteExisting = true; // change to false if you ever want to reuse existing file
+
+    // when i test i don't want to the overwrite feature
+    if (testing) overwriteExisting = false;
+
     const orders_file_path = await utilities.downloadOrdersCsv(
       fullfillmentDateStart,
       fullfillmentDateEnd,
@@ -928,13 +1013,13 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
    
   
 // Run the delivery_order script
-/*
+
 const fullfillmentDateObject = {
-  start: '2025-12-02',
-  end: '2025-12-02',
-  date: '2025-12-02'
+  start: '2025-12-30',
+  end: '2025-12-30',
+  date: '2025-12-30'
 };
-*/
-fullfillmentDateObject = utilities.getNextFullfillmentDate()
-const TESTING = false;
+
+//fullfillmentDateObject = utilities.getNextFullfillmentDate()
+const TESTING = true;
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end, TESTING);
