@@ -52,8 +52,14 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
 
     // Create stream + DOC and wire events BEFORE writing
     const writeStream = fs.createWriteStream(pdf_file);
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ bufferPages: true });
     doc.pipe(writeStream);
+    const pageNumbering = new Map();
+
+    const currentPageIndex = () => {
+      const range = doc.bufferedPageRange();
+      return range.start + range.count - 1;
+    };
 
     writeStream.on('finish', () => {
       debugLog('[writeChecklistPDF] PDF created successfully at', pdf_file);
@@ -309,8 +315,14 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
     const pdf_file = 'data/packlists.pdf';
 
     const writeStream = fs.createWriteStream(pdf_file);
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ bufferPages: true });
     doc.pipe(writeStream);
+    const pageNumbering = new Map();
+
+    const currentPageIndex = () => {
+      const range = doc.bufferedPageRange();
+      return range.start + range.count - 1;
+    };
 
     writeStream.on('finish', () => {
       debugLog('[writePacklistsPDF] PDF created successfully at', pdf_file);
@@ -420,9 +432,26 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
           });
 
           // Product-specific packlists into this separate PDF
-          productSpecificPackList(doc, dropsitesAll, 'frozen');
+          productSpecificPackList(doc, dropsitesAll, 'frozen', pageNumbering, currentPageIndex);
           doc.addPage();
-          productSpecificPackList(doc, dropsitesAll, 'dairy');
+          productSpecificPackList(doc, dropsitesAll, 'dairy', pageNumbering, currentPageIndex);
+
+          const pageRange = doc.bufferedPageRange();
+          for (let i = pageRange.start; i < pageRange.start + pageRange.count; i++) {
+            const info = pageNumbering.get(i);
+            if (!info) continue;
+            doc.switchToPage(i);
+            doc.font('Helvetica').fontSize(11)
+              .text(
+                `Page ${info.page} of ${info.total}  ${info.date}`,
+                doc.page.margins.left,
+                8,
+                {
+                  width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+                  align: 'right',
+                }
+              );
+          }
 
           debugLog('[writePacklistsPDF] calling doc.end()');
           doc.end();
@@ -438,7 +467,7 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
   });
 }
 
-function productSpecificPackList(doc, dropsitesAll, disposition) {
+function productSpecificPackList(doc, dropsitesAll, disposition, pageNumbering, currentPageIndex) {
   // 0️⃣ Build a list of dropsites *that actually have* this disposition
   const dropsiteNames = Object.keys(dropsitesAll).filter((dropsiteName) => {
     const customers = dropsitesAll[dropsiteName]?.customers || {};
@@ -450,6 +479,36 @@ function productSpecificPackList(doc, dropsitesAll, disposition) {
     }
     return false;
   });
+
+  const drawHeader = (dropsiteName, orderCount) => {
+    doc.y = Math.max(doc.y, doc.page.margins.top + 6);
+    const headerY = doc.y;
+    const lineWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+    const title = `${disposition.toUpperCase()} ${dropsiteName}`;
+    const titleHeight = doc.font('Helvetica-Bold').fontSize(16)
+      .heightOfString(title, { width: lineWidth });
+
+    doc.font('Helvetica-Bold').fontSize(16)
+      .text(title, doc.page.margins.left, headerY, { width: lineWidth, align: 'left' });
+
+    doc.y = headerY + titleHeight + 6;
+    doc.font('Helvetica').fontSize(11);
+    const headerLineY = doc.y;
+    if (disposition === 'frozen') {
+      doc.text('# of bags in cooler:', doc.page.margins.left, headerLineY, { align: 'left' });
+      doc.text(`# of orders: ${orderCount}`, doc.page.margins.left, headerLineY, { align: 'right' });
+    } else {
+      doc.text(`# of orders: ${orderCount}`, doc.page.margins.left, headerLineY, { align: 'left' });
+    }
+    doc.moveDown(0.2);
+    doc.text('Packed By:');
+    doc.moveDown(0.6);
+  };
+
+  const leftMargin = doc.page.margins.left;
+  const rightMargin = doc.page.margins.right;
+  const lineWidth = doc.page.width - leftMargin - rightMargin;
+  const indent = 20;
 
   // 1️⃣ Loop with index so we know if we're on the last one
   dropsiteNames.forEach((dropsiteName, idx) => {
@@ -467,62 +526,86 @@ function productSpecificPackList(doc, dropsitesAll, disposition) {
       }
     }
 
+    const sortedCustomerNames = Object.keys(selectedCustomers).sort((a, b) =>
+      a.localeCompare(b)
+    );
+
     // If somehow no customers, skip this dropsite (shouldn't usually happen due to filter above)
-    if (Object.keys(selectedCustomers).length === 0) return;
+    if (sortedCustomerNames.length === 0) return;
 
     // 👉 Page break *between* dropsites, but not before the first
     if (idx > 0) {
       doc.addPage();
     }
 
-    // Build full table with dividers
-    let allCustomersTable = [];
-    for (const customerName in selectedCustomers) {
-      const customerData = selectedCustomers[customerName];
+    const dropsiteStartPage = currentPageIndex();
+    drawHeader(dropsiteName, sortedCustomerNames.length);
 
-      const customerRows = customerData.map((item) => [
-        customerName,
-        item.product,
-        item.itemUnit,
+    const pageBottom = doc.page.height - doc.page.margins.bottom;
+
+    sortedCustomerNames.forEach((customerName, customerIdx) => {
+      const customerData = selectedCustomers[customerName];
+      const [nameLine, phoneLine = ''] = customerName.split('\n');
+      const titleLine = phoneLine
+        ? `${nameLine}  ${phoneLine}`
+        : nameLine;
+
+      doc.font('Helvetica-Bold').fontSize(12);
+      const nameHeight = doc.heightOfString(titleLine, { width: lineWidth });
+
+      const productWidth = Math.floor(lineWidth * 0.7);
+      const qtyWidth = Math.floor(lineWidth * 0.15);
+      const packedWidth = lineWidth - productWidth - qtyWidth;
+      const rowHeight = doc.font('Helvetica').fontSize(10)
+        .heightOfString('A', { width: productWidth }) + 6;
+      const tableHeaderHeight = doc.font('Helvetica-Bold').fontSize(10)
+        .heightOfString('Product', { width: productWidth }) + 8;
+      const productsHeight = (customerData.length * rowHeight) + tableHeaderHeight;
+
+      const blockHeight = nameHeight + productsHeight + 8;
+      if (doc.y + blockHeight > pageBottom) {
+        doc.addPage();
+        drawHeader(dropsiteName, sortedCustomerNames.length);
+      }
+
+      const productIndent = '   ';
+      const tableRows = customerData.map((item) => [
+        `${productIndent}${item.product}`,
         item.quantity,
+        '',
       ]);
 
-      if (allCustomersTable.length > 0) {
-        allCustomersTable.push([" ", "", "", ""]); // blank row between customers
-      }
-
-      allCustomersTable.push(...customerRows);
-    }
-
-    const rowsPerPage = 22;
-    const totalPages = Math.ceil(allCustomersTable.length / rowsPerPage);
-
-    let page = 1;
-    for (let i = 0; i < allCustomersTable.length; i += rowsPerPage) {
-      // Page break *within* a dropsite for page 2+ of same packlist
-      if (i > 0) {
-        doc.addPage();
-      }
-
-      // Header Info
-      doc.fontSize(12).text(fullfillmentDateObject.date, { align: "right" });
-
-      const title = `${dropsiteName} ${capitalize(
-        disposition
-      )} Product Packlist, Page ${page} of ${totalPages}`;
-      doc.fontSize(14).text(title, { bold: true });
-
       const tableOptions = {
-        headers: ["Name", "Product", "Unit", "Quantity"],
-        rows: allCustomersTable.slice(i, i + rowsPerPage),
+        headers: [titleLine, 'Qty', 'Packed'],
+        rows: tableRows,
       };
 
-      doc.table(tableOptions);
-      page++;
-    }
+      doc.table(tableOptions, {
+        x: leftMargin,
+        y: doc.y,
+        absolutePosition: true,
+        columnsSize: [productWidth, qtyWidth, packedWidth],
+        columnSpacing: 4,
+        padding: 2,
+        prepareHeader: () => doc.font('Helvetica-Bold').fontSize(10),
+        prepareRow: () => doc.font('Helvetica').fontSize(10),
+      });
+      doc.x = leftMargin;
 
-    // 🔴 Notice: NO `doc.addPage()` here.
-    // The next dropsite (if any) will add a page at the top via `if (idx > 0) doc.addPage()`.
+      if (customerIdx < sortedCustomerNames.length - 1) {
+        doc.moveDown(0.2);
+      }
+    });
+
+    const dropsiteEndPage = currentPageIndex();
+    const totalPages = dropsiteEndPage - dropsiteStartPage + 1;
+    for (let i = 0; i < totalPages; i++) {
+      pageNumbering.set(dropsiteStartPage + i, {
+        page: i + 1,
+        total: totalPages,
+        date: fullfillmentDateObject.date,
+      });
+    }
   });
 }
 
@@ -646,17 +729,18 @@ async function checklist(fullfillmentDate, testing = false, manualDispositions =
 
 // ----- CONFIG CONSTANTS (easy to tweak) -----
 
+
 /*
 const fullfillmentDateObject = {
-  start: '2025-12-02',
-  end: '2025-12-02',
-  date: '2025-12-02'
+  start: '2025-12-30',
+  end: '2025-12-30',
+  date: '2025-12-30'
 };
 */
+
 let fullfillmentDateObject = utilities.getNextFullfillmentDate();
 
 // 👉 flip this to false when ready to send to full recipients
 TESTING = false;
 
 checklist(fullfillmentDateObject, TESTING, MANUAL_DISPOSITIONS);
-
