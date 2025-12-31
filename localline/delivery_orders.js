@@ -6,6 +6,8 @@ const PDFDocument = require('pdfkit-table');
 const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
+const contentLeft = 54; // 0.75"
+const contentRight = 54;
 
 
 // Load or initialize drop site colors
@@ -648,58 +650,109 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             const orderStartPage = currentPageIndex();
             // Logo + header
             const image = 'logo.png';
-            const x = 0; // X-coordinate (left)
+            const leftMargin = contentLeft;
+            const rightMargin = contentRight;
+            const x = leftMargin; // X-coordinate (left)
             const y = 0; // Y-coordinate (top)
             const width = 60; // Image width in pixels
             const height = 60; // Image height in pixels
             const lineSpacing = 15;
 
-            doc.image(image, 10, 10, { width, height });
+            doc.image(image, x, 10, { width, height });
 
-            let textX = x + width + 20;
+            let textX = x + width + 10;
             let textY = 0;
+            const logoBottom = y + height + 10;
+            const headerRightWidth = doc.page.width - rightMargin - textX;
+            const fullWidth = doc.page.width - leftMargin - rightMargin;
 
             doc.font('Helvetica');
+
+            const splitTextByHeight = (text, width, maxHeight) => {
+              if (maxHeight <= 0) return ['', text];
+              const words = text.split(/\s+/);
+              let low = 1;
+              let high = words.length;
+              let best = 0;
+              while (low <= high) {
+                const mid = Math.floor((low + high) / 2);
+                const candidate = words.slice(0, mid).join(' ');
+                const height = doc.heightOfString(candidate, { width });
+                if (height <= maxHeight) {
+                  best = mid;
+                  low = mid + 1;
+                } else {
+                  high = mid - 1;
+                }
+              }
+              if (best === 0) return ['', text];
+              const first = words.slice(0, best).join(' ');
+              const rest = words.slice(best).join(' ');
+              return [first, rest];
+            };
+
+            const drawWrappedBlock = (label, value) => {
+              const blockText = `${label}       ${value}`;
+              if (textY < logoBottom) {
+                const availableHeight = logoBottom - textY;
+                const blockHeight = doc.heightOfString(blockText, { width: headerRightWidth });
+                if (blockHeight <= availableHeight) {
+                  doc.fontSize(12).text(blockText, textX, textY, { width: headerRightWidth });
+                  textY += blockHeight + lineSpacing;
+                  return;
+                }
+                const [first, rest] = splitTextByHeight(blockText, headerRightWidth, availableHeight);
+                if (first) {
+                  const firstHeight = doc.heightOfString(first, { width: headerRightWidth });
+                  doc.fontSize(12).text(first, textX, textY, { width: headerRightWidth });
+                  textY += firstHeight + lineSpacing;
+                }
+                textY = Math.max(textY, logoBottom + lineSpacing);
+                if (rest) {
+                  const restHeight = doc.heightOfString(rest, { width: fullWidth });
+                  doc.fontSize(12).text(rest, leftMargin, textY, { width: fullWidth });
+                  textY += restHeight + lineSpacing;
+                }
+                return;
+              }
+              const fullHeight = doc.heightOfString(blockText, { width: fullWidth });
+              doc.fontSize(12).text(blockText, leftMargin, textY, { width: fullWidth });
+              textY += fullHeight + lineSpacing;
+            };
 
             // Fulfillment date is rendered with page numbering later for consistent alignment.
             textY += lineSpacing;
 
             // Customer details
-            doc.fontSize(12).text(`Name:        ${customerData.customerName}`, textX, textY);
+            doc.fontSize(12).text(`Name:        ${customerData.customerName}`, textX, textY, { width: headerRightWidth });
             textY += lineSpacing;
-            doc.fontSize(12).text(`Phone:       ${customerData.phone}`, textX, textY);
+            doc.fontSize(12).text(`Phone:       ${customerData.phone}`, textX, textY, { width: headerRightWidth });
             textY += lineSpacing;
 
             // Drop site and time range
             let timeRangeText = customerData.timeRange ? ` (${customerData.timeRange})` : '';
             const fullText = `Drop Site:   ${customerData.fullfillmentName}${timeRangeText}`;
-            doc.fontSize(12).text(fullText, textX, textY);
+            doc.fontSize(12).text(fullText, textX, textY, { width: headerRightWidth });
             textY += lineSpacing;
 
-            // Address
+            // Address (keep aligned under Name/Phone/Drop Site)
             let text = `Address:       ${customerData.fullfillmentAddress}`;
-            let textHeight = doc.heightOfString(text, { width: 400 });
-            doc.fontSize(12).text(text, textX, textY, { width: 400 });
+            let textHeight = doc.heightOfString(text, { width: headerRightWidth });
+            doc.fontSize(12).text(text, textX, textY, { width: headerRightWidth });
             textY += textHeight + lineSpacing;
 
             // Directions (if available)
             if (customerData.company !== '') {
-              text = `Directions:       ${customerData.company}`;
-              textHeight = doc.heightOfString(text, { width: 400 });
-              doc.fontSize(12).text(text, textX, textY, { width: 400 });
-              textY += textHeight + lineSpacing;
+              drawWrappedBlock('Directions:', customerData.company);
             }
 
             // Customer Notes (if available)
             if (customerData.customerNote !== '') {
-              text = `Customer Notes:       ${customerData.customerNote}`;
-              textHeight = doc.heightOfString(text, { width: 400 });
-              doc.fontSize(12).text(text, textX, textY, { width: 400 });
-              textY += textHeight + lineSpacing;
+              drawWrappedBlock('Customer Notes:', customerData.customerNote);
             }
 
             const headerBottom = Math.max(textY, y + height + 10);
-            doc.x = doc.page.margins.left;
+            doc.x = leftMargin;
             doc.y = headerBottom + 10;
 
             // 🔹 Sort products by vendor order then product name (no location)
@@ -743,7 +796,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
             // 🔹 Render sections in the desired order
             const pageBottom = doc.page.height - doc.page.margins.bottom;
-            const tableWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+            const tableWidth = doc.page.width - leftMargin - rightMargin;
 
             for (const section of sectionOrder) {
               const sectionItems = groupedItems[section];
@@ -781,7 +834,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
                   rows: itemsAsData
                 };
 
-                const tableStartX = doc.page.margins.left;
+                const tableStartX = leftMargin;
                 const tableStartY = doc.y;
                 const productWidth = Math.floor(tableWidth * 0.45);
                 const vendorWidth = Math.floor(tableWidth * 0.25);
@@ -834,15 +887,15 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           if (info.page > 1) {
             doc.fontSize(10)
               .fillColor('black')
-              .text(`Name: ${info.name}`, doc.page.margins.left, 10, {
-                width: (doc.page.width - doc.page.margins.left - doc.page.margins.right) / 2,
+              .text(`Name: ${info.name}`, contentLeft, 10, {
+                width: (doc.page.width - contentLeft - contentRight) / 2,
                 align: 'left',
               });
           }
           doc.fontSize(9)
             .fillColor('gray')
-            .text(pageLabel, doc.page.margins.left, 10, {
-              width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+            .text(pageLabel, contentLeft, 10, {
+              width: doc.page.width - contentLeft - contentRight,
               align: 'right',
             });
         }
@@ -1013,13 +1066,14 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
    
   
 // Run the delivery_order script
-
+/*
 const fullfillmentDateObject = {
   start: '2025-12-30',
   end: '2025-12-30',
   date: '2025-12-30'
 };
+*/
 
-//fullfillmentDateObject = utilities.getNextFullfillmentDate()
-const TESTING = true;
+fullfillmentDateObject = utilities.getNextFullfillmentDate()
+const TESTING = false;
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end, TESTING);
