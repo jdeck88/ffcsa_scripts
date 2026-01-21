@@ -173,12 +173,36 @@ async function generateSummaryPDF(vendorOrders, outputFile) {
     doc.pipe(stream);
 
     const vendorNames = Object.keys(vendorOrders).filter(vendor => vendorOrders[vendor].length > 0);
+    const fulfillmentDate = vendorNames.length
+      ? vendorOrders[vendorNames[0]][0].fulfillmentDate
+      : null;
+
+    const drawPageHeader = () => {
+      if (!fulfillmentDate) return;
+      const previousFontSize = doc._fontSize || 12;
+      const previousX = doc.x;
+      const previousY = doc.y;
+      const headerFontSize = 16;
+
+      doc.fontSize(headerFontSize);
+      const headerHeight = doc.currentLineHeight();
+      const headerY = Math.max(0, doc.page.margins.top - headerHeight);
+      const headerX = doc.page.margins.left;
+      const headerWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+
+      doc.text(fulfillmentDate, headerX, headerY, { align: 'right', width: headerWidth });
+      doc.fontSize(previousFontSize);
+      doc.x = previousX;
+      doc.y = previousY;
+    };
+
+    doc.on('pageAdded', drawPageHeader);
+    drawPageHeader();
 
     vendorNames.forEach((vendor, i) => {
       const items = vendorOrders[vendor];
       if (!items || items.length === 0) return;
 
-      doc.fontSize(16).text(items[0].fulfillmentDate.date, { align: 'right' });
       doc.fontSize(16).text(vendor, { bold: true });
 
       const rows = groupByCategoryWithSubtotals(items);
