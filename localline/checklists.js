@@ -30,6 +30,45 @@ function debugLog(...args) {
   }
 }
 
+function buildLowercaseMap(manualDispositions) {
+  const map = new Map();
+  for (const [key, value] of Object.entries(manualDispositions || {})) {
+    const normalizedKey = String(key || '').trim().toLowerCase();
+    if (normalizedKey) {
+      map.set(normalizedKey, value);
+    }
+  }
+  return map;
+}
+
+function computeDispositionForRow(row, manualDispositions, manualDispositionsLower) {
+  const productId = String(row['Product ID'] || '').trim();
+  const productName = String(row['Product'] || '').trim();
+
+  let manualRaw = manualDispositions[productId];
+  if (!manualRaw && productName) {
+    manualRaw = manualDispositions[productName];
+  }
+  if (!manualRaw && manualDispositionsLower) {
+    if (productId) {
+      manualRaw = manualDispositionsLower.get(productId.toLowerCase());
+    }
+    if (!manualRaw && productName) {
+      manualRaw = manualDispositionsLower.get(productName.toLowerCase());
+    }
+  }
+
+  const manualLower = (manualRaw || '').toLowerCase();
+  if (manualLower === 'dairy' || manualLower === 'frozen' || manualLower === 'tote') {
+    return manualLower;
+  }
+
+  const tag = (row['Packing Tag'] || '').trim().toLowerCase();
+  if (tag === 'dairy') return 'dairy';
+  if (tag === 'frozen') return 'frozen';
+  return 'tote';
+}
+
 function formatPhoneNumber(phoneNumber) {
   if (!phoneNumber) return '';
   // Remove all non-digit characters
@@ -104,25 +143,15 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
             return lastA.localeCompare(lastB);
           });
 
+          const manualDispositionsLower = buildLowercaseMap(manualDispositions);
+
           // Set disposition based on MANUAL_DISPOSITIONS or Packing Tag
           sortedData.forEach((item) => {
-            const productId = String(item['Product ID'] || '').trim(); // <-- important
-            const manual = manualDispositions[productId];
-            const manualLower = (manual || '').toLowerCase();
-
-            if (manualLower === 'dairy' || manualLower === 'frozen' || manualLower === 'tote') {
-              item.disposition = manualLower;
-              console.log('manually setting frozen for ' + productId);
-            } else {
-              const tag = (item['Packing Tag'] || '').trim().toLowerCase();
-              if (tag === 'dairy') {
-                item.disposition = 'dairy';
-              } else if (tag === 'frozen') {
-                item.disposition = 'frozen';
-              } else {
-                item.disposition = 'tote';
-              }
-            }
+            item.disposition = computeDispositionForRow(
+              item,
+              manualDispositions,
+              manualDispositionsLower
+            );
           });
 
           let currentDropsiteName = null;
@@ -363,25 +392,15 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
             return lastA.localeCompare(lastB);
           });
 
+          const manualDispositionsLower = buildLowercaseMap(manualDispositions);
+
           // Set disposition based on MANUAL_DISPOSITIONS or Packing Tag
           sortedData.forEach((item) => {
-            const productId = String(item['Product ID'] || '').trim();
-            const manual = manualDispositions[productId];
-            const manualLower = (manual || '').toLowerCase();
-
-            if (manualLower === 'dairy' || manualLower === 'frozen' || manualLower === 'tote') {
-              item.disposition = manualLower;
-              console.log('manually setting frozen for ' + productId);
-            } else {
-              const tag = (item['Packing Tag'] || '').trim().toLowerCase();
-              if (tag === 'dairy') {
-                item.disposition = 'dairy';
-              } else if (tag === 'frozen') {
-                item.disposition = 'frozen';
-              } else {
-                item.disposition = 'tote';
-              }
-            }
+            item.disposition = computeDispositionForRow(
+              item,
+              manualDispositions,
+              manualDispositionsLower
+            );
           });
 
           let currentDropsiteName = null;
@@ -729,12 +748,11 @@ async function checklist(fullfillmentDate, testing = false, manualDispositions =
 
 // ----- CONFIG CONSTANTS (easy to tweak) -----
 
-
 /*
 const fullfillmentDateObject = {
-  start: '2025-12-30',
-  end: '2025-12-30',
-  date: '2025-12-30'
+  start: '2026-01-31',
+  end: '2026-01-31',
+  date: '2026-01-31'
 };
 */
 

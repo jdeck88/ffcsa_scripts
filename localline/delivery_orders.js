@@ -9,6 +9,60 @@ const utilities = require('./utilities');
 const contentLeft = 54; // 0.75"
 const contentRight = 54;
 
+// Shared manual dispositions map (from manual_dispositions.json)
+let MANUAL_DISPOSITIONS = {};
+let MANUAL_DISPOSITIONS_LOWER = new Map();
+const manualDispositionsPath = path.join(__dirname, 'manual_dispositions.json');
+try {
+  if (fs.existsSync(manualDispositionsPath)) {
+    MANUAL_DISPOSITIONS = JSON.parse(
+      fs.readFileSync(manualDispositionsPath, 'utf8')
+    );
+    MANUAL_DISPOSITIONS_LOWER = buildLowercaseMap(MANUAL_DISPOSITIONS);
+  }
+} catch (err) {
+  console.error('[delivery_orders] Error reading manual_dispositions.json:', err);
+}
+
+function buildLowercaseMap(manualDispositions) {
+  const map = new Map();
+  for (const [key, value] of Object.entries(manualDispositions || {})) {
+    const normalizedKey = String(key || '').trim().toLowerCase();
+    if (normalizedKey) {
+      map.set(normalizedKey, value);
+    }
+  }
+  return map;
+}
+
+function computeDispositionForRow(row, manualDispositions, manualDispositionsLower) {
+  const productId = String(row['Product ID'] || '').trim();
+  const productName = String(row['Product'] || '').trim();
+
+  let manualRaw = manualDispositions[productId];
+  if (!manualRaw && productName) {
+    manualRaw = manualDispositions[productName];
+  }
+  if (!manualRaw && manualDispositionsLower) {
+    if (productId) {
+      manualRaw = manualDispositionsLower.get(productId.toLowerCase());
+    }
+    if (!manualRaw && productName) {
+      manualRaw = manualDispositionsLower.get(productName.toLowerCase());
+    }
+  }
+
+  const manualLower = (manualRaw || '').toLowerCase();
+  if (manualLower === 'dairy' || manualLower === 'frozen' || manualLower === 'tote') {
+    return manualLower;
+  }
+
+  const tag = (row['Packing Tag'] || '').trim().toLowerCase();
+  if (tag === 'dairy') return 'dairy';
+  if (tag === 'frozen') return 'frozen';
+  return 'tote';
+}
+
 
 // Load or initialize drop site colors
 function loadDropSiteColors(filePath) {
@@ -602,8 +656,11 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           const startTime = row['Fulfillment - Pickup Start Time'];
           const endTime = row['Fulfillment - Pickup End Time'];
 
-          // 🔹 NEW: Packing Tag (from CSV) – "Frozen", "Dairy", or blank/null
-          const rawPackingTag = (row['Packing Tag'] || '').trim();
+          const disposition = computeDispositionForRow(
+            row,
+            MANUAL_DISPOSITIONS,
+            MANUAL_DISPOSITIONS_LOWER
+          );
 
           let timeRange = '';
           if (startTime && endTime) {
@@ -636,8 +693,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               quantity,
               itemUnit,
               vendor,
-              // store raw packing tag for grouping later
-              packingTag: rawPackingTag,
+              disposition,
             });
           }
         });
@@ -771,7 +827,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               return 0;
             });
 
-            // 🔹 Group items by Packing Tag → Frozen/Dairy/Tote
+            // 🔹 Group items by disposition → Frozen/Dairy/Tote
             const groupedItems = {
               'Frozen Items': [],
               'Dairy Items': [],
@@ -779,7 +835,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             };
 
             items.forEach(item => {
-              const tag = (item.packingTag || '').toLowerCase();
+              const tag = (item.disposition || '').toLowerCase();
               let section;
               if (tag === 'frozen') {
                 section = 'Frozen Items';
@@ -1064,13 +1120,12 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
   }
 }
    
-  
-// Run the delivery_order script
 /*
+// Run the delivery_order script
 const fullfillmentDateObject = {
-  start: '2025-12-30',
-  end: '2025-12-30',
-  date: '2025-12-30'
+  start: '2026-01-31',
+  end: '2026-01-31',
+  date: '2026-01-31'
 };
 */
 

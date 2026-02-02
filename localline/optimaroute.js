@@ -12,12 +12,14 @@ const ExcelJS = require('exceljs');
 
 // Shared manual dispositions map (from manual_dispositions.json)
 let MANUAL_DISPOSITIONS = {};
+let MANUAL_DISPOSITIONS_LOWER = new Map();
 const manualDispositionsPath = path.join(__dirname, 'manual_dispositions.json');
 try {
   if (fs.existsSync(manualDispositionsPath)) {
     MANUAL_DISPOSITIONS = JSON.parse(
       fs.readFileSync(manualDispositionsPath, 'utf8')
     );
+    MANUAL_DISPOSITIONS_LOWER = buildLowercaseMap(MANUAL_DISPOSITIONS);
   }
 } catch (err) {
   console.error('[optimaroute] Error reading manual_dispositions.json:', err);
@@ -29,6 +31,17 @@ let fulfillment_json = { results: [] };
 /* =========================
  * Helpers
  * ========================= */
+
+function buildLowercaseMap(manualDispositions) {
+  const map = new Map();
+  for (const [key, value] of Object.entries(manualDispositions || {})) {
+    const normalizedKey = String(key || '').trim().toLowerCase();
+    if (normalizedKey) {
+      map.set(normalizedKey, value);
+    }
+  }
+  return map;
+}
 
 // Helper to format phone numbers
 function formatPhoneNumber(phoneNumber) {
@@ -65,7 +78,20 @@ async function writeXLSX(rows, outputPath) {
 // Decide disposition for a single row based on manual_dispositions + Packing Tag
 function computeDispositionForRow(row) {
   const productId = (row['Product ID'] || '').toString().trim();
-  const manualRaw = MANUAL_DISPOSITIONS[productId];
+  const productName = (row['Product'] || '').toString().trim();
+
+  let manualRaw = MANUAL_DISPOSITIONS[productId];
+  if (!manualRaw && productName) {
+    manualRaw = MANUAL_DISPOSITIONS[productName];
+  }
+  if (!manualRaw && MANUAL_DISPOSITIONS_LOWER) {
+    if (productId) {
+      manualRaw = MANUAL_DISPOSITIONS_LOWER.get(productId.toLowerCase());
+    }
+    if (!manualRaw && productName) {
+      manualRaw = MANUAL_DISPOSITIONS_LOWER.get(productName.toLowerCase());
+    }
+  }
   const manualLower = (manualRaw || '').toLowerCase();
 
   if (manualLower === 'dairy' || manualLower === 'frozen' || manualLower === 'tote') {
@@ -310,4 +336,3 @@ const fullfillmentDateObject = utilities.getNextFullfillmentDate();
 const TESTING = false;
 
 optimaroute(fullfillmentDateObject, TESTING);
-
