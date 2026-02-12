@@ -295,52 +295,66 @@ function buildEmailText(results, fulfillmentDate, ordersFilePath, customersFileP
 }
 
 async function runDairyMonitor(fulfillmentDate, testing = false) {
-  try {
-    // In testing mode, reuse existing order export if already present.
-    const overwriteExisting = !testing;
-    const ordersFilePath = await utilities.downloadOrdersCsv(
-      fulfillmentDate.start,
-      fulfillmentDate.end,
-      overwriteExisting
-    );
+  // In testing mode, reuse existing order export if already present.
+  const overwriteExisting = !testing;
+  const ordersFilePath = await utilities.downloadOrdersCsv(
+    fulfillmentDate.start,
+    fulfillmentDate.end,
+    overwriteExisting
+  );
 
-    const customersFilePath = await downloadCustomersCsv(fulfillmentDate, testing);
-    const customerTagMap = await buildCustomerTagMap(customersFilePath);
-    const results = await collectDairyMembers(ordersFilePath, customerTagMap);
-    const reportPath = await writeReportPdf(results, fulfillmentDate);
-    const bodyText = buildEmailText(
-      results,
-      fulfillmentDate,
-      ordersFilePath,
-      customersFilePath,
-      testing
-    );
+  const customersFilePath = await downloadCustomersCsv(fulfillmentDate, testing);
+  const customerTagMap = await buildCustomerTagMap(customersFilePath);
+  const results = await collectDairyMembers(ordersFilePath, customerTagMap);
+  const reportPath = await writeReportPdf(results, fulfillmentDate);
+  const bodyText = buildEmailText(
+    results,
+    fulfillmentDate,
+    ordersFilePath,
+    customersFilePath,
+    testing
+  );
 
-    const emailOptions = {
-      from: 'jdeck88@gmail.com',
-      to: testing ? TEST_TO_EMAIL : PROD_TO_EMAIL,
-      cc: testing ? undefined : PROD_CC_EMAIL,
-      subject: `${testing ? '[TEST] ' : ''}FFCSA Report: Dairy Monitor for ${fulfillmentDate.end}`,
-      text: bodyText,
-      attachments: [
-        {
-          filename: path.basename(reportPath),
-          content: fs.readFileSync(reportPath),
-        },
-      ],
-    };
+  const emailOptions = {
+    from: 'jdeck88@gmail.com',
+    to: testing ? TEST_TO_EMAIL : PROD_TO_EMAIL,
+    cc: testing ? undefined : PROD_CC_EMAIL,
+    subject: `${testing ? '[TEST] ' : ''}FFCSA Report: Dairy Monitor for ${fulfillmentDate.end}`,
+    text: bodyText,
+    attachments: [
+      {
+        filename: path.basename(reportPath),
+        content: fs.readFileSync(reportPath),
+      },
+    ],
+  };
 
-    await utilities.sendEmail(emailOptions);
-    console.log(`Dairy monitor complete. Matched members: ${results.length}`);
-  } catch (error) {
-    console.error('An error occurred in dairy_monitor:', error);
-    utilities.sendErrorEmail(error);
-  }
+  await utilities.sendEmail(emailOptions);
+  console.log(`Dairy monitor complete. Matched members: ${results.length}`);
 }
 
 const fullfillmentDateObject = utilities.getNextFullfillmentDate();
 // Set to true for testing behavior:
 // - Subject includes [TEST]
 // - Existing orders CSV is reused (no overwrite)
-const TESTING = true;
-runDairyMonitor(fullfillmentDateObject, TESTING);
+const TESTING = false;
+
+// Explicit process exit prevents pooled SMTP sockets from keeping the script alive.
+(async () => {
+  const HARD_TIMEOUT_MS = 5 * 60 * 1000;
+  const timeout = setTimeout(() => {
+    console.error(`Global timeout (${HARD_TIMEOUT_MS} ms) - forcing exit.`);
+    process.exit(2);
+  }, HARD_TIMEOUT_MS);
+
+  try {
+    await runDairyMonitor(fullfillmentDateObject, TESTING);
+    clearTimeout(timeout);
+    setTimeout(() => process.exit(0), 10);
+  } catch (error) {
+    clearTimeout(timeout);
+    console.error('An error occurred in dairy_monitor:', error);
+    try { await utilities.sendErrorEmail(error); } catch (_) {}
+    setTimeout(() => process.exit(1), 10);
+  }
+})();
