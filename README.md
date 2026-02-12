@@ -100,6 +100,8 @@ Crontab Scripts
 13 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh weekly_benefits.js
 # 4:15 AM PT every Monday — optimaroute.js
 15 11 * * 1 /home/exouser/code/ffcsa_scripts/localline/run.sh optimaroute.js
+# 6:00 AM PT every Monday — dairy_monitor.js
+0 13 * * 1 /home/jdeck/code/ffcsa_scripts/localline/run.sh dairy_monitor.js
 
 # WEEKLY - TUESDAY
 # 4:05 AM PT every Tuesday — status_change.js
@@ -114,6 +116,8 @@ Crontab Scripts
 11 11 * * 4 /home/exouser/code/ffcsa_scripts/localline/run.sh vendors.js
 # 4:15 AM PT every Thursday — optimaroute.js
 15 11 * * 4 /home/exouser/code/ffcsa_scripts/localline/run.sh optimaroute.js
+# 6:00 AM PT every Thursday — dairy_monitor.js
+0 13 * * 4 /home/jdeck/code/ffcsa_scripts/localline/run.sh dairy_monitor.js
 
 # WEEKLY - FRIDAY
 # 4:15 AM PT every Friday — fulfillment_strategies.js
