@@ -342,5 +342,5 @@ const fullfillmentDateObject = utilities.getNextFullfillmentDate();
 // Set to true for testing behavior:
 // - Subject includes [TEST]
 // - Existing orders CSV is reused (no overwrite)
-const TESTING = false;
+const TESTING = true;
 runDairyMonitor(fullfillmentDateObject, TESTING);
