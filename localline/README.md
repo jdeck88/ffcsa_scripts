@@ -52,6 +52,7 @@ Scripts overview
 - `dufb_summary_sales_report.js`: monthly DUFB summary report
 - `monthly_customers.js`: monthly customer report
 - `monthly_vendors.js`: monthly vendor summary report
+- `dairy_monitor.js`: flags members with `CSA Only` customer-account tags who ordered from the target dairy vendor (currently `radiant` / Vendor ID `3158`), emails a detailed body summary, and attaches a PDF report
 - `product_kpi.js`: product KPI export over a date range
 - `new_subscribers.js`: report of new subscribers
 - `status_change.js`: compares subscriber exports to find cancellations/new plans
