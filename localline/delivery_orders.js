@@ -8,6 +8,8 @@ const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
 const contentLeft = 54; // 0.75"
 const contentRight = 54;
+const deliveryOrderQrPath = path.join(__dirname, 'images', 'qr-code.png');
+const deliveryOrderSquareQrPath = path.join(__dirname, 'images', 'qr-code-square.png');
 
 // Shared manual dispositions map (from manual_dispositions.json)
 let MANUAL_DISPOSITIONS = {};
@@ -594,15 +596,70 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
   const vendorOrder = await readVendorOrder('vendor_order.csv');
   return new Promise((resolve, reject) => {
     const pdf_file = 'data/delivery_order.pdf';
+    const reviewHeading = 'Leave us a Review!';
+    const reviewPrompt = 'Your feedback helps us grow and helps future members learn what CSA membership is really like. You can share your thoughts privately or choose to post them publicly.';
+    const firstPageTopOffset = 36;
 
     // Create a new PDF document
     const doc = new PDFDocument({ bufferPages: true });
     doc.pipe(fs.createWriteStream(pdf_file));
     const pageNumbering = new Map();
+    let reviewQrAvailable = false;
+
+    try {
+      fs.accessSync(deliveryOrderSquareQrPath, fs.constants.R_OK);
+      reviewQrAvailable = true;
+    } catch (error) {
+      console.warn(`[delivery_orders] Review QR image unavailable at ${deliveryOrderSquareQrPath}; skipping review block.`);
+    }
 
     const currentPageIndex = () => {
       const range = doc.bufferedPageRange();
       return range.start + range.count - 1;
+    };
+
+    const drawStar = (centerX, centerY, outerRadius, fillColor) => {
+      const innerRadius = outerRadius * 0.45;
+      doc.save();
+      doc.fillColor(fillColor);
+      for (let i = 0; i < 10; i++) {
+        const angle = (-Math.PI / 2) + (i * Math.PI / 5);
+        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+        const pointX = centerX + Math.cos(angle) * radius;
+        const pointY = centerY + Math.sin(angle) * radius;
+        if (i === 0) {
+          doc.moveTo(pointX, pointY);
+        } else {
+          doc.lineTo(pointX, pointY);
+        }
+      }
+      doc.closePath().fill();
+      doc.restore();
+    };
+
+    const drawGoogleWord = (x, y, options = {}) => {
+      const letters = [
+        { char: 'G', color: '#4285F4' },
+        { char: 'o', color: '#DB4437' },
+        { char: 'o', color: '#F4B400' },
+        { char: 'g', color: '#4285F4' },
+        { char: 'l', color: '#0F9D58' },
+        { char: 'e', color: '#DB4437' },
+      ];
+      let cursorX = x;
+      const fontSize = options.fontSize || 12;
+      const opacity = options.opacity ?? 1;
+      doc.save();
+      doc.font('Helvetica-Bold').fontSize(fontSize).fillOpacity(opacity);
+      for (const letter of letters) {
+        const width = doc.widthOfString(letter.char);
+        doc.fillColor(letter.color).text(letter.char, cursorX, y, {
+          lineBreak: false,
+        });
+        cursorX += width;
+      }
+      doc.restore();
+      return cursorX;
     };
 
     // Initialize variables to group items by "Fulfillment Name"
@@ -709,15 +766,15 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             const leftMargin = contentLeft;
             const rightMargin = contentRight;
             const x = leftMargin; // X-coordinate (left)
-            const y = 0; // Y-coordinate (top)
+            const y = firstPageTopOffset; // X/Y origin for the first-page header block
             const width = 60; // Image width in pixels
             const height = 60; // Image height in pixels
             const lineSpacing = 15;
 
-            doc.image(image, x, 10, { width, height });
+            doc.image(image, x, y + 10, { width, height });
 
             let textX = x + width + 10;
-            let textY = 0;
+            let textY = y;
             const logoBottom = y + height + 10;
             const headerRightWidth = doc.page.width - rightMargin - textX;
             const fullWidth = doc.page.width - leftMargin - rightMargin;
@@ -777,9 +834,13 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             };
 
             // Fulfillment date is rendered with page numbering later for consistent alignment.
-            textY += lineSpacing;
+            doc.fontSize(16).font('Helvetica-Bold').text('Delivery Order Ticket', textX, textY, {
+              width: Math.max(120, headerRightWidth - 120),
+            });
+            textY += doc.currentLineHeight() + 4;
 
             // Customer details
+            doc.font('Helvetica');
             doc.fontSize(12).text(`Name:        ${customerData.customerName}`, textX, textY, { width: headerRightWidth });
             textY += lineSpacing;
             doc.fontSize(12).text(`Phone:       ${customerData.phone}`, textX, textY, { width: headerRightWidth });
@@ -917,10 +978,86 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             doc.moveDown();
 
             // Footer note
-            doc.fontSize(12).font('Helvetica-Oblique').text("Please check your tote and the meat/dairy coolers for all listed items, and email fullfarmcsa@deckfamilyfarm.com if anything is missing so we can issue you a credit.", doc.x, doc.y);
+            const footerText = "Please check your tote and the meat/dairy coolers for all listed items, and email fullfarmcsa@deckfamilyfarm.com if anything is missing so we can issue you a credit.";
+            doc.fontSize(12).font('Helvetica-Oblique').text(footerText, doc.x, doc.y, {
+              width: tableWidth,
+            });
 
             const orderEndPage = currentPageIndex();
             const totalOrderPages = orderEndPage - orderStartPage + 1;
+
+            if (totalOrderPages === 1 && reviewQrAvailable) {
+              const reviewTop = doc.y + 12;
+              const reviewBoxPadding = 10;
+              const reviewImageSize = 78;
+              const reviewGap = 12;
+              const reviewHeadingGap = 6;
+              const reviewMetaGap = 8;
+              const reviewTextWidth = tableWidth - reviewImageSize - reviewGap - (reviewBoxPadding * 2);
+              const headingHeight = doc.font('Helvetica-Bold').fontSize(13).heightOfString(reviewHeading, {
+                width: reviewTextWidth,
+              });
+              const promptHeight = doc.font('Helvetica').fontSize(9).heightOfString(reviewPrompt, {
+                width: reviewTextWidth,
+              });
+              const reviewMetaHeight = doc.font('Helvetica-Bold').fontSize(8).heightOfString('Google', {
+                width: reviewTextWidth,
+              });
+              const reviewContentHeight = Math.max(
+                reviewImageSize,
+                headingHeight + reviewHeadingGap + promptHeight + reviewMetaGap + reviewMetaHeight
+              );
+              const reviewBlockHeight = reviewContentHeight + (reviewBoxPadding * 2);
+              const remainingHeight = pageBottom - reviewTop;
+
+              if (remainingHeight >= reviewBlockHeight) {
+                const reviewBoxX = leftMargin;
+                const reviewBoxY = reviewTop;
+                const reviewBoxWidth = tableWidth;
+                const reviewImageX = reviewBoxX + reviewBoxPadding;
+                const reviewImageY = reviewBoxY + reviewBoxPadding;
+                const reviewTextX = reviewImageX + reviewImageSize + reviewGap;
+                const reviewTextY = reviewBoxY + reviewBoxPadding;
+
+                doc.save();
+                try {
+                  doc.image(deliveryOrderSquareQrPath, reviewImageX, reviewImageY, {
+                    width: reviewImageSize,
+                    height: reviewImageSize,
+                  });
+                  doc.roundedRect(reviewBoxX, reviewBoxY, reviewBoxWidth, reviewBlockHeight, 8)
+                    .lineWidth(1)
+                    .strokeColor('#cfcfcf')
+                    .stroke();
+                  doc.font('Helvetica-Bold').fontSize(13).fillColor('black')
+                    .text(reviewHeading, reviewTextX, reviewTextY, { width: reviewTextWidth });
+                  doc.font('Helvetica').fontSize(9).fillColor('black')
+                    .text(reviewPrompt, reviewTextX, reviewTextY + headingHeight + reviewHeadingGap, {
+                      width: reviewTextWidth,
+                    });
+                  const googleY = reviewTextY + headingHeight + reviewHeadingGap + promptHeight + reviewMetaGap;
+                  const googleEndX = drawGoogleWord(reviewTextX, googleY, {
+                    fontSize: 8,
+                    opacity: 0.65,
+                  });
+                  let starX = googleEndX + 8;
+                  const starY = googleY + 5;
+                  doc.save();
+                  doc.fillOpacity(0.65);
+                  for (let i = 0; i < 5; i++) {
+                    drawStar(starX, starY, 3, '#E0B437');
+                    starX += 9;
+                  }
+                  doc.restore();
+                  doc.y = reviewBoxY + reviewBlockHeight;
+                } catch (error) {
+                  reviewQrAvailable = false;
+                  console.warn(`[delivery_orders] Unable to render review QR image; skipping review block. ${error.message}`);
+                }
+                doc.restore();
+              }
+            }
+
             for (let i = 0; i < totalOrderPages; i++) {
               pageNumbering.set(orderStartPage + i, {
                 page: i + 1,
