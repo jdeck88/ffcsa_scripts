@@ -8,8 +8,57 @@ const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
 const contentLeft = 54; // 0.75"
 const contentRight = 54;
-const deliveryOrderQrPath = path.join(__dirname, 'images', 'qr-code.png');
-const deliveryOrderSquareQrPath = path.join(__dirname, 'images', 'qr-code-square.png');
+
+function resolveProjectAssetPath(relativePath) {
+  const candidates = [
+    path.join(__dirname, relativePath),
+    path.join(process.cwd(), relativePath),
+    path.join(process.cwd(), 'localline', relativePath),
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      fs.accessSync(candidate, fs.constants.R_OK);
+      return candidate;
+    } catch (error) {
+      // Keep trying the next candidate.
+    }
+  }
+
+  return null;
+}
+
+function attachPdfWriteHandlers(doc, pdfFile, resolve, reject, successMessage) {
+  const writeStream = fs.createWriteStream(pdfFile);
+  let settled = false;
+
+  const resolveOnce = () => {
+    if (settled) return;
+    settled = true;
+    if (successMessage) {
+      console.log(successMessage);
+    }
+    resolve(pdfFile);
+  };
+
+  const rejectOnce = (error) => {
+    if (settled) return;
+    settled = true;
+    console.error('PDF creation error:', error);
+    reject(error);
+  };
+
+  writeStream.on('finish', resolveOnce);
+  writeStream.on('error', rejectOnce);
+  doc.on('error', rejectOnce);
+  doc.pipe(writeStream);
+
+  return writeStream;
+}
+
+const deliveryOrderQrPath = resolveProjectAssetPath(path.join('images', 'qr-code.png'));
+const deliveryOrderSquareQrPath = resolveProjectAssetPath(path.join('images', 'qr-code-square.png'));
+const logoPath = resolveProjectAssetPath('logo.png');
 
 // Shared manual dispositions map (from manual_dispositions.json)
 let MANUAL_DISPOSITIONS = {};
@@ -307,7 +356,13 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
 
     // Create a new PDF document
     const doc = new PDFDocument({ bufferPages: true });
-    doc.pipe(fs.createWriteStream(pdf_file));
+    attachPdfWriteHandlers(
+      doc,
+      pdf_file,
+      resolve,
+      reject,
+      'PDF with customer notes created successfully.'
+    );
     const pageNumbering = new Map();
 
     const currentPageIndex = () => {
@@ -389,22 +444,6 @@ async function writeCustomerNotePDF(filename, fullfillmentDateEnd) {
         }
 
         doc.end();
-
-        // Wait for the stream to finish and then resolve with the file path
-        doc.on('finish', () => {
-          console.log('PDF with customer notes created successfully.');
-          resolve(pdf_file);
-        });
-
-        doc.on('error', (error) => {
-          console.error('PDF creation error:', error);
-          reject(error);
-        });
-
-        // Temporary async method for finishing PDF creation
-        setTimeout(() => {
-          resolve(pdf_file); // Promise is resolved with the generated file path
-        }, 1000);
       });
   });
 }
@@ -422,7 +461,7 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
     const doc = new PDFDocument({
       margin: 30 
     });
-    doc.pipe(fs.createWriteStream(pdf_file));
+    attachPdfWriteHandlers(doc, pdf_file, resolve, reject, `PDF created successfully.\n${pdf_file}`);
     const vendors = {}; // Store customer data including attributes
     let currentVendor = null;
     const sortedData = [];
@@ -516,10 +555,6 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
             sortedDataByLocation[location][vendor] = sortedProducts;
           }
         }
-
-        // Create PDF document
-        doc.pipe(fs.createWriteStream('report.pdf'));
-
         doc.fontSize(18).font('Helvetica-Bold').text('Setup Instructions for ' + fullfillmentDateEnd + ' Packout', { align: 'center', underline: true });
         doc.moveDown(0.5);
 
@@ -570,24 +605,6 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
 
 
         doc.end();
-
-
-        // Wait for the stream to finish and then resolve with the file path
-        doc.on('finish', () => {
-          console.log('PDF created successfully.');
-          console.log(pdf_file);
-        });
-
-        doc.on('error', (error) => {
-          console.error('PDF creation error:', error);
-          reject(error);
-        });
-
-        // TODO: figure out appropriate aync methods to enable finishing PDF creation
-        setTimeout(() => {
-          console.log("Success!")
-          resolve(pdf_file); // Promise is resolved with "Success!"
-        }, 1000);
       })
   });
 }
@@ -599,18 +616,16 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
     const reviewHeading = 'Leave us a Review!';
     const reviewPrompt = 'Your feedback helps us grow and helps future members learn what CSA membership is really like. You can share your thoughts privately or choose to post them publicly.';
     const firstPageTopOffset = 36;
+    const reviewQrPath = deliveryOrderSquareQrPath || deliveryOrderQrPath;
 
     // Create a new PDF document
     const doc = new PDFDocument({ bufferPages: true });
-    doc.pipe(fs.createWriteStream(pdf_file));
+    attachPdfWriteHandlers(doc, pdf_file, resolve, reject, 'PDF created successfully.');
     const pageNumbering = new Map();
-    let reviewQrAvailable = false;
+    let reviewQrAvailable = Boolean(reviewQrPath);
 
-    try {
-      fs.accessSync(deliveryOrderSquareQrPath, fs.constants.R_OK);
-      reviewQrAvailable = true;
-    } catch (error) {
-      console.warn(`[delivery_orders] Review QR image unavailable at ${deliveryOrderSquareQrPath}; skipping review block.`);
+    if (!reviewQrAvailable) {
+      console.warn('[delivery_orders] Review QR image unavailable; skipping review block.');
     }
 
     const currentPageIndex = () => {
@@ -771,7 +786,9 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             const height = 60; // Image height in pixels
             const lineSpacing = 15;
 
-            doc.image(image, x, y + 10, { width, height });
+            if (logoPath) {
+              doc.image(logoPath, x, y + 10, { width, height });
+            }
 
             let textX = x + width + 10;
             let textY = y;
@@ -1021,7 +1038,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
                 doc.save();
                 try {
-                  doc.image(deliveryOrderSquareQrPath, reviewImageX, reviewImageY, {
+                  doc.image(reviewQrPath, reviewImageX, reviewImageY, {
                     width: reviewImageSize,
                     height: reviewImageSize,
                   });
@@ -1094,22 +1111,6 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
         }
 
         doc.end();
-
-        // Wait for the stream to finish and then resolve with the file path
-        doc.on('finish', () => {
-          console.log('PDF created successfully.');
-          resolve(pdf_file);
-        });
-
-        doc.on('error', (error) => {
-          console.error('PDF creation error:', error);
-          reject(error);
-        });
-
-        // Temporary async method for finishing PDF creation
-        setTimeout(() => {
-          resolve(pdf_file); // Promise is resolved with "Success!"
-        }, 1000);
       });
   });
 }
@@ -1157,7 +1158,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
         delete emailOptions.cc;
       }
 
-      utilities.sendEmail(emailOptions);
+      await utilities.sendEmail(emailOptions);
     } catch (error) {
       console.error("Error in writeCustomerNotePDF:", error);
       utilities.sendErrorEmail(error);
@@ -1186,7 +1187,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
         delete emailOptions.cc;
       }
 
-      utilities.sendEmail(emailOptions);
+      await utilities.sendEmail(emailOptions);
     } catch (error) {
       console.error("Error in writeDeliveryOrderPDF:", error);
       utilities.sendErrorEmail(error);
@@ -1215,7 +1216,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
         delete emailOptions.cc;
       }
 
-      utilities.sendEmail(emailOptions);
+      await utilities.sendEmail(emailOptions);
     } catch (error) {
       console.error("Error in writeSetupPDF:", error);
       utilities.sendErrorEmail(error);
@@ -1245,7 +1246,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
         delete emailOptions.cc;
       }
 
-      utilities.sendEmail(emailOptions);
+      await utilities.sendEmail(emailOptions);
     } catch (error) {
       console.error("Error in writeLabelPDF:", error);
       utilities.sendErrorEmail(error);
@@ -1254,6 +1255,8 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
   } catch (error) {
     console.error('An error occurred in delivery_order:', error);
     utilities.sendErrorEmail(error);
+  } finally {
+    utilities.closeEmailTransport();
   }
 }
    
@@ -1267,5 +1270,5 @@ const fullfillmentDateObject = {
 */
 
 fullfillmentDateObject = utilities.getNextFullfillmentDate()
-const TESTING = false;
+const TESTING = true;
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end, TESTING);

@@ -417,6 +417,10 @@ async function sendEmail(emailOptions) {
   return sendWithRetry(mailData);
 }
 
+function closeEmailTransport() {
+  transporter.close();
+}
+
 
 
 /*
@@ -723,4 +727,5 @@ module.exports = {
     mailADocument,
     getJsonFromUrl,
     downloadOrdersCsv,
+    closeEmailTransport,
 };
