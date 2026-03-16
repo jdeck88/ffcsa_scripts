@@ -1255,5 +1255,5 @@ const fullfillmentDateObject = {
 */
 
 fullfillmentDateObject = utilities.getNextFullfillmentDate()
-const TESTING = true;
+const TESTING = false;
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end, TESTING);
