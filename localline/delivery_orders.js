@@ -614,7 +614,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
   return new Promise((resolve, reject) => {
     const pdf_file = 'data/delivery_order.pdf';
     const reviewHeading = 'Leave us a Review!';
-    const reviewPrompt = 'Your feedback helps us grow and helps future members learn what CSA membership is really like. You can share your thoughts privately or choose to post them publicly.';
+    const reviewPrompt = 'Your feedback helps us grow and helps\nfuture members learn what CSA\nmembership is really like.';
     const firstPageTopOffset = 36;
     const reviewQrPath = deliveryOrderSquareQrPath || deliveryOrderQrPath;
 
@@ -1005,67 +1005,52 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
             if (totalOrderPages === 1 && reviewQrAvailable) {
               const reviewTop = doc.y + 12;
-              const reviewBoxPadding = 10;
-              const reviewImageSize = 78;
-              const reviewGap = 12;
-              const reviewHeadingGap = 6;
-              const reviewMetaGap = 8;
-              const reviewTextWidth = tableWidth - reviewImageSize - reviewGap - (reviewBoxPadding * 2);
-              const headingHeight = doc.font('Helvetica-Bold').fontSize(13).heightOfString(reviewHeading, {
+              const reviewBoxPadding = 8;
+              const reviewBoxWidth = Math.floor(tableWidth * 0.5);
+              const reviewImageSize = 64;
+              const reviewGap = 10;
+              const reviewHeadingGap = 4;
+              const reviewHeadingFontSize = 11;
+              const reviewPromptFontSize = 8;
+              const reviewTextWidth = reviewBoxWidth - reviewImageSize - reviewGap - (reviewBoxPadding * 2);
+              const headingHeight = doc.font('Helvetica-Bold').fontSize(reviewHeadingFontSize).heightOfString(reviewHeading, {
                 width: reviewTextWidth,
               });
-              const promptHeight = doc.font('Helvetica').fontSize(9).heightOfString(reviewPrompt, {
-                width: reviewTextWidth,
-              });
-              const reviewMetaHeight = doc.font('Helvetica-Bold').fontSize(8).heightOfString('Google', {
+              const promptHeight = doc.font('Helvetica').fontSize(reviewPromptFontSize).heightOfString(reviewPrompt, {
                 width: reviewTextWidth,
               });
               const reviewContentHeight = Math.max(
                 reviewImageSize,
-                headingHeight + reviewHeadingGap + promptHeight + reviewMetaGap + reviewMetaHeight
+                headingHeight + reviewHeadingGap + promptHeight
               );
               const reviewBlockHeight = reviewContentHeight + (reviewBoxPadding * 2);
               const remainingHeight = pageBottom - reviewTop;
 
               if (remainingHeight >= reviewBlockHeight) {
-                const reviewBoxX = leftMargin;
+                const reviewBoxX = leftMargin + tableWidth - reviewBoxWidth;
                 const reviewBoxY = reviewTop;
-                const reviewBoxWidth = tableWidth;
+                const reviewContentTop = reviewBoxY + reviewBoxPadding;
                 const reviewImageX = reviewBoxX + reviewBoxPadding;
-                const reviewImageY = reviewBoxY + reviewBoxPadding;
+                const reviewImageY = reviewContentTop;
                 const reviewTextX = reviewImageX + reviewImageSize + reviewGap;
-                const reviewTextY = reviewBoxY + reviewBoxPadding;
+                const reviewTextY = reviewContentTop;
 
                 doc.save();
                 try {
-                  doc.image(reviewQrPath, reviewImageX, reviewImageY, {
-                    width: reviewImageSize,
-                    height: reviewImageSize,
-                  });
                   doc.roundedRect(reviewBoxX, reviewBoxY, reviewBoxWidth, reviewBlockHeight, 8)
                     .lineWidth(1)
                     .strokeColor('#cfcfcf')
                     .stroke();
-                  doc.font('Helvetica-Bold').fontSize(13).fillColor('black')
+                  doc.image(reviewQrPath, reviewImageX, reviewImageY, {
+                    width: reviewImageSize,
+                    height: reviewImageSize,
+                  });
+                  doc.font('Helvetica-Bold').fontSize(reviewHeadingFontSize).fillColor('black')
                     .text(reviewHeading, reviewTextX, reviewTextY, { width: reviewTextWidth });
-                  doc.font('Helvetica').fontSize(9).fillColor('black')
+                  doc.font('Helvetica').fontSize(reviewPromptFontSize).fillColor('black')
                     .text(reviewPrompt, reviewTextX, reviewTextY + headingHeight + reviewHeadingGap, {
                       width: reviewTextWidth,
                     });
-                  const googleY = reviewTextY + headingHeight + reviewHeadingGap + promptHeight + reviewMetaGap;
-                  const googleEndX = drawGoogleWord(reviewTextX, googleY, {
-                    fontSize: 8,
-                    opacity: 0.65,
-                  });
-                  let starX = googleEndX + 8;
-                  const starY = googleY + 5;
-                  doc.save();
-                  doc.fillOpacity(0.65);
-                  for (let i = 0; i < 5; i++) {
-                    drawStar(starX, starY, 3, '#E0B437');
-                    starX += 9;
-                  }
-                  doc.restore();
                   doc.y = reviewBoxY + reviewBlockHeight;
                 } catch (error) {
                   reviewQrAvailable = false;
