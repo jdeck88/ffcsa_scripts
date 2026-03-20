@@ -43,6 +43,29 @@ function buildLowercaseMap(manualDispositions) {
   return map;
 }
 
+function findManualDisposition(productId, productName, manualDispositions, manualDispositionsLower) {
+  const productIdNormalized = String(productId || '').trim().toLowerCase();
+  const productNameNormalized = String(productName || '').trim().toLowerCase();
+
+  let manualRaw = manualDispositions[productId];
+  if (!manualRaw && productName) {
+    manualRaw = manualDispositions[productName];
+  }
+  if (!manualRaw && manualDispositionsLower) {
+    for (const [key, value] of manualDispositionsLower.entries()) {
+      if (
+        (productIdNormalized && productIdNormalized.includes(key)) ||
+        (productNameNormalized && productNameNormalized.includes(key))
+      ) {
+        manualRaw = value;
+        break;
+      }
+    }
+  }
+
+  return manualRaw;
+}
+
 // Helper to format phone numbers
 function formatPhoneNumber(phoneNumber) {
   if (!phoneNumber) return '';
@@ -79,19 +102,12 @@ async function writeXLSX(rows, outputPath) {
 function computeDispositionForRow(row) {
   const productId = (row['Product ID'] || '').toString().trim();
   const productName = (row['Product'] || '').toString().trim();
-
-  let manualRaw = MANUAL_DISPOSITIONS[productId];
-  if (!manualRaw && productName) {
-    manualRaw = MANUAL_DISPOSITIONS[productName];
-  }
-  if (!manualRaw && MANUAL_DISPOSITIONS_LOWER) {
-    if (productId) {
-      manualRaw = MANUAL_DISPOSITIONS_LOWER.get(productId.toLowerCase());
-    }
-    if (!manualRaw && productName) {
-      manualRaw = MANUAL_DISPOSITIONS_LOWER.get(productName.toLowerCase());
-    }
-  }
+  const manualRaw = findManualDisposition(
+    productId,
+    productName,
+    MANUAL_DISPOSITIONS,
+    MANUAL_DISPOSITIONS_LOWER
+  );
   const manualLower = (manualRaw || '').toLowerCase();
 
   if (manualLower === 'dairy' || manualLower === 'frozen' || manualLower === 'tote') {

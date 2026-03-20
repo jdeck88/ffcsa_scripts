@@ -9,7 +9,7 @@ Important notes
 
 Manual dispositions (Frozen/Dairy/Tote overrides)
 - File: `localline/manual_dispositions.json`
-- Keys: Product ID or Product name (from the orders CSV `Product` column). Matching is case-insensitive.
+- Keys: Product ID or Product name (from the orders CSV `Product` column). Matching is case-insensitive and uses substring matching.
 - Values: `Frozen`, `Dairy`, `Tote`
 - Used by: `checklists.js` (packlists + manifests), `delivery_orders.js` (delivery orders PDF), `optimaroute.js` (optimaroute.xlsx)
 - Purpose: override missing/incorrect `Packing Tag` values in Local Line exports

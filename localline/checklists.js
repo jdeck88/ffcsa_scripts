@@ -41,22 +41,38 @@ function buildLowercaseMap(manualDispositions) {
   return map;
 }
 
-function computeDispositionForRow(row, manualDispositions, manualDispositionsLower) {
-  const productId = String(row['Product ID'] || '').trim();
-  const productName = String(row['Product'] || '').trim();
+function findManualDisposition(productId, productName, manualDispositions, manualDispositionsLower) {
+  const productIdNormalized = String(productId || '').trim().toLowerCase();
+  const productNameNormalized = String(productName || '').trim().toLowerCase();
 
   let manualRaw = manualDispositions[productId];
   if (!manualRaw && productName) {
     manualRaw = manualDispositions[productName];
   }
   if (!manualRaw && manualDispositionsLower) {
-    if (productId) {
-      manualRaw = manualDispositionsLower.get(productId.toLowerCase());
-    }
-    if (!manualRaw && productName) {
-      manualRaw = manualDispositionsLower.get(productName.toLowerCase());
+    for (const [key, value] of manualDispositionsLower.entries()) {
+      if (
+        (productIdNormalized && productIdNormalized.includes(key)) ||
+        (productNameNormalized && productNameNormalized.includes(key))
+      ) {
+        manualRaw = value;
+        break;
+      }
     }
   }
+
+  return manualRaw;
+}
+
+function computeDispositionForRow(row, manualDispositions, manualDispositionsLower) {
+  const productId = String(row['Product ID'] || '').trim();
+  const productName = String(row['Product'] || '').trim();
+  const manualRaw = findManualDisposition(
+    productId,
+    productName,
+    manualDispositions,
+    manualDispositionsLower
+  );
 
   const manualLower = (manualRaw || '').toLowerCase();
   if (manualLower === 'dairy' || manualLower === 'frozen' || manualLower === 'tote') {
