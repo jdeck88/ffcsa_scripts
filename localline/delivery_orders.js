@@ -130,18 +130,40 @@ function computeDispositionForRow(row, manualDispositions, manualDispositionsLow
   return 'tote';
 }
 
+function normalizeDropSiteKey(dropSite) {
+  return String(dropSite || '').trim().toLowerCase();
+}
+
+function normalizeDropSiteColors(colors) {
+  const normalizedColors = {};
+
+  for (const [key, value] of Object.entries(colors || {})) {
+    const normalizedKey = normalizeDropSiteKey(key);
+    if (normalizedKey) {
+      normalizedColors[normalizedKey] = value;
+    }
+  }
+
+  return normalizedColors;
+}
 
 // Load or initialize drop site colors
 function loadDropSiteColors(filePath) {
   if (fs.existsSync(filePath)) {
-    return JSON.parse(fs.readFileSync(filePath));
+    return normalizeDropSiteColors(
+      JSON.parse(fs.readFileSync(filePath, 'utf8'))
+    );
   }
   return {};
 }
 
 // Save updated drop site colors
 function saveDropSiteColors(filePath, colors) {
-  fs.writeFileSync(filePath, JSON.stringify(colors, null, 2));
+  fs.writeFileSync(
+    filePath,
+    JSON.stringify(normalizeDropSiteColors(colors), null, 2),
+    'utf8'
+  );
 }
 
 // Generate random pastel color
@@ -161,13 +183,11 @@ async function writeLabelPDF(csvFilePath) {
     let dropSiteColors = {};
 
     // 1️⃣ Load existing drop site colors
-    if (fs.existsSync(dropSiteColorsPath)) {
-      try {
-        dropSiteColors = JSON.parse(fs.readFileSync(dropSiteColorsPath, 'utf8'));
-      } catch (err) {
-        console.error("Error reading drop_site_colors.json:", err);
-        dropSiteColors = {};
-      }
+    try {
+      dropSiteColors = loadDropSiteColors(dropSiteColorsPath);
+    } catch (err) {
+      console.error("Error reading drop_site_colors.json:", err);
+      dropSiteColors = {};
     }
 
     // 2️⃣ Read CSV and group labels
@@ -278,7 +298,7 @@ async function writeLabelPDF(csvFilePath) {
         writeStream.on('finish', () => {
           console.log("Labels PDF generated:", outputPath);
 
-          fs.writeFileSync(dropSiteColorsPath, JSON.stringify(dropSiteColors, null, 2), 'utf8');
+          saveDropSiteColors(dropSiteColorsPath, dropSiteColors);
           console.log("drop_site_colors.json updated.");
 
           resolve(outputPath);
@@ -1271,5 +1291,5 @@ const fullfillmentDateObject = {
 */
 
 fullfillmentDateObject = utilities.getNextFullfillmentDate()
-const TESTING = false;
+const TESTING = true;
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end, TESTING);
