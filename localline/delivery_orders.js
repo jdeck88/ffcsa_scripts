@@ -491,6 +491,7 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
   const vendorOrder = await readVendorOrder('vendor_order.csv');
   return new Promise((resolve, reject) => {
     const pdf_file = 'data/setup.pdf'
+    const UNMAPPED_LOCATION = 'Unmapped';
 
     // Create a new PDF document
     // Create a new PDF document with custom margins
@@ -573,28 +574,34 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
 
         // Initialize the buckets for each location
         Object.values(vendorLocations).forEach(location => {
-          sortedDataByLocation[location] = {};
+          if (location && !sortedDataByLocation[location]) {
+            sortedDataByLocation[location] = {};
+          }
         });
+        sortedDataByLocation[UNMAPPED_LOCATION] = {};
 
         // Populate the buckets with vendors and their sorted products
         for (const vendor in aggregatedData) {
-          const location = vendorLocations[vendor];
-          if (location) {
-            sortedDataByLocation[location][vendor] = aggregatedData[vendor];
+          const location = vendorLocations[vendor] || UNMAPPED_LOCATION;
+          sortedDataByLocation[location] ||= {};
 
-            // Sort the products within each vendor
-            const sortedProducts = {};
-            Object.keys(aggregatedData[vendor]).sort().forEach(productName => {
-              sortedProducts[productName] = aggregatedData[vendor][productName];
-            });
+          // Sort the products within each vendor
+          const sortedProducts = {};
+          Object.keys(aggregatedData[vendor]).sort().forEach(productName => {
+            sortedProducts[productName] = aggregatedData[vendor][productName];
+          });
 
-            sortedDataByLocation[location][vendor] = sortedProducts;
-          }
+          sortedDataByLocation[location][vendor] = sortedProducts;
         }
         doc.fontSize(18).font('Helvetica-Bold').text('Setup Instructions for ' + fullfillmentDateEnd + ' Packout', { align: 'center', underline: true });
         doc.moveDown(0.5);
 
         for (const location in sortedDataByLocation) {
+          const vendors = Object.keys(sortedDataByLocation[location]);
+          if (vendors.length === 0) {
+            continue;
+          }
+
           // Print the location name
           // Draw the line across the page
           doc.moveTo(doc.page.margins.left, doc.y)
@@ -611,7 +618,6 @@ async function writeSetupPDF(filename, fullfillmentDateEnd) {
           doc.moveDown(0.35);
 
           // Sort vendors based on vendor order
-          const vendors = Object.keys(sortedDataByLocation[location]);
           vendors.sort((a, b) => {
             const orderA = vendorOrderMap.hasOwnProperty(a) ? vendorOrderMap[a] : vendorOrder.length;
             const orderB = vendorOrderMap.hasOwnProperty(b) ? vendorOrderMap[b] : vendorOrder.length;
