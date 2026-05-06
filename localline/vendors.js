@@ -6,6 +6,30 @@ const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
 
+const FULL_FARM_VENDOR = 'Full Farm CSA';
+const FULL_FARM_EMAIL = 'fullfarmcsa@deckfamilyfarm.com';
+
+function normalizeId(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const num = Number(value);
+  if (!Number.isNaN(num)) {
+    return String(Math.trunc(num));
+  }
+  return String(value).trim();
+}
+
+function formatMoney(value) {
+  const amount = Number(value || 0);
+  return amount.toFixed(2);
+}
+
+function normalizeText(value) {
+  return String(value || '').trim();
+}
+
+function getOrderId(row) {
+  return row['Order'] || row['\ufeffOrder'] || '';
+}
 
 function groupByCategoryWithSubtotals(items) {
   const merged = {};
@@ -114,9 +138,52 @@ async function readVendorProductsExcel(filePath) {
   return rows;
 }
 
+async function readProductVendorMapExcel(filePath) {
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(filePath);
+  const worksheet = workbook.getWorksheet('Availability') || workbook.getWorksheet(1);
+  const headers = worksheet.getRow(1).values;
+  const vendorMap = {};
+
+  for (let i = 2; i <= worksheet.actualRowCount; i++) {
+    const row = worksheet.getRow(i).values;
+    const item = {};
+    for (let j = 1; j < headers.length; j++) {
+      item[headers[j]] = row[j];
+    }
+
+    const productId = normalizeId(item['Local Line Product ID']);
+    const vendorName = item['Vendor'];
+    if (productId && vendorName) {
+      vendorMap[productId] = vendorName;
+    }
+  }
+
+  return vendorMap;
+}
+
 function lookupPackagePrice(productID, packageName, productsData) {
-  const match = productsData.find(p => p['Local Line Product ID'] === productID && p['Package Name'] === packageName);
-  return match ? parseFloat(match['Package Price']) : 0;
+  const normalizedProductId = normalizeId(productID);
+  const normalizedPackageName = normalizeText(packageName);
+  const productMatches = productsData.filter(
+    p => normalizeId(p['Local Line Product ID']) === normalizedProductId
+  );
+  const exactMatch = productMatches.find(
+    p => normalizeText(p['Package Name']) === normalizedPackageName
+  );
+
+  if (exactMatch) {
+    return parseFloat(exactMatch['Package Price']) || 0;
+  }
+
+  if (productMatches.length === 1) {
+    return parseFloat(productMatches[0]['Package Price']) || 0;
+  }
+
+  const blankPackageMatch = productMatches.find(
+    p => !normalizeText(p['Package Name'])
+  );
+  return blankPackageMatch ? parseFloat(blankPackageMatch['Package Price']) || 0 : 0;
 }
 
 // Parse order CSV and group by vendor
@@ -145,10 +212,16 @@ async function groupOrdersByVendor(orderFile, productData, fulfillmentDate) {
             if (numItems > 1 && quantity == 1) {
               quantity = numItems;
             }
-            const price = lookupPackagePrice(parseInt(row['Product ID'], 10), row['Package Name'], productData);
+            const lookupPrice = lookupPackagePrice(parseInt(row['Product ID'], 10), row['Package Name'], productData);
+            const rowSubtotal = Number(row['Product Subtotal'] || 0) || 0;
+            const fallbackUnitPrice = quantity > 0 ? rowSubtotal / quantity : 0;
+            const price = lookupPrice > 0 ? lookupPrice : fallbackUnitPrice;
             const totalPrice = price * quantity;
 
             orders[vendor].push({
+              orderId: getOrderId(row),
+              sourceProductName: row['Product'],
+              packageName: row['Package Name'],
               product: row['Item Unit'] + ', ' + row['Product'] + ' - ' + row['Package Name'],
               quantity,
               price,
@@ -162,6 +235,172 @@ async function groupOrdersByVendor(orderFile, productData, fulfillmentDate) {
       })
       .on('error', reject);
   });
+}
+
+async function buildFullFarmBundleDetails(items, accessToken, productVendorMap, productData) {
+  const orderIds = [...new Set(items.map(item => item.orderId).filter(Boolean))];
+  const bundleMap = new Map();
+
+  for (const orderId of orderIds) {
+    const order = await utilities.getJsonFromUrl(
+      `https://localline.ca/api/backoffice/v2/orders/${orderId}/`,
+      accessToken
+    );
+
+    const customerName = [
+      order?.customer?.first_name,
+      order?.customer?.last_name
+    ].filter(Boolean).join(' ');
+
+    for (const entry of order.order_entries || []) {
+      if (entry.vendor_name !== FULL_FARM_VENDOR || !entry.is_box || !entry.sub_order_entries?.length) {
+        continue;
+      }
+
+      const bundleKey = `${entry.product_name}|${entry.package_name}`;
+      if (!bundleMap.has(bundleKey)) {
+        const boxBasePrice = lookupPackagePrice(entry.product, entry.package_name, productData);
+        const defaultContentsValue = Number(entry.sub_order_entries_total_price || 0);
+        const memberPrice = Number(entry.total_price || entry.price || 0);
+        bundleMap.set(bundleKey, {
+          bundleName: entry.product_name,
+          bundlePackage: entry.package_name,
+          boxBasePrice,
+          defaultContentsValue,
+          memberPrice,
+          members: [],
+          components: new Map()
+        });
+      }
+
+      const bundle = bundleMap.get(bundleKey);
+      const bundleQuantity = Number(
+        entry.quantity_to_charge ?? entry.unit_quantity ?? 1
+      );
+
+      if (customerName) {
+        bundle.members.push({
+          customerName,
+          orderId,
+          quantity: bundleQuantity
+        });
+      }
+
+      for (const subEntry of entry.sub_order_entries) {
+        const sourceVendor =
+          productVendorMap[normalizeId(subEntry.product)] ||
+          productVendorMap[normalizeId(subEntry.product_package)] ||
+          `Vendor ${subEntry.vendor}`;
+        const unitPrice = Number(subEntry.package_unit_price ?? subEntry.price ?? 0);
+        const quantity = Number(subEntry.unit_quantity || 0) * bundleQuantity;
+        const componentKey = [
+          sourceVendor,
+          subEntry.product_name,
+          subEntry.package_name,
+          unitPrice
+        ].join('|');
+
+        if (!bundle.components.has(componentKey)) {
+          bundle.components.set(componentKey, {
+            sourceVendor,
+            productName: subEntry.product_name,
+            packageName: subEntry.package_name,
+            quantity: 0,
+            unitPrice
+          });
+        }
+
+        const component = bundle.components.get(componentKey);
+        component.quantity += quantity;
+      }
+    }
+  }
+
+  return [...bundleMap.values()]
+    .map(bundle => ({
+      bundleName: bundle.bundleName,
+      bundlePackage: bundle.bundlePackage,
+      boxBasePrice: bundle.boxBasePrice,
+      defaultContentsValue: bundle.defaultContentsValue,
+      memberPrice: bundle.memberPrice,
+      markupValue: bundle.memberPrice - bundle.defaultContentsValue,
+      markupPercent:
+        bundle.defaultContentsValue > 0
+          ? ((bundle.memberPrice - bundle.defaultContentsValue) / bundle.defaultContentsValue) * 100
+          : 0,
+      members: bundle.members
+        .sort((a, b) =>
+          a.customerName.localeCompare(b.customerName) ||
+          String(a.orderId).localeCompare(String(b.orderId))
+        ),
+      components: [...bundle.components.values()]
+        .sort((a, b) =>
+          a.sourceVendor.localeCompare(b.sourceVendor) ||
+          a.productName.localeCompare(b.productName) ||
+          a.packageName.localeCompare(b.packageName)
+        )
+        .map(component => ({
+          ...component,
+          totalPrice: component.unitPrice * component.quantity
+        }))
+    }))
+    .sort((a, b) => a.bundleName.localeCompare(b.bundleName));
+}
+
+function addFullFarmNotesToPdf(doc, bundleDetails) {
+  if (!bundleDetails.length) return;
+
+  doc.moveDown(1);
+  doc.fontSize(14).text('FFCSA Notes', { bold: true });
+  doc.moveDown(0.2);
+  doc.fontSize(10).text(
+    'Bundle component note: The bundle items below were expanded from Local Line order details. These constituent products may need to be invoiced separately by the source vendors.'
+  );
+  doc.moveDown(0.2);
+  doc.fontSize(10).text(
+    'Members shown below ordered the bundle listed in the main table. Source prices are the component prices saved on the order. Box base price is inferred from the current configured bundle price in the products export.'
+  );
+
+  for (const bundle of bundleDetails) {
+    doc.moveDown(0.8);
+    doc.fontSize(12).text(
+      `${bundle.bundleName} - ${bundle.bundlePackage}`,
+      { bold: true }
+    );
+    doc.moveDown(0.2);
+    doc.table({
+      headers: ['Metric', 'Amount'],
+      rows: [
+        ['Box base price', formatMoney(bundle.boxBasePrice)],
+        ['Default contents value', formatMoney(bundle.defaultContentsValue)],
+        ['Member price', formatMoney(bundle.memberPrice)],
+        ['Markup', `${formatMoney(bundle.markupValue)} (${formatMoney(bundle.markupPercent)}%)`]
+      ]
+    });
+    doc.moveDown(0.1);
+    if (bundle.members.length) {
+      doc.fontSize(10).text('Members:');
+      for (const member of bundle.members) {
+        const qtyText = member.quantity > 1 ? ` x${member.quantity}` : '';
+        doc.text(`- ${member.customerName} (Order ${member.orderId})${qtyText}`);
+      }
+    } else {
+      doc.fontSize(10).text('Members: None listed');
+    }
+    doc.moveDown(0.2);
+
+    const rows = bundle.components.map(component => [
+      `${component.sourceVendor} - ${component.productName} - ${component.packageName}`,
+      component.quantity,
+      formatMoney(component.unitPrice),
+      formatMoney(component.totalPrice)
+    ]);
+
+    doc.table({
+      headers: ['Product', 'Qty', 'Price', 'Total Price'],
+      rows
+    });
+  }
 }
 
 // Generate summary PDF
@@ -238,9 +477,20 @@ async function generateSummaryPDF(vendorOrders, outputFile) {
 }
 
 // Send vendor-specific emails
-async function sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate, testing = false) {
+async function sendVendorEmails(
+  vendorOrders,
+  vendorEmails,
+  productData,
+  fulfillmentDate,
+  accessToken,
+  productVendorMap,
+  testing = false
+) {
   for (const [vendor, items] of Object.entries(vendorOrders)) {
     let email = vendorEmails[vendor];
+    if (vendor === FULL_FARM_VENDOR) {
+      email = FULL_FARM_EMAIL;
+    }
     if (!items.length) continue;
 
     // In normal mode, skip vendors without an email
@@ -261,19 +511,33 @@ async function sendVendorEmails(vendorOrders, vendorEmails, productData, fulfill
     doc.table(table);
     doc.text('Total Price ' + sumTotal.toFixed(2), { align: 'right', bold: true });
 
+    let bundleDetails = [];
+    if (vendor === FULL_FARM_VENDOR) {
+      bundleDetails = await buildFullFarmBundleDetails(items, accessToken, productVendorMap, productData);
+      addFullFarmNotesToPdf(doc, bundleDetails);
+    }
+
     // 🔹 Testing mode: send ONLY to jdeck88@gmail.com
     const toAddress = testing ? 'jdeck88@gmail.com' : email;
     const fromAddress = testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com';
+    const ccAddress =
+      testing || toAddress === FULL_FARM_EMAIL ? undefined : FULL_FARM_EMAIL;
+
+    let messageText = testing
+      ? `TESTING MODE: This fulfillment report would normally go to ${email || '(no email on file)'} for vendor "${vendor}".`
+      : 'The attached PDF contains the Full Farm CSA Order for the next fulfillment cycle. Please reply with questions.';
+
+    if (vendor === FULL_FARM_VENDOR && bundleDetails.length) {
+      messageText += '\n\nBundle component details are included in the FFCSA notes section of the attached PDF.';
+    }
 
     const mailOptions = {
       from: fromAddress,
       to: toAddress,
-      cc: testing ? undefined : 'fullfarmcsa@deckfamilyfarm.com',
+      cc: ccAddress,
       bcc: testing ? undefined : 'jdeck88@gmail.com',
       subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: Vendor Fulfillments for ${vendor} - ${utilities.getToday()}`,
-      text: testing
-        ? `TESTING MODE: This fulfillment report would normally go to ${email || '(no email on file)'} for vendor "${vendor}".`
-        : 'The attached PDF contains the Full Farm CSA Order for the next fulfillment cycle. Please reply with questions.'
+      text: messageText
     };
 
     try {
@@ -319,9 +583,18 @@ async function runVendorReports(fulfillmentDate, testing = false) {
 
     const vendorEmails = await readVendorsCSV(vendorsFile);
     const productData = await readVendorProductsExcel(productsFile);
+    const productVendorMap = await readProductVendorMapExcel(productsFile);
     const vendorOrders = await groupOrdersByVendor(orderFile, productData, fulfillmentDate.date);
 
-    await sendVendorEmails(vendorOrders, vendorEmails, productData, fulfillmentDate.date, testing);
+    await sendVendorEmails(
+      vendorOrders,
+      vendorEmails,
+      productData,
+      fulfillmentDate.date,
+      token,
+      productVendorMap,
+      testing
+    );
     const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile);
 
     const summaryMail = {
