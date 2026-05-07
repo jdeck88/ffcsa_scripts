@@ -92,11 +92,9 @@ async function downloadProductsExcel(accessToken, fulfillmentDateEnd) {
 
   const productsFile = `data/products_${fulfillmentDateEnd}.xlsx`;
 
-  // ✅ Check if file already exists
-  if (fs.existsSync(productsFile)) {
-    console.log(`⚠️ Products file already exists: ${productsFile}`);
-    console.log("⏭️ Skipping download to avoid overwrite.");
-    return productsFile; // return path without re-downloading
+  const cachedPath = utilities.getFreshCachedFilePath(productsFile, 'products file');
+  if (cachedPath) {
+    return cachedPath;
   }
 
   // Otherwise, proceed with download
@@ -476,4 +474,3 @@ main()
     console.error('❌ Fatal error in vendor monthly summary:', err);
     setTimeout(() => process.exit(1), 100);
   });
-

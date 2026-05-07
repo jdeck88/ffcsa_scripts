@@ -206,9 +206,14 @@ async function downloadCustomersCsv(fulfillmentDate, testing = false) {
   const fileName = `customers_${fulfillmentDate.end}.csv`;
   const outputPath = path.join('data', fileName);
 
-  if (testing && fs.existsSync(outputPath)) {
-    console.log(`📄 Using existing customers file (testing mode): ${outputPath}`);
-    return outputPath;
+  if (testing) {
+    const cachedPath = utilities.getFreshCachedFilePath(
+      outputPath,
+      'customers file (testing mode)'
+    );
+    if (cachedPath) {
+      return cachedPath;
+    }
   }
 
   const tokenResp = await utilities.getAccessToken();

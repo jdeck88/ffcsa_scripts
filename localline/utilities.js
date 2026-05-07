@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const nodemailer = require("nodemailer");
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
 // --- Shared pooled transporter (Gmail) ---
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -224,15 +226,41 @@ async function downloadData(file_path, filename) {
     });
 }
 
+function getFreshCachedFilePath(filePath, label = 'file', maxAgeMs = ONE_HOUR_MS) {
+    if (!fs.existsSync(filePath)) {
+        return null;
+    }
+
+    try {
+        const stats = fs.statSync(filePath);
+        const ageMs = Date.now() - stats.mtimeMs;
+
+        if (ageMs <= maxAgeMs) {
+            const ageMinutes = Math.floor(ageMs / 60000);
+            console.log(`📄 Using cached ${label} (${ageMinutes}m old): ${filePath}`);
+            return filePath;
+        }
+
+        const ageMinutes = Math.floor(ageMs / 60000);
+        console.log(`♻️ Cached ${label} is stale (${ageMinutes}m old); fetching fresh copy: ${filePath}`);
+    } catch (error) {
+        console.warn(`⚠️ Could not inspect cached ${label}; fetching fresh copy: ${filePath}`, error);
+    }
+
+    return null;
+}
+
 async function downloadOrdersCsv(fullfillmentDateStart, fullfillmentDateEnd, overwrite = true) {
   // 👉 Where we expect the final file to live
   const baseName = `orders_list_${fullfillmentDateEnd}.csv`;
   const targetPath = path.join('data', baseName); // matches how downloadData usually writes
 
-  // If file exists and we don't want to overwrite, just reuse it
-  if (!overwrite && fs.existsSync(targetPath)) {
-    console.log(`📄 Using existing orders file (overwrite=false): ${targetPath}`);
-    return targetPath;
+  // If overwrite is disabled, reuse only a fresh cached file.
+  if (!overwrite) {
+    const cachedPath = getFreshCachedFilePath(targetPath, 'orders file');
+    if (cachedPath) {
+      return cachedPath;
+    }
   }
 
   // 1️⃣ Login / access token
@@ -727,5 +755,6 @@ module.exports = {
     mailADocument,
     getJsonFromUrl,
     downloadOrdersCsv,
+    getFreshCachedFilePath,
     closeEmailTransport,
 };

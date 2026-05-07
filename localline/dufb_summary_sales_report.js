@@ -12,9 +12,12 @@ async function fetchAllOrdersForMonth(month, year) {
   const endDate = new Date(year, month, 0).toISOString().split('T')[0];
   const filename = `data/tmp_all_orders_${year}_${month}.csv`;
 
-  if (fs.existsSync(filename)) {
-    console.log(`✅ Using cached orders for ${year}-${month}`);
-  } else {
+  const cachedPath = utilities.getFreshCachedFilePath(
+    filename,
+    `orders for ${year}-${month}`
+  );
+
+  if (!cachedPath) {
     const accessToken = JSON.parse(await utilities.getAccessToken()).access;
     const url = `https://localline.ca/api/backoffice/v2/orders/export/?file_type=orders_list_view&send_to_email=false&direct=true&fulfillment_date_start=${startDate}&fulfillment_date_end=${endDate}`;
     const requestId = JSON.parse(await utilities.getRequestID(url, accessToken)).id;
@@ -196,4 +199,3 @@ if (require.main === module) {
     await generateReportFromCSV();
   })();
 }
-

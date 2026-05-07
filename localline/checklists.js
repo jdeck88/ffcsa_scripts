@@ -171,7 +171,6 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
           });
 
           let currentDropsiteName = null;
-          let currentCustomerName = null;
 
           // Build dropsites -> customers -> items
           sortedData.forEach((row) => {
@@ -208,9 +207,10 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
               };
             }
 
-            if (customerName !== currentCustomerName) {
-              currentCustomerName = customerName;
+            if (!dropsites[dropsiteName].customers[customerName]) {
               dropsites[dropsiteName].customers[customerName] = [];
+            }
+            if (!dropsitesAll[dropsiteName].customers[customerName]) {
               dropsitesAll[dropsiteName].customers[customerName] = [];
             }
 
@@ -420,7 +420,6 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
           });
 
           let currentDropsiteName = null;
-          let currentCustomerName = null;
 
           // Build dropsitesAll -> customers -> items (used for packlists)
           sortedData.forEach((row) => {
@@ -451,8 +450,7 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
               dropsitesAll[dropsiteName] = { customers: {} };
             }
 
-            if (customerName !== currentCustomerName) {
-              currentCustomerName = customerName;
+            if (!dropsitesAll[dropsiteName].customers[customerName]) {
               dropsitesAll[dropsiteName].customers[customerName] = [];
             }
 
