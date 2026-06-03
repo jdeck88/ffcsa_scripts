@@ -51,28 +51,6 @@ if [ "$1" == "pricelist_checker.js" ]; then
     echo "No changes in data files."
   fi
 fi
-if [ "$1" == "weekly_kpi.js" ]; then
-  if [[ -n $(git status -s data/weekly_kpi.json) ]]; then
-    git add data/weekly_kpi.json
-    #git add data/fulfillment_kpi.json
-    git commit -m "Update weekly kpi files"
-    git push
-    echo "Changes pushed to GitHub."
-  else
-    echo "No changes in data files."
-  fi
-fi
-if [ "$1" == "fulfillment_strategies.js" ]; then
-  if [[ -n $(git status -s data/delivery_data.tsv) ]]; then
-    git add data/delivery_data.tsv
-    git add ../docs/delivery_data.html
-    git commit -m "Update fulfillment strategies file"
-    git push
-    echo "Changes pushed to GitHub."
-  else
-    echo "No changes in data files."
-  fi
-fi
 if [ "$1" == "monthly_vendors.js" ]; then
   shopt -s nullglob  # prevents literal *.xlsx if no match
   files=(data/products_*.xlsx)
