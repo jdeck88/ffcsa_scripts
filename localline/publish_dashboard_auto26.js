@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const fastcsv = require('fast-csv');
 const XLSX = require('xlsx');
 const crypto = require('crypto');
 
@@ -15,6 +16,7 @@ const TARGET_SHEET_TITLE =
   process.env.GOOGLE_SHEETS_TAB ||
   process.env.DASHBOARD_TARGET_TITLE ||
   'Dashboard-auto-26';
+const DATA_DIR = path.join(__dirname, 'data');
 const WEEKLY_KPI_PATH = path.join(__dirname, 'data', 'weekly_kpi.json');
 const TIMESHEETS_SERVICE_PATH = path.resolve(__dirname, '../../timesheets/server/services/userService.js');
 const TIMESHEETS_DB_PATH = path.resolve(__dirname, '../../timesheets/server/models/db.js');
@@ -80,15 +82,22 @@ function parseVendorWeeklySummary(filePath) {
 
 function buildVendorWeeklyMap() {
   const map = {};
-  const dataDir = path.join(__dirname, 'data');
-  if (!fs.existsSync(dataDir)) return map;
-  const files = fs.readdirSync(dataDir);
+  if (!fs.existsSync(DATA_DIR)) return map;
+  const files = fs.readdirSync(DATA_DIR);
   for (const file of files) {
     const m = file.match(/^vendor_weekly_summary_(\d{4}-\d{2}-\d{2})_to_(\d{4}-\d{2}-\d{2})\.csv$/);
     if (!m) continue;
-    map[m[1]] = parseVendorWeeklySummary(path.join(dataDir, file));
+    map[m[1]] = parseVendorWeeklySummary(path.join(DATA_DIR, file));
   }
   return map;
+}
+
+function isPastCompleteWeek(week) {
+  return week.end < getTodayYmd();
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function getTimesheetsBackend() {
@@ -258,6 +267,243 @@ async function getLocallineAccessToken() {
     throw new Error('Failed to obtain Local Line access token.');
   }
   return res.data.access;
+}
+
+async function requestLocallineOrdersExportId(accessToken, weekStart, weekEnd) {
+  const params = new URLSearchParams({
+    file_type: 'orders_list_view',
+    send_to_email: 'false',
+    destination_email: 'fullfarmcsa@deckfamilyfarm.com',
+    direct: 'true',
+    fulfillment_date_start: weekStart,
+    fulfillment_date_end: weekEnd,
+    status: 'OPEN',
+  });
+  const url = `https://localline.ca/api/backoffice/v2/orders/export/?${params.toString()}`;
+  const res = await axios.get(url, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!res.data?.id) {
+    throw new Error(`Orders export request did not return id for ${weekStart}..${weekEnd}.`);
+  }
+  return res.data.id;
+}
+
+async function pollLocallineExportFilePath(accessToken, exportId) {
+  const deadline = Date.now() + 3 * 60 * 1000;
+  while (Date.now() < deadline) {
+    const res = await axios.get(
+      `https://localline.ca/api/backoffice/v2/export/${exportId}/`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    const status = res.data?.status;
+    if (status === 'COMPLETE' && res.data?.file_path) {
+      return res.data.file_path;
+    }
+    if (status === 'FAILED') {
+      throw new Error(`Local Line export ${exportId} failed.`);
+    }
+    await sleep(5000);
+  }
+  throw new Error(`Timed out waiting for Local Line export ${exportId}.`);
+}
+
+async function downloadUrlToFile(url, outPath, headers = {}) {
+  const res = await axios.get(url, { responseType: 'arraybuffer', headers });
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, res.data);
+  return outPath;
+}
+
+async function ensureWeeklyOrdersCsv(accessToken, weekStart, weekEnd) {
+  const fileName = `orders_list_${weekStart}_to_${weekEnd}.csv`;
+  const outPath = path.join(DATA_DIR, fileName);
+  if (fs.existsSync(outPath)) {
+    return outPath;
+  }
+  const exportId = await requestLocallineOrdersExportId(accessToken, weekStart, weekEnd);
+  const filePath = await pollLocallineExportFilePath(accessToken, exportId);
+  await downloadUrlToFile(filePath, outPath);
+  return outPath;
+}
+
+async function ensureProductsWorkbook(accessToken, weekEnd) {
+  const outPath = path.join(DATA_DIR, `products_${weekEnd}.xlsx`);
+  if (fs.existsSync(outPath)) {
+    return outPath;
+  }
+  await downloadUrlToFile(
+    'https://localline.ca/api/backoffice/v2/products/export/?direct=true',
+    outPath,
+    { Authorization: `Bearer ${accessToken}` }
+  );
+  return outPath;
+}
+
+function normalizePackageId(value) {
+  if (value === null || value === undefined) return null;
+  const num = Number(value);
+  if (!Number.isNaN(num)) {
+    return String(Math.trunc(num));
+  }
+  const trimmed = String(value).trim();
+  return trimmed || null;
+}
+
+function computeEffectiveQuantity(row) {
+  let quantity = Number(row['Quantity']);
+  if (Number.isNaN(quantity)) quantity = 0;
+  quantity = Math.round(quantity);
+
+  let numItems = Number(row['# of Items']);
+  if (Number.isNaN(numItems)) numItems = 0;
+  numItems = Math.round(numItems);
+
+  if (numItems > 1 && quantity === 1) {
+    quantity = numItems;
+  }
+  return quantity;
+}
+
+function buildPackagePriceMap(productsPath) {
+  const wb = XLSX.readFile(productsPath, { raw: true });
+  const ws =
+    wb.Sheets['Packages and pricing'] ||
+    wb.Sheets[wb.SheetNames[1]] ||
+    wb.Sheets[wb.SheetNames[0]];
+  if (!ws) {
+    throw new Error(`No worksheets found in ${productsPath}`);
+  }
+
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+  if (!rows.length) {
+    return {};
+  }
+
+  const header = rows[0].map((h) => String(h || '').toLowerCase().replace(/\s+/g, ''));
+  const idIdx = header.indexOf('packageid');
+  const priceIdx = header.indexOf('packageprice');
+  if (idIdx === -1 || priceIdx === -1) {
+    throw new Error(`Package ID / Package Price columns not found in ${productsPath}`);
+  }
+
+  const map = {};
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i] || [];
+    const key = normalizePackageId(row[idIdx]);
+    if (!key) continue;
+    const price = Number(row[priceIdx]);
+    if (Number.isNaN(price)) continue;
+    map[key] = price;
+  }
+  return map;
+}
+
+async function aggregateVendorSummaryFromOrders(ordersCsvPath, packagePriceMap) {
+  return new Promise((resolve, reject) => {
+    const summaryByVendor = {};
+    fs.createReadStream(ordersCsvPath)
+      .pipe(fastcsv.parse({ headers: true }))
+      .on('data', (row) => {
+        try {
+          const vendor = row['Vendor'];
+          if (!vendor) return;
+          if (row['Category'] === 'Membership') return;
+
+          if (!summaryByVendor[vendor]) {
+            summaryByVendor[vendor] = {
+              vendor,
+              retailSales: 0,
+              purchaseCost: 0,
+            };
+          }
+
+          const quantity = computeEffectiveQuantity(row);
+          if (!quantity || quantity <= 0) return;
+
+          const retailTotal = Number(row['Product Subtotal'] || 0) || 0;
+          const packageId = normalizePackageId(row['Package ID']);
+          const purchaseUnitPrice = packageId ? packagePriceMap[packageId] || 0 : 0;
+          const purchaseTotal = purchaseUnitPrice * quantity;
+
+          summaryByVendor[vendor].retailSales += retailTotal;
+          summaryByVendor[vendor].purchaseCost += purchaseTotal;
+        } catch (_err) {
+          // continue on malformed rows
+        }
+      })
+      .on('end', () => {
+        const summary = Object.values(summaryByVendor).map((v) => {
+          const markupAmount = v.retailSales - v.purchaseCost;
+          const markupPercent = v.purchaseCost > 0 ? (markupAmount / v.purchaseCost) * 100 : 0;
+          return {
+            vendor: v.vendor,
+            retailSales: v.retailSales,
+            purchaseCost: v.purchaseCost,
+            markupAmount,
+            markupPercent,
+          };
+        });
+        summary.sort((a, b) => b.retailSales - a.retailSales || a.vendor.localeCompare(b.vendor));
+        resolve(summary);
+      })
+      .on('error', reject);
+  });
+}
+
+async function writeVendorSummaryCsv(summary, outPath) {
+  return new Promise((resolve, reject) => {
+    const ws = fs.createWriteStream(outPath);
+    const csvStream = fastcsv.format({ headers: true });
+    csvStream.pipe(ws).on('finish', resolve).on('error', reject);
+    for (const row of summary) {
+      csvStream.write({
+        Vendor: row.vendor,
+        RetailSales: row.retailSales.toFixed(2),
+        PurchaseCost: row.purchaseCost.toFixed(2),
+        MarkupAmount: row.markupAmount.toFixed(2),
+        MarkupPercent: row.markupPercent.toFixed(2),
+      });
+    }
+    csvStream.end();
+  });
+}
+
+async function backfillMissingVendorWeeklySummaries(weeks, currentMap = {}) {
+  const missingPastWeeks = weeks.filter((w) => isPastCompleteWeek(w) && !currentMap[w.start]);
+  if (!missingPastWeeks.length) {
+    return { created: 0, checked: weeks.length, message: 'no missing past weeks' };
+  }
+
+  const accessToken = await getLocallineAccessToken();
+  const packageMapCache = new Map();
+  let created = 0;
+
+  for (const week of missingPastWeeks) {
+    console.log(`Backfilling vendor summary: ${week.start}..${week.end}`);
+    const ordersCsvPath = await ensureWeeklyOrdersCsv(accessToken, week.start, week.end);
+    const productsPath = await ensureProductsWorkbook(accessToken, week.end);
+
+    let packagePriceMap = packageMapCache.get(productsPath);
+    if (!packagePriceMap) {
+      packagePriceMap = buildPackagePriceMap(productsPath);
+      packageMapCache.set(productsPath, packagePriceMap);
+    }
+
+    const summary = await aggregateVendorSummaryFromOrders(ordersCsvPath, packagePriceMap);
+    const outCsv = path.join(
+      DATA_DIR,
+      `vendor_weekly_summary_${week.start}_to_${week.end}.csv`
+    );
+    await writeVendorSummaryCsv(summary, outCsv);
+    created += 1;
+  }
+
+  return {
+    created,
+    checked: weeks.length,
+    message: `created ${created} weekly vendor summaries`,
+  };
 }
 
 async function downloadSubscriberSnapshot(filePath, accessToken) {

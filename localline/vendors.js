@@ -8,6 +8,8 @@ const utilities = require('./utilities');
 
 const FULL_FARM_VENDOR = 'Full Farm CSA';
 const FULL_FARM_EMAIL = 'fullfarmcsa@deckfamilyfarm.com';
+const BOX_CONTENT_CATEGORY = 'Box Contents';
+const BOX_COMPONENT_SOURCE = 'full_farm_box_component';
 
 function normalizeId(value) {
   if (value === null || value === undefined || value === '') return null;
@@ -15,7 +17,8 @@ function normalizeId(value) {
   if (!Number.isNaN(num)) {
     return String(Math.trunc(num));
   }
-  return String(value).trim();
+  const trimmed = String(value).trim();
+  return trimmed && trimmed !== 'NaN' ? trimmed : null;
 }
 
 function formatMoney(value) {
@@ -23,8 +26,21 @@ function formatMoney(value) {
   return amount.toFixed(2);
 }
 
+function formatQuantity(value) {
+  const quantity = Number(value || 0);
+  if (Math.abs(quantity - Math.round(quantity)) < 0.0001) {
+    return String(Math.round(quantity));
+  }
+  return quantity.toFixed(2).replace(/\.?0+$/, '');
+}
+
 function normalizeText(value) {
   return String(value || '').trim();
+}
+
+function toPositiveNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : fallback;
 }
 
 function getOrderId(row) {
@@ -162,7 +178,17 @@ async function readProductVendorMapExcel(filePath) {
   return vendorMap;
 }
 
-function lookupPackagePrice(productID, packageName, productsData) {
+function lookupPackagePrice(productID, packageName, productsData, packageID = null) {
+  const normalizedPackageId = normalizeId(packageID);
+  if (normalizedPackageId) {
+    const packageMatch = productsData.find(
+      p => normalizeId(p['Package ID']) === normalizedPackageId
+    );
+    if (packageMatch) {
+      return parseFloat(packageMatch['Package Price']) || 0;
+    }
+  }
+
   const normalizedProductId = normalizeId(productID);
   const normalizedPackageName = normalizeText(packageName);
   const productMatches = productsData.filter(
@@ -212,7 +238,7 @@ async function groupOrdersByVendor(orderFile, productData, fulfillmentDate) {
             if (numItems > 1 && quantity == 1) {
               quantity = numItems;
             }
-            const lookupPrice = lookupPackagePrice(parseInt(row['Product ID'], 10), row['Package Name'], productData);
+            const lookupPrice = lookupPackagePrice(row['Product ID'], row['Package Name'], productData, row['Package ID']);
             const rowSubtotal = Number(row['Product Subtotal'] || 0) || 0;
             const fallbackUnitPrice = quantity > 0 ? rowSubtotal / quantity : 0;
             const price = lookupPrice > 0 ? lookupPrice : fallbackUnitPrice;
@@ -237,6 +263,48 @@ async function groupOrdersByVendor(orderFile, productData, fulfillmentDate) {
   });
 }
 
+function lookupSourceVendor(subEntry, productVendorMap) {
+  const candidates = [
+    subEntry.product,
+    subEntry.product_id,
+    subEntry.product_package,
+    subEntry.package_id
+  ];
+
+  for (const candidate of candidates) {
+    const vendor = productVendorMap[normalizeId(candidate)];
+    if (vendor) {
+      return { vendor, matched: true };
+    }
+  }
+
+  const vendorName = normalizeText(subEntry.vendor_name);
+  if (vendorName) {
+    return { vendor: vendorName, matched: true };
+  }
+
+  const fallbackVendor = normalizeId(subEntry.vendor) ? `Vendor ${normalizeId(subEntry.vendor)}` : 'Unknown Vendor';
+  return { vendor: fallbackVendor, matched: false };
+}
+
+function getSubEntryOrderUnitPrice(subEntry, componentQuantity = 0) {
+  const directPrice = toPositiveNumber(subEntry.package_unit_price ?? subEntry.price, 0);
+  if (directPrice > 0) return directPrice;
+
+  const totalPrice = toPositiveNumber(subEntry.total_price, 0);
+  if (totalPrice > 0 && componentQuantity > 0) {
+    return totalPrice / componentQuantity;
+  }
+
+  return 0;
+}
+
+function formatBoxComponentProduct(component) {
+  const unitPrefix = component.itemUnit ? `${component.itemUnit}, ` : '';
+  const packageSuffix = component.packageName ? ` - ${component.packageName}` : '';
+  return `Box content: ${unitPrefix}${component.productName}${packageSuffix}`;
+}
+
 async function buildFullFarmBundleDetails(items, accessToken, productVendorMap, productData) {
   const orderIds = [...new Set(items.map(item => item.orderId).filter(Boolean))];
   const bundleMap = new Map();
@@ -257,26 +325,32 @@ async function buildFullFarmBundleDetails(items, accessToken, productVendorMap, 
         continue;
       }
 
-      const bundleKey = `${entry.product_name}|${entry.package_name}`;
+      const bundleKey = `${entry.product}|${entry.product_name}|${entry.package_name}`;
       if (!bundleMap.has(bundleKey)) {
-        const boxBasePrice = lookupPackagePrice(entry.product, entry.package_name, productData);
-        const defaultContentsValue = Number(entry.sub_order_entries_total_price || 0);
-        const memberPrice = Number(entry.total_price || entry.price || 0);
         bundleMap.set(bundleKey, {
-          bundleName: entry.product_name,
-          bundlePackage: entry.package_name,
-          boxBasePrice,
-          defaultContentsValue,
-          memberPrice,
+          bundleName: normalizeText(entry.product_name),
+          bundlePackage: normalizeText(entry.package_name),
+          boxBasePrice: lookupPackagePrice(entry.product, entry.package_name, productData, entry.product_package),
+          boxQuantity: 0,
+          boxSalesTotal: 0,
+          defaultContentsValueTotal: 0,
           members: [],
           components: new Map()
         });
       }
 
       const bundle = bundleMap.get(bundleKey);
-      const bundleQuantity = Number(
-        entry.quantity_to_charge ?? entry.unit_quantity ?? 1
+      const bundleQuantity = toPositiveNumber(
+        entry.quantity_to_charge ?? entry.unit_quantity ?? entry.quantity,
+        1
       );
+      const entryUnitPrice = toPositiveNumber(entry.price ?? entry.package_unit_price, 0);
+      const entryTotalPrice = toPositiveNumber(entry.total_price, entryUnitPrice * bundleQuantity);
+      const defaultContentsValue = Number(entry.sub_order_entries_total_price || 0) || 0;
+
+      bundle.boxQuantity += bundleQuantity;
+      bundle.boxSalesTotal += entryTotalPrice;
+      bundle.defaultContentsValueTotal += defaultContentsValue;
 
       if (customerName) {
         bundle.members.push({
@@ -287,26 +361,51 @@ async function buildFullFarmBundleDetails(items, accessToken, productVendorMap, 
       }
 
       for (const subEntry of entry.sub_order_entries) {
-        const sourceVendor =
-          productVendorMap[normalizeId(subEntry.product)] ||
-          productVendorMap[normalizeId(subEntry.product_package)] ||
-          `Vendor ${subEntry.vendor}`;
-        const unitPrice = Number(subEntry.package_unit_price ?? subEntry.price ?? 0);
-        const quantity = Number(subEntry.unit_quantity || 0) * bundleQuantity;
-        const componentKey = [
-          sourceVendor,
-          subEntry.product_name,
+        const sourceVendor = lookupSourceVendor(subEntry, productVendorMap);
+        const subEntryUnitQuantity = toPositiveNumber(
+          subEntry.unit_quantity ?? subEntry.quantity_to_charge ?? subEntry.quantity,
+          0
+        );
+        const quantity = subEntryUnitQuantity * bundleQuantity;
+        if (quantity <= 0) continue;
+
+        const boxUnitPrice = getSubEntryOrderUnitPrice(subEntry, quantity);
+        const productUnitPrice = lookupPackagePrice(
+          subEntry.product,
           subEntry.package_name,
-          unitPrice
+          productData,
+          subEntry.product_package
+        );
+        const unitPrice = productUnitPrice > 0 ? productUnitPrice : boxUnitPrice;
+        const componentKey = [
+          sourceVendor.vendor,
+          subEntry.product,
+          subEntry.product_package,
+          normalizeText(subEntry.product_name),
+          normalizeText(subEntry.package_name),
+          unitPrice,
+          boxUnitPrice
         ].join('|');
 
         if (!bundle.components.has(componentKey)) {
+          const productName = normalizeText(subEntry.product_name);
+          const packageName = normalizeText(subEntry.package_name);
+          const itemUnit = normalizeText(
+            subEntry.item_unit ||
+            subEntry.item_unit_name ||
+            subEntry.unit ||
+            subEntry.charge_unit
+          );
           bundle.components.set(componentKey, {
-            sourceVendor,
-            productName: subEntry.product_name,
-            packageName: subEntry.package_name,
+            sourceVendor: sourceVendor.vendor,
+            sourceVendorMatched: sourceVendor.matched,
+            productName,
+            packageName,
+            itemUnit,
             quantity: 0,
-            unitPrice
+            unitPrice,
+            boxUnitPrice,
+            priceSource: productUnitPrice > 0 ? 'products export' : 'order box detail'
           });
         }
 
@@ -321,13 +420,9 @@ async function buildFullFarmBundleDetails(items, accessToken, productVendorMap, 
       bundleName: bundle.bundleName,
       bundlePackage: bundle.bundlePackage,
       boxBasePrice: bundle.boxBasePrice,
-      defaultContentsValue: bundle.defaultContentsValue,
-      memberPrice: bundle.memberPrice,
-      markupValue: bundle.memberPrice - bundle.defaultContentsValue,
-      markupPercent:
-        bundle.defaultContentsValue > 0
-          ? ((bundle.memberPrice - bundle.defaultContentsValue) / bundle.defaultContentsValue) * 100
-          : 0,
+      boxQuantity: bundle.boxQuantity,
+      boxSalesTotal: bundle.boxSalesTotal,
+      defaultContentsValueTotal: bundle.defaultContentsValueTotal,
       members: bundle.members
         .sort((a, b) =>
           a.customerName.localeCompare(b.customerName) ||
@@ -341,10 +436,175 @@ async function buildFullFarmBundleDetails(items, accessToken, productVendorMap, 
         )
         .map(component => ({
           ...component,
-          totalPrice: component.unitPrice * component.quantity
+          product: formatBoxComponentProduct(component),
+          totalPrice: component.unitPrice * component.quantity,
+          boxTotalPrice: component.boxUnitPrice * component.quantity
         }))
     }))
+    .map(bundle => {
+      const componentBoxValueTotal = bundle.components.reduce((sum, component) => sum + component.boxTotalPrice, 0);
+      const boxValueTotal = componentBoxValueTotal || bundle.defaultContentsValueTotal || 0;
+      const vendorCostTotal = bundle.components.reduce((sum, component) => sum + component.totalPrice, 0);
+      const memberPrice = bundle.boxQuantity > 0 ? bundle.boxSalesTotal / bundle.boxQuantity : 0;
+      const defaultContentsValue = bundle.boxQuantity > 0 ? boxValueTotal / bundle.boxQuantity : 0;
+
+      return {
+        ...bundle,
+        boxValueTotal,
+        vendorCostTotal,
+        memberPrice,
+        defaultContentsValue,
+        markupValue: memberPrice - defaultContentsValue,
+        markupPercent:
+          defaultContentsValue > 0
+            ? ((memberPrice - defaultContentsValue) / defaultContentsValue) * 100
+            : 0
+      };
+    })
     .sort((a, b) => a.bundleName.localeCompare(b.bundleName));
+}
+
+function buildBoxContentAdditions(bundleDetails, fulfillmentDate) {
+  const additions = [];
+
+  for (const bundle of bundleDetails) {
+    for (const component of bundle.components) {
+      if (component.sourceVendor === FULL_FARM_VENDOR) continue;
+
+      additions.push({
+        orderId: '',
+        sourceProductName: component.productName,
+        packageName: component.packageName,
+        product: component.product,
+        quantity: component.quantity,
+        price: component.unitPrice,
+        totalPrice: component.totalPrice,
+        boxUnitPrice: component.boxUnitPrice,
+        boxTotalPrice: component.boxTotalPrice,
+        category: `${BOX_CONTENT_CATEGORY} - ${bundle.bundleName}`,
+        fulfillmentDate,
+        source: BOX_COMPONENT_SOURCE,
+        sourceBox: `${bundle.bundleName} - ${bundle.bundlePackage}`,
+        sourceVendorMatched: component.sourceVendorMatched,
+        priceSource: component.priceSource,
+        vendor: component.sourceVendor
+      });
+    }
+  }
+
+  return additions;
+}
+
+function addBoxContentAdditionsToVendorOrders(vendorOrders, additions) {
+  for (const addition of additions) {
+    if (!vendorOrders[addition.vendor]) {
+      vendorOrders[addition.vendor] = [];
+    }
+    vendorOrders[addition.vendor].push(addition);
+  }
+}
+
+function summarizeBoxContentAdditions(bundleDetails, additions, vendorEmails) {
+  const vendorMap = new Map();
+  const bundleMap = new Map();
+
+  for (const addition of additions) {
+    if (!vendorMap.has(addition.vendor)) {
+      vendorMap.set(addition.vendor, {
+        vendor: addition.vendor,
+        lines: 0,
+        quantity: 0,
+        vendorCostTotal: 0,
+        boxValueTotal: 0,
+        hasEmail: Boolean(vendorEmails[addition.vendor] || (addition.vendor === FULL_FARM_VENDOR && FULL_FARM_EMAIL)),
+        unmatchedVendorLookups: 0
+      });
+    }
+
+    const vendorSummary = vendorMap.get(addition.vendor);
+    vendorSummary.lines += 1;
+    vendorSummary.quantity += addition.quantity;
+    vendorSummary.vendorCostTotal += addition.totalPrice;
+    vendorSummary.boxValueTotal += addition.boxTotalPrice;
+    if (!addition.sourceVendorMatched) {
+      vendorSummary.unmatchedVendorLookups += 1;
+    }
+  }
+
+  for (const bundle of bundleDetails) {
+    const boxName = `${bundle.bundleName} - ${bundle.bundlePackage}`;
+    bundleMap.set(boxName, {
+      boxName,
+      boxQuantity: bundle.boxQuantity,
+      vendorCostTotal: 0,
+      boxValueTotal: 0,
+      boxSalesTotal: bundle.boxSalesTotal
+    });
+  }
+
+  for (const addition of additions) {
+    const bundleSummary = bundleMap.get(addition.sourceBox);
+    if (!bundleSummary) continue;
+    bundleSummary.vendorCostTotal += addition.totalPrice;
+    bundleSummary.boxValueTotal += addition.boxTotalPrice;
+  }
+
+  const vendorSummaries = [...vendorMap.values()]
+    .sort((a, b) => a.vendor.localeCompare(b.vendor));
+  const bundleSummaries = [...bundleMap.values()]
+    .sort((a, b) => a.boxName.localeCompare(b.boxName));
+
+  return {
+    bundleDetails,
+    additions,
+    vendorSummaries,
+    bundleSummaries,
+    totals: {
+      bundles: bundleDetails.length,
+      boxes: bundleDetails.reduce((sum, bundle) => sum + bundle.boxQuantity, 0),
+      productLines: additions.length,
+      vendors: vendorSummaries.length,
+      quantity: additions.reduce((sum, addition) => sum + addition.quantity, 0),
+      vendorCostTotal: additions.reduce((sum, addition) => sum + addition.totalPrice, 0),
+      boxValueTotal: additions.reduce((sum, addition) => sum + addition.boxTotalPrice, 0),
+      boxSalesTotal: bundleDetails.reduce((sum, bundle) => sum + bundle.boxSalesTotal, 0),
+      unmatchedVendorLookups: additions.filter(addition => !addition.sourceVendorMatched).length,
+      vendorsWithoutEmail: vendorSummaries.filter(summary => !summary.hasEmail).length
+    }
+  };
+}
+
+function buildBoxContentReport(bundleDetails, vendorEmails, fulfillmentDate) {
+  const additions = buildBoxContentAdditions(bundleDetails, fulfillmentDate);
+  return summarizeBoxContentAdditions(bundleDetails, additions, vendorEmails);
+}
+
+function getBoxContentAdditionsForVendor(boxContentReport, vendor) {
+  if (!boxContentReport) return [];
+  return boxContentReport.additions.filter(addition => addition.vendor === vendor);
+}
+
+function formatBoxContentEmailSummary(boxContentReport) {
+  if (!boxContentReport || boxContentReport.totals.productLines === 0) {
+    return 'No Full Farm CSA box component products were added to vendor orders for this fulfillment.';
+  }
+
+  const totals = boxContentReport.totals;
+  const parts = [
+    `Box content additions: added ${totals.productLines} product line(s) to ${totals.vendors} vendor order(s)`,
+    `vendor cost $${formatMoney(totals.vendorCostTotal)}`,
+    `box value $${formatMoney(totals.boxValueTotal)}`,
+    `box sales $${formatMoney(totals.boxSalesTotal)}`
+  ];
+
+  if (totals.unmatchedVendorLookups > 0) {
+    parts.push(`${totals.unmatchedVendorLookups} line(s) used fallback vendor names`);
+  }
+  if (totals.vendorsWithoutEmail > 0) {
+    parts.push(`${totals.vendorsWithoutEmail} vendor(s) have no email in the vendor export`);
+  }
+
+  return parts.join('; ') + '.';
 }
 
 function addFullFarmNotesToPdf(doc, bundleDetails) {
@@ -354,11 +614,11 @@ function addFullFarmNotesToPdf(doc, bundleDetails) {
   doc.fontSize(14).text('FFCSA Notes', { bold: true });
   doc.moveDown(0.2);
   doc.fontSize(10).text(
-    'Bundle component note: The bundle items below were expanded from Local Line order details. These constituent products may need to be invoiced separately by the source vendors.'
+    'Bundle component note: The bundle items below were expanded from Local Line order details. Non-FFCSA components are added to the source vendor fulfillment sheets under Box Contents.'
   );
   doc.moveDown(0.2);
   doc.fontSize(10).text(
-    'Members shown below ordered the bundle listed in the main table. Source prices are the component prices saved on the order. Box base price is inferred from the current configured bundle price in the products export.'
+    'Members shown below ordered the bundle listed in the main table. Vendor prices come from the current products export when package IDs match, then fall back to the component price saved on the order.'
   );
 
   for (const bundle of bundleDetails) {
@@ -371,10 +631,14 @@ function addFullFarmNotesToPdf(doc, bundleDetails) {
     doc.table({
       headers: ['Metric', 'Amount'],
       rows: [
-        ['Box base price', formatMoney(bundle.boxBasePrice)],
-        ['Default contents value', formatMoney(bundle.defaultContentsValue)],
-        ['Member price', formatMoney(bundle.memberPrice)],
-        ['Markup', `${formatMoney(bundle.markupValue)} (${formatMoney(bundle.markupPercent)}%)`]
+        ['Boxes sold', formatQuantity(bundle.boxQuantity)],
+        ['Configured box price/unit', formatMoney(bundle.boxBasePrice)],
+        ['Box sales total', formatMoney(bundle.boxSalesTotal)],
+        ['Box contents value total', formatMoney(bundle.boxValueTotal)],
+        ['Component vendor cost total', formatMoney(bundle.vendorCostTotal)],
+        ['Member price/unit', formatMoney(bundle.memberPrice)],
+        ['Contents value/unit', formatMoney(bundle.defaultContentsValue)],
+        ['Markup/unit', `${formatMoney(bundle.markupValue)} (${formatMoney(bundle.markupPercent)}%)`]
       ]
     });
     doc.moveDown(0.1);
@@ -391,20 +655,85 @@ function addFullFarmNotesToPdf(doc, bundleDetails) {
 
     const rows = bundle.components.map(component => [
       `${component.sourceVendor} - ${component.productName} - ${component.packageName}`,
-      component.quantity,
+      formatQuantity(component.quantity),
       formatMoney(component.unitPrice),
-      formatMoney(component.totalPrice)
+      formatMoney(component.totalPrice),
+      formatMoney(component.boxUnitPrice),
+      formatMoney(component.boxTotalPrice)
     ]);
 
     doc.table({
-      headers: ['Product', 'Qty', 'Price', 'Total Price'],
+      headers: ['Product', 'Qty', 'Vendor Price', 'Vendor Total', 'Box Price', 'Box Total'],
       rows
     });
   }
 }
 
+function addBoxContentAuditToPdf(doc, boxContentReport) {
+  if (!boxContentReport || !boxContentReport.bundleDetails.length) return;
+
+  doc.addPage();
+  doc.fontSize(16).text('Box Content Additions', { bold: true });
+  doc.moveDown(0.2);
+  doc.fontSize(10).text(formatBoxContentEmailSummary(boxContentReport));
+
+  if (boxContentReport.totals.productLines === 0) {
+    doc.moveDown(0.4);
+    doc.text('No non-FFCSA box components were added to vendor fulfillment sheets.');
+    return;
+  }
+
+  doc.moveDown(0.6);
+  doc.fontSize(12).text('Vendor Summary', { bold: true });
+  doc.table({
+    headers: ['Vendor', 'Lines', 'Qty', 'Vendor Cost', 'Box Value', 'Email?'],
+    rows: boxContentReport.vendorSummaries.map(summary => [
+      summary.vendor,
+      summary.lines,
+      formatQuantity(summary.quantity),
+      formatMoney(summary.vendorCostTotal),
+      formatMoney(summary.boxValueTotal),
+      summary.hasEmail ? 'Yes' : 'No'
+    ])
+  });
+
+  doc.moveDown(0.5);
+  doc.fontSize(12).text('Box Summary', { bold: true });
+  doc.table({
+    headers: ['Box', 'Qty Sold', 'Added Vendor Cost', 'Added Box Value', 'Box Sales'],
+    rows: boxContentReport.bundleSummaries.map(summary => [
+      summary.boxName,
+      formatQuantity(summary.boxQuantity),
+      formatMoney(summary.vendorCostTotal),
+      formatMoney(summary.boxValueTotal),
+      formatMoney(summary.boxSalesTotal)
+    ])
+  });
+
+  for (const bundle of boxContentReport.bundleDetails) {
+    const sourceBox = `${bundle.bundleName} - ${bundle.bundlePackage}`;
+    const additions = boxContentReport.additions.filter(addition => addition.sourceBox === sourceBox);
+    if (!additions.length) continue;
+
+    doc.moveDown(0.6);
+    doc.fontSize(12).text(sourceBox, { bold: true });
+    doc.table({
+      headers: ['Vendor', 'Product', 'Qty', 'Vendor Price', 'Vendor Total', 'Box Price', 'Box Total'],
+      rows: additions.map(addition => [
+        addition.vendor,
+        addition.product,
+        formatQuantity(addition.quantity),
+        formatMoney(addition.price),
+        formatMoney(addition.totalPrice),
+        formatMoney(addition.boxUnitPrice),
+        formatMoney(addition.boxTotalPrice)
+      ])
+    });
+  }
+}
+
 // Generate summary PDF
-async function generateSummaryPDF(vendorOrders, outputFile) {
+async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = null) {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument();
     const stream = fs.createWriteStream(outputFile);
@@ -462,6 +791,8 @@ async function generateSummaryPDF(vendorOrders, outputFile) {
       }
     });
 
+    addBoxContentAuditToPdf(doc, boxContentReport);
+
     doc.end();
 
     stream.on('finish', () => {
@@ -480,11 +811,9 @@ async function generateSummaryPDF(vendorOrders, outputFile) {
 async function sendVendorEmails(
   vendorOrders,
   vendorEmails,
-  productData,
   fulfillmentDate,
-  accessToken,
-  productVendorMap,
-  testing = false
+  testing = false,
+  boxContentReport = null
 ) {
   for (const [vendor, items] of Object.entries(vendorOrders)) {
     let email = vendorEmails[vendor];
@@ -511,9 +840,16 @@ async function sendVendorEmails(
     doc.table(table);
     doc.text('Total Price ' + sumTotal.toFixed(2), { align: 'right', bold: true });
 
-    let bundleDetails = [];
-    if (vendor === FULL_FARM_VENDOR) {
-      bundleDetails = await buildFullFarmBundleDetails(items, accessToken, productVendorMap, productData);
+    const vendorBoxAdditions = getBoxContentAdditionsForVendor(boxContentReport, vendor);
+    if (vendorBoxAdditions.length && vendor !== FULL_FARM_VENDOR) {
+      doc.moveDown(0.4);
+      doc.fontSize(10).text(
+        `Box Contents note: ${vendorBoxAdditions.length} line(s) in this report were added from Full Farm CSA box orders.`
+      );
+    }
+
+    const bundleDetails = boxContentReport ? boxContentReport.bundleDetails : [];
+    if (vendor === FULL_FARM_VENDOR && bundleDetails.length) {
       addFullFarmNotesToPdf(doc, bundleDetails);
     }
 
@@ -529,6 +865,9 @@ async function sendVendorEmails(
 
     if (vendor === FULL_FARM_VENDOR && bundleDetails.length) {
       messageText += '\n\nBundle component details are included in the FFCSA notes section of the attached PDF.';
+    }
+    if (vendorBoxAdditions.length && vendor !== FULL_FARM_VENDOR) {
+      messageText += `\n\nThis fulfillment report includes ${vendorBoxAdditions.length} line(s) added from Full Farm CSA box contents. These are grouped under Box Contents in the attached PDF.`;
     }
 
     const mailOptions = {
@@ -585,26 +924,33 @@ async function runVendorReports(fulfillmentDate, testing = false) {
     const productData = await readVendorProductsExcel(productsFile);
     const productVendorMap = await readProductVendorMapExcel(productsFile);
     const vendorOrders = await groupOrdersByVendor(orderFile, productData, fulfillmentDate.date);
+    const bundleDetails = await buildFullFarmBundleDetails(
+      vendorOrders[FULL_FARM_VENDOR] || [],
+      token,
+      productVendorMap,
+      productData
+    );
+    const boxContentReport = buildBoxContentReport(bundleDetails, vendorEmails, fulfillmentDate.date);
+    addBoxContentAdditionsToVendorOrders(vendorOrders, boxContentReport.additions);
+    console.log(formatBoxContentEmailSummary(boxContentReport));
 
     await sendVendorEmails(
       vendorOrders,
       vendorEmails,
-      productData,
       fulfillmentDate.date,
-      token,
-      productVendorMap,
-      testing
+      testing,
+      boxContentReport
     );
-    const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile);
+    const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport);
 
     const summaryMail = {
       from: 'jdeck88@gmail.com',
       to: testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com',
       cc: testing ? undefined : 'jdeck88@gmail.com',
       subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: All Vendor Data for ${fulfillmentDate.date}`,
-      text: testing
+      text: `${testing
         ? 'TESTING MODE: This is the consolidated vendor report. In production this would go to fullfarmcsa@deckfamilyfarm.com.'
-        : 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.',
+        : 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.'}\n\n${formatBoxContentEmailSummary(boxContentReport)}`,
       attachments: [{ filename: 'vendors.pdf', content: fs.readFileSync(summaryPDF) }]
     };
 
