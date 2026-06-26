@@ -1,29 +1,69 @@
 const fs = require('fs');
 require('dotenv').config();
 const utilities = require('./utilities');
+const { isBecomeAMemberPriceList } = require('./subscription_price_lists');
+
+function parseCsvLine(line) {
+	const columns = [];
+	let current = '';
+	let quoted = false;
+
+	for (let i = 0; i < line.length; i++) {
+		const char = line[i];
+		if (char === '"') {
+			if (quoted && line[i + 1] === '"') {
+				current += '"';
+				i++;
+			} else {
+				quoted = !quoted;
+			}
+		} else if (char === ',' && !quoted) {
+			columns.push(current);
+			current = '';
+		} else {
+			current += char;
+		}
+	}
+	columns.push(current);
+	return columns;
+}
+
+function normalizeHeader(column) {
+	return String(column || '').replace(/^\uFEFF/, '').trim().toLowerCase();
+}
+
+function getColumnIndex(header, name) {
+	return header.findIndex(column => normalizeHeader(column) === name);
+}
+
+function isBecomeAMemberColumns(columns, priceListIndex) {
+	return priceListIndex >= 0 && isBecomeAMemberPriceList(columns[priceListIndex]);
+}
 
 function findStatusChanges(oldFilePath, newFilePath) {
 	// Read old subscribers file
 	const oldData = fs.readFileSync(oldFilePath, 'utf8');
 	const oldLines = oldData.trim().split('\n');
-	const oldHeader = oldLines[0].split(',');
+	const oldHeader = parseCsvLine(oldLines[0]);
 
 	// Find the index of 'status', 'email', and 'Plan #' columns in the old file
-	const oldStatusIndex = oldHeader.findIndex(column => column.toLowerCase() === 'status');
-	const oldEmailIndex = oldHeader.findIndex(column => column.toLowerCase() === 'email');
-	const oldPlanIndex = oldHeader.findIndex(column => column.toLowerCase() === 'plan #');
-	const oldCustomerIndex = oldHeader.findIndex(column => column.toLowerCase() === 'customer');
+	const oldStatusIndex = getColumnIndex(oldHeader, 'status');
+	const oldEmailIndex = getColumnIndex(oldHeader, 'email');
+	const oldPlanIndex = getColumnIndex(oldHeader, 'plan #');
+	const oldCustomerIndex = getColumnIndex(oldHeader, 'customer');
+	const oldPriceListIndex = getColumnIndex(oldHeader, 'price list');
 
 	// Read new subscribers file
 	const newData = fs.readFileSync(newFilePath, 'utf8');
 	const newLines = newData.trim().split('\n');
-	const newHeader = newLines[0].split(',');
+	const newHeader = parseCsvLine(newLines[0]);
 
 	// Find the index of 'status', 'email', and 'Plan #' columns in the new file
-	const newStatusIndex = newHeader.findIndex(column => column.toLowerCase() === 'status');
-	const newEmailIndex = newHeader.findIndex(column => column.toLowerCase() === 'email');
-	const newPlanIndex = newHeader.findIndex(column => column.toLowerCase() === 'plan #');
-	const newCustomerIndex = newHeader.findIndex(column => column.toLowerCase() === 'customer');
+	const newStatusIndex = getColumnIndex(newHeader, 'status');
+	const newEmailIndex = getColumnIndex(newHeader, 'email');
+	const newPlanIndex = getColumnIndex(newHeader, 'plan #');
+	const newCustomerIndex = getColumnIndex(newHeader, 'customer');
+	const newPriceListIndex = getColumnIndex(newHeader, 'price list');
 
 	// Find status changes
 	const cancelledCustomers = [];
@@ -31,14 +71,16 @@ function findStatusChanges(oldFilePath, newFilePath) {
 	const newPlans = [];
 
 	for (let i = 1; i < oldLines.length; i++) {
-		const oldColumns = oldLines[i].split(',');
+		const oldColumns = parseCsvLine(oldLines[i]);
+		if (!isBecomeAMemberColumns(oldColumns, oldPriceListIndex)) continue;
 		const oldEmail = oldColumns[oldEmailIndex];
 		const oldStatus = oldColumns[oldStatusIndex];
 		const oldPlan = oldColumns[oldPlanIndex];
 		const oldCustomer = oldColumns[oldCustomerIndex];
 
 		const newLine = newLines.find(line => {
-			const newColumns = line.split(',');
+			const newColumns = parseCsvLine(line);
+			if (!isBecomeAMemberColumns(newColumns, newPriceListIndex)) return false;
 			const newEmail = newColumns[newEmailIndex];
 			const newStatus = newColumns[newStatusIndex];
 			const newPlan = newColumns[newPlanIndex];
@@ -47,7 +89,7 @@ function findStatusChanges(oldFilePath, newFilePath) {
 		});
 
 		if (newLine) {
-			const newColumns = newLine.split(',');
+			const newColumns = parseCsvLine(newLine);
 			const newEmail = newColumns[newEmailIndex];
 			const newStatus = newColumns[newStatusIndex];
 			const newCustomer = newColumns[newCustomerIndex];
@@ -61,13 +103,15 @@ function findStatusChanges(oldFilePath, newFilePath) {
 
 	// Check for new plans
 	for (let i = 1; i < newLines.length; i++) {
-		const newColumns = newLines[i].split(',');
+		const newColumns = parseCsvLine(newLines[i]);
+		if (!isBecomeAMemberColumns(newColumns, newPriceListIndex)) continue;
 		const newEmail = newColumns[newEmailIndex];
 		const newPlan = newColumns[newPlanIndex];
 		const newCustomer = newColumns[newCustomerIndex];
 
 		const isNewPlan = !oldLines.some(oldLine => {
-			const oldColumns = oldLine.split(',');
+			const oldColumns = parseCsvLine(oldLine);
+			if (!isBecomeAMemberColumns(oldColumns, oldPriceListIndex)) return false;
 			const oldEmail = oldColumns[oldEmailIndex];
 			const oldPlan = oldColumns[oldPlanIndex];
 			return oldEmail === newEmail && oldPlan === newPlan;
@@ -108,4 +152,3 @@ Cancelled plans:
 	};
 	utilities.sendEmail(emailOptions)
 }, 1000);
-

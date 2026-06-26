@@ -7,6 +7,10 @@ require('dotenv').config();
 const PDFDocument = require('pdfkit-table');
 const axios = require('axios');
 const fastcsv = require('fast-csv');
+const {
+    BECOME_A_MEMBER_PRICE_LIST_ID,
+    isBecomeAMemberSubscription,
+} = require('./subscription_price_lists');
 
 
 async function run(filename, lastDay) {
@@ -17,6 +21,7 @@ async function run(filename, lastDay) {
         fs.createReadStream(filename)
             .pipe(fastcsv.parse({ headers: true }))
             .on('data', (row) => {
+                if (!isBecomeAMemberSubscription(row)) return;
                 customers.push({
                     customer: row['Customer'],
                     phone: row['Phone'],
@@ -57,7 +62,7 @@ async function new_subscribers(today) {
         console.log("running report on daily customers ")
 
         //url = 'https://localline.ca/api/backoffice/v2/order-subscriptions/export/'
-        url= 'https://localline.ca/api/backoffice/v2/orders/export/?file_type=orders_summary&send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&status=NEEDS_APPROVAL'
+        url= `https://localline.ca/api/backoffice/v2/orders/export/?file_type=orders_summary&send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&status=NEEDS_APPROVAL&price_lists=${BECOME_A_MEMBER_PRICE_LIST_ID}`
         //url = 'https://localline.ca/api/backoffice/v2/orders/export/?file_type=orders_summary&send_to_email=false&destination_email=fullfarmcsa%40deckfamilyfarm.com&direct=true&status=CANCELLED'
         data = {}
 
