@@ -7,6 +7,7 @@ const PDFDocument = require('pdfkit-table');
 const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
+const { isBecomeAMemberSubscription } = require('./subscription_price_lists');
 const { createObjectCsvWriter } = require('csv-writer');
 
 async function subscribers(filename) {
@@ -16,6 +17,7 @@ async function subscribers(filename) {
 		fs.createReadStream(filename)
 			.pipe(fastcsv.parse({ headers: true }))
 			.on('data', (row) => {
+				if (!isBecomeAMemberSubscription(row)) return;
 				sortedData.push(row);
 			})
 			.on('end', () => {

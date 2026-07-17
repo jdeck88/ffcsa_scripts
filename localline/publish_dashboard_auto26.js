@@ -4,6 +4,7 @@ const axios = require('axios');
 const fastcsv = require('fast-csv');
 const XLSX = require('xlsx');
 const crypto = require('crypto');
+const { isBecomeAMemberSubscription } = require('./subscription_price_lists');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
@@ -221,6 +222,9 @@ function loadSubscriberSnapshot(filePath) {
   const activeKeys = new Set();
 
   for (const row of rows) {
+    if (!isBecomeAMemberSubscription(row)) {
+      continue;
+    }
     if (String(row.Status || '').trim().toLowerCase() !== 'active') {
       continue;
     }
