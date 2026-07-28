@@ -6,6 +6,7 @@ const PDFDocument = require('pdfkit-table');
 const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
+const boxContents = require('./box_contents');
 const contentLeft = 54; // 0.75"
 const contentRight = 54;
 
@@ -1169,10 +1170,14 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
     );
 
     console.log('Downloaded file path:', orders_file_path);
+    const operational_orders_file_path = await boxContents.expandOrderRowsWithBoxContents(
+      orders_file_path
+    );
+    console.log('Operational orders file path:', operational_orders_file_path);
 
     // ---------- Customer Notes PDF ----------
     try {
-      const customer_note_pdf = await writeCustomerNotePDF(orders_file_path, fullfillmentDateEnd);
+      const customer_note_pdf = await writeCustomerNotePDF(operational_orders_file_path, fullfillmentDateEnd);
 
       const emailOptions = {
         from: "jdeck88@gmail.com",
@@ -1202,7 +1207,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
 
     // ---------- Delivery Orders PDF ----------
     try {
-      const delivery_order_pdf = await writeDeliveryOrderPDF(orders_file_path, fullfillmentDateEnd);
+      const delivery_order_pdf = await writeDeliveryOrderPDF(operational_orders_file_path, fullfillmentDateEnd);
 
       const emailOptions = {
         from: "jdeck88@gmail.com",
@@ -1231,7 +1236,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
 
     // ---------- Setup PDF ----------
     try {
-      const setup_pdf = await writeSetupPDF(orders_file_path, fullfillmentDateEnd);
+      const setup_pdf = await writeSetupPDF(operational_orders_file_path, fullfillmentDateEnd);
 
       const emailOptions = {
         from: "jdeck88@gmail.com",
@@ -1261,7 +1266,7 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
     // ---------- Labels PDF ----------
     try {
       console.log("starting writeLabelPDF");
-      const labelPdfPath = await writeLabelPDF(orders_file_path);
+      const labelPdfPath = await writeLabelPDF(operational_orders_file_path);
 
       const emailOptions = {
         from: "jdeck88@gmail.com",

@@ -6,6 +6,7 @@ const PDFDocument = require('pdfkit-table');
 const fastcsv = require('fast-csv');
 const utilities = require('./utilities');
 const path = require('path');
+const boxContents = require('./box_contents');
 
 // Global testing flag (set near bottom before calling checklist)
 let TESTING = false;
@@ -738,14 +739,19 @@ async function checklist(fullfillmentDate, testing = false, manualDispositions =
       return;
     }
 
+    const operational_order_file_path = await boxContents.expandOrderRowsWithBoxContents(
+      delivery_order_file_path
+    );
+    debugLog('[checklist] Using operational orders CSV:', operational_order_file_path);
+
     const checklist_pdf = await writeChecklistPDF(
-      delivery_order_file_path,
+      operational_order_file_path,
       manualDispositions
     );
     debugLog('[checklist] Checklist PDF ready at:', checklist_pdf);
 
     const packlists_pdf = await writePacklistsPDF(
-      delivery_order_file_path,
+      operational_order_file_path,
       manualDispositions
     );
     debugLog('[checklist] Packlists PDF ready at:', packlists_pdf);
