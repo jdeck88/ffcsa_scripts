@@ -131,6 +131,12 @@ function computeDispositionForRow(row, manualDispositions, manualDispositionsLow
   return 'tote';
 }
 
+function getBoxContentName(category) {
+  const prefix = 'Box Contents - ';
+  const text = String(category || '').trim();
+  return text.startsWith(prefix) ? text.slice(prefix.length).trim() : '';
+}
+
 function normalizeDropSiteKey(dropSite) {
   return String(dropSite || '').trim().toLowerCase();
 }
@@ -762,6 +768,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           const itemUnit = row['Item Unit'];
           const vendor = row['Vendor'];
           const category = row['Category'];
+          const boxContentName = getBoxContentName(category);
           const customerPhone = row['Phone'];
           const company = row['About This Customer'];
           const fullfillmentName = row['Fulfillment Name'];
@@ -807,6 +814,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               fullfillmentDate: fullfillmentDate,
               timeRange: timeRange,
               customerNote: customerNote,
+              boxContents: {},
             };
           }
 
@@ -818,6 +826,11 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               vendor,
               disposition,
             });
+
+            if (boxContentName && row['Product']) {
+              customers[customerKey].boxContents[boxContentName] ||= new Set();
+              customers[customerKey].boxContents[boxContentName].add(row['Product']);
+            }
           }
         });
 
@@ -1045,6 +1058,42 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             }
 
             doc.moveDown();
+
+            const boxContentNotes = Object.entries(customerData.boxContents || {})
+              .map(([boxName, products]) => {
+                const productList = [...products]
+                  .filter(Boolean)
+                  .sort((a, b) => a.localeCompare(b))
+                  .join('; ');
+                return productList
+                  ? `${boxName} contents included above: ${productList}.`
+                  : '';
+              })
+              .filter(Boolean);
+
+            if (boxContentNotes.length > 0) {
+              const boxHeading = 'Box contents listed above';
+              const boxText = boxContentNotes.join('\n');
+              const headingHeight = doc.font('Helvetica-Bold').fontSize(11).heightOfString(boxHeading, {
+                width: tableWidth,
+              });
+              const noteHeight = doc.font('Helvetica').fontSize(10).heightOfString(boxText, {
+                width: tableWidth,
+              });
+
+              if (doc.y + headingHeight + noteHeight + 18 > pageBottom) {
+                doc.addPage();
+              }
+
+              doc.font('Helvetica-Bold').fontSize(11).text(boxHeading, {
+                width: tableWidth,
+              });
+              doc.moveDown(0.15);
+              doc.font('Helvetica').fontSize(10).text(boxText, {
+                width: tableWidth,
+              });
+              doc.moveDown(0.5);
+            }
 
             // Footer note
             const footerText = "Please check your tote and the meat/dairy coolers for all listed items, and email fullfarmcsa@deckfamilyfarm.com if anything is missing so we can issue you a credit.";
