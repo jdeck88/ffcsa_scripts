@@ -30,6 +30,12 @@ function debugLog(...args) {
   }
 }
 
+function formatFulfillmentWindowDisplay(fulfillmentDate) {
+  const start = utilities.formatFulfillmentDateDisplay(fulfillmentDate.start);
+  const end = utilities.formatFulfillmentDateDisplay(fulfillmentDate.end);
+  return start === end ? end : `${start} to ${end}`;
+}
+
 function buildLowercaseMap(manualDispositions) {
   const map = new Map();
   for (const [key, value] of Object.entries(manualDispositions || {})) {
@@ -136,6 +142,7 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
     const dropsitesAll = {};
 
     const masterdropsites = {};
+    const dropsiteDates = {};
     const sortedData = [];
 
     fs.createReadStream(delivery_order_file_path)
@@ -176,6 +183,10 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
           sortedData.forEach((row) => {
             const dropsiteName = row['Fulfillment Name'];
             if (!dropsiteName) return;
+            const fulfillmentDate = utilities.formatFulfillmentDateDisplay(row['Fulfillment Date']);
+            if (!dropsiteDates[dropsiteName]) {
+              dropsiteDates[dropsiteName] = fulfillmentDate;
+            }
 
             const disposition = row.disposition || 'tote';
 
@@ -204,6 +215,7 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
               masterdropsites[dropsiteName] = [];
               dropsitesAll[dropsiteName] = {
                 customers: {},
+                fulfillmentDate,
               };
             }
 
@@ -279,7 +291,7 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
               }
 
               // Header: fulfillment date
-              doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
+              doc.fontSize(10).text(dropsiteDates[dropsiteName] || '', { align: 'right' });
 
               // Title
               const title = `${dropsiteName} Manifest - Page ${page} of ${totalPages}`;
@@ -314,7 +326,7 @@ async function writeChecklistPDF(delivery_order_file_path, manualDispositions = 
             masterdropsites[dropsiteName] = sums;
           }
 
-          doc.fontSize(12).text(fullfillmentDateObject.date, { align: 'right' });
+          doc.fontSize(10).text(formatFulfillmentWindowDisplay(fullfillmentDateObject), { align: 'right' });
           doc.fontSize(16).text('Master Manifest', { bold: true });
 
           const masterTableData = [
@@ -425,6 +437,7 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
           sortedData.forEach((row) => {
             const dropsiteName = row['Fulfillment Name'];
             if (!dropsiteName) return;
+            const fulfillmentDate = utilities.formatFulfillmentDateDisplay(row['Fulfillment Date']);
 
             const disposition = row.disposition || 'tote';
 
@@ -447,7 +460,7 @@ async function writePacklistsPDF(delivery_order_file_path, manualDispositions = 
 
             if (dropsiteName !== currentDropsiteName) {
               currentDropsiteName = dropsiteName;
-              dropsitesAll[dropsiteName] = { customers: {} };
+              dropsitesAll[dropsiteName] = { customers: {}, fulfillmentDate };
             }
 
             if (!dropsitesAll[dropsiteName].customers[customerName]) {
@@ -636,7 +649,7 @@ function productSpecificPackList(doc, dropsitesAll, disposition, pageNumbering, 
       pageNumbering.set(dropsiteStartPage + i, {
         page: i + 1,
         total: totalPages,
-        date: fullfillmentDateObject.date,
+        date: dropsitesAll[dropsiteName]?.fulfillmentDate || formatFulfillmentWindowDisplay(fullfillmentDateObject),
       });
     }
   });
@@ -770,9 +783,9 @@ const fullfillmentDateObject = {
 };
 */
 
-let fullfillmentDateObject = utilities.getNextFullfillmentDate();
+let fullfillmentDateObject = utilities.getConfiguredFullfillmentDate();
 
 // 👉 flip this to false when ready to send to full recipients
-TESTING = false;
+TESTING = utilities.getTestingMode(false);
 
 checklist(fullfillmentDateObject, TESTING, MANUAL_DISPOSITIONS);

@@ -549,17 +549,97 @@ function formatDateToYYYYMMDD(date) {
     return `${year}-${month}-${day}`;
 }
 
+function parseFulfillmentDate(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return null;
 
-// Get the next fullfillmentDate to query, which is either Tuesday or Friday/Saturday
+    const monthIndexes = {
+        jan: 0, january: 0,
+        feb: 1, february: 1,
+        mar: 2, march: 2,
+        apr: 3, april: 3,
+        may: 4,
+        jun: 5, june: 5,
+        jul: 6, july: 6,
+        aug: 7, august: 7,
+        sep: 8, sept: 8, september: 8,
+        oct: 9, october: 9,
+        nov: 10, november: 10,
+        dec: 11, december: 11,
+    };
+
+    const clean = raw.replace(/,/g, '').split(/[T\s]+/)[0];
+    let year;
+    let monthIndex;
+    let day;
+
+    if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(clean)) {
+        const parts = clean.split('-').map(Number);
+        year = parts[0];
+        monthIndex = parts[1] - 1;
+        day = parts[2];
+    } else {
+        const parts = raw.replace(/,/g, '').split(/[-\s/]+/).filter(Boolean);
+        if (parts.length < 3) return null;
+
+        const [first, second, third] = parts;
+        if (/^\d{4}$/.test(first)) {
+            year = Number(first);
+            monthIndex = /^\d+$/.test(second)
+                ? Number(second) - 1
+                : monthIndexes[second.toLowerCase()];
+            day = Number(third);
+        } else {
+            day = Number(first);
+            monthIndex = /^\d+$/.test(second)
+                ? Number(second) - 1
+                : monthIndexes[second.toLowerCase()];
+            year = Number(third);
+            if (year < 100) year += 2000;
+        }
+    }
+
+    if (!Number.isInteger(year) || !Number.isInteger(monthIndex) || !Number.isInteger(day)) {
+        return null;
+    }
+
+    const date = new Date(year, monthIndex, day, 12);
+    if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== monthIndex ||
+        date.getDate() !== day
+    ) {
+        return null;
+    }
+
+    return date;
+}
+
+function formatFulfillmentDateDisplay(value) {
+    const date = parseFulfillmentDate(value);
+    if (!date) return String(value || '').trim();
+
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
+
+
+// Get the next fullfillmentDate to query, which is either Tuesday/Wednesday or Friday/Saturday.
 function getNextFullfillmentDate() {
     const nextTuesdayOrSaturday = getNextTuesdayOrSaturday();
-    const end = nextTuesdayOrSaturday;
-    start = new Date(nextTuesdayOrSaturday);
+    const end = new Date(nextTuesdayOrSaturday);
+    const start = new Date(nextTuesdayOrSaturday);
 
     // if date is a saturday, then include Friday as start date
     if (end.getDay() === 6) {
         start.setDate(nextTuesdayOrSaturday.getDate() - 1);
-        // otherwise, set this date to same as end date
+    } else if (end.getDay() === 2) {
+        end.setDate(nextTuesdayOrSaturday.getDate() + 1);
     } else {
         start.setDate(nextTuesdayOrSaturday.getDate());
     }
@@ -570,6 +650,38 @@ function getNextFullfillmentDate() {
     formattedDate.date = formatDateToYYYYMMDD(end);
 
     return formattedDate;
+}
+
+function parseBooleanEnv(value, defaultValue = false) {
+    if (value === undefined || value === null || value === '') {
+        return defaultValue;
+    }
+
+    const normalized = String(value).trim().toLowerCase();
+    return ['1', 'true', 'yes', 'y', 'test', 'testing'].includes(normalized);
+}
+
+function getTestingMode(defaultValue = false) {
+    return parseBooleanEnv(process.env.TESTING || process.env.LL_TESTING, defaultValue);
+}
+
+function getConfiguredFullfillmentDate() {
+    const date = process.env.FULFILLMENT_DATE || process.env.FULLFILLMENT_DATE;
+    const start = process.env.FULFILLMENT_DATE_START || process.env.FULFILLMENT_START;
+    const end = process.env.FULFILLMENT_DATE_END || process.env.FULFILLMENT_END;
+
+    if (date) {
+        return { start: date, end: date, date };
+    }
+
+    if (start || end) {
+        if (!start || !end) {
+            throw new Error('Set both FULFILLMENT_DATE_START and FULFILLMENT_DATE_END for a custom fulfillment window.');
+        }
+        return { start, end, date: end };
+    }
+
+    return getNextFullfillmentDate();
 }
 function getLastMonth() {
     const today = new Date();
@@ -743,6 +855,10 @@ module.exports = {
     sendEmail,
     sendErrorEmail,
     getNextFullfillmentDate,
+    getConfiguredFullfillmentDate,
+    getTestingMode,
+    parseFulfillmentDate,
+    formatFulfillmentDateDisplay,
     getPreviousWeek,
     getOrderDay,
     getOrderDayMinusSeven,

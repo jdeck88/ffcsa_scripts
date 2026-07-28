@@ -338,11 +338,11 @@ async function runDairyMonitor(fulfillmentDate, testing = false) {
   console.log(`Dairy monitor complete. Matched members: ${results.length}`);
 }
 
-const fullfillmentDateObject = utilities.getNextFullfillmentDate();
+const fullfillmentDateObject = utilities.getConfiguredFullfillmentDate();
 // Set to true for testing behavior:
 // - Subject includes [TEST]
 // - Existing orders CSV is reused (no overwrite)
-const TESTING = false;
+const TESTING = utilities.getTestingMode(false);
 
 // Explicit process exit prevents pooled SMTP sockets from keeping the script alive.
 (async () => {

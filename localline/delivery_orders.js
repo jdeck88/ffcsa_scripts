@@ -765,7 +765,8 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           const company = row['About This Customer'];
           const fullfillmentName = row['Fulfillment Name'];
           const fullfillmentAddress = row['Fulfillment Address'];
-          const fullfillmentDate = utilities.formatDate(row['Fulfillment Date']);
+          const rawFullfillmentDate = row['Fulfillment Date'];
+          const fullfillmentDate = utilities.formatFulfillmentDateDisplay(rawFullfillmentDate);
           const customerNote = row['Customer Note'];
           const startTime = row['Fulfillment - Pickup Start Time'];
           const endTime = row['Fulfillment - Pickup End Time'];
@@ -786,9 +787,16 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
             quantity = numItems;
           }
 
+          const customerKey = [
+            email,
+            rawFullfillmentDate,
+            fullfillmentName,
+            fullfillmentAddress,
+          ].map(value => String(value || '').trim().toLowerCase()).join('|');
+
           // Initialize customer bucket
-          if (!customers[email]) {
-            customers[email] = {
+          if (!customers[customerKey]) {
+            customers[customerKey] = {
               products: [],
               customerName: customerName,
               phone: customerPhone,
@@ -802,7 +810,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
           }
 
           if (category !== 'Membership') {
-            customers[email].products.push({
+            customers[customerKey].products.push({
               product,
               quantity,
               itemUnit,
@@ -892,7 +900,6 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               textY += fullHeight + lineSpacing;
             };
 
-            // Fulfillment date is rendered with page numbering later for consistent alignment.
             doc.fontSize(16).font('Helvetica-Bold').text('Delivery Order Ticket', textX, textY, {
               width: Math.max(120, headerRightWidth - 120),
             });
@@ -900,6 +907,8 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
 
             // Customer details
             doc.font('Helvetica');
+            doc.fontSize(12).text(`Date:        ${customerData.fullfillmentDate}`, textX, textY, { width: headerRightWidth });
+            textY += lineSpacing;
             doc.fontSize(12).text(`Name:        ${customerData.customerName}`, textX, textY, { width: headerRightWidth });
             textY += lineSpacing;
             doc.fontSize(12).text(`Phone:       ${customerData.phone}`, textX, textY, { width: headerRightWidth });
@@ -1106,7 +1115,7 @@ async function writeDeliveryOrderPDF(filename, fullfillmentDateEnd) {
               pageNumbering.set(orderStartPage + i, {
                 page: i + 1,
                 total: totalOrderPages,
-                date: fullfillmentDateEnd,
+                date: customerData.fullfillmentDate,
                 name: customerData.customerName,
               });
             }
@@ -1296,6 +1305,6 @@ const fullfillmentDateObject = {
 };
 */
 
-fullfillmentDateObject = utilities.getNextFullfillmentDate()
-const TESTING = false;
+const fullfillmentDateObject = utilities.getConfiguredFullfillmentDate();
+const TESTING = utilities.getTestingMode(false);
 delivery_order(fullfillmentDateObject.start, fullfillmentDateObject.end, TESTING);

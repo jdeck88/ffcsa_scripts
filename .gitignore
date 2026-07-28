@@ -1,3 +1,4 @@
 config/*
 node_modules/*
 images/*
+localline/data/products_*

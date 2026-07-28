@@ -962,8 +962,8 @@ async function runVendorReports(fulfillmentDate, testing = false) {
 }
 
 // 🔹 TESTING flag – set to true to send ALL emails ONLY to jdeck88@gmail.com
-const TESTING = false;
+const TESTING = utilities.getTestingMode(false);
 
 // Run it
-const fulfillment = utilities.getNextFullfillmentDate();
+const fulfillment = utilities.getConfiguredFullfillmentDate();
 runVendorReports(fulfillment, TESTING);

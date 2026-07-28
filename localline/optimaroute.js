@@ -346,9 +346,9 @@ async function optimaroute(fullfillmentDateObject, testing = false) {
 //   "1017951": "Frozen"
 // }
 
-const fullfillmentDateObject = utilities.getNextFullfillmentDate();
+const fullfillmentDateObject = utilities.getConfiguredFullfillmentDate();
 
 // 👉 flip this to false when ready to send to full recipients
-const TESTING = false;
+const TESTING = utilities.getTestingMode(false);
 
 optimaroute(fullfillmentDateObject, TESTING);
