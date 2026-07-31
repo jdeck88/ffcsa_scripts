@@ -68,4 +68,13 @@ if [ "$1" == "monthly_vendors.js" ]; then
     echo "⚠️ No product Excel files found in data/."
   fi
 fi
-
+if [ "$1" == "fulfillment_strategies.js" ]; then
+  if [[ -n $(git status -s data/delivery_data.tsv ../docs/delivery_data.html) ]]; then
+    git add data/delivery_data.tsv ../docs/delivery_data.html
+    git commit -m "Update fulfillment strategies file"
+    git push
+    echo "Changes pushed to GitHub."
+  else
+    echo "No changes in data files."
+  fi
+fi

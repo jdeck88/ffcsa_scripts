@@ -2,3 +2,16 @@ config/*
 node_modules/*
 images/*
 localline/data/products_*
+deckfamilyfarm-e5800eeebb36.json
+dff-reporting/
+scripts/allvegetables.sql
+scripts/allvegetables.sql.xlsx
+scripts/graziers_report.sql
+scripts/graziers_report.sql.xlsx
+scripts/graziersgarden.sql
+scripts/graziersgarden.sql.xlsx
+scripts/vendor_by_month.sql.xlsx
+scripts/~$customers_export.sql.xlsx
+scripts/~$product_export.sql.xlsx
+timesheets/
+~$FFCSA Member Budgets_10.25.23.xlsx
