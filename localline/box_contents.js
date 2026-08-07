@@ -236,6 +236,7 @@ async function expandOrderRowsWithBoxContents(orderFilePath, options = {}) {
   const parentRowsToReplace = new Set();
   const componentRows = [];
   const boxSummaries = [];
+  const consumedParentRowIndexesByBoxKey = new Map();
 
   for (const [orderId, order] of orderDetails.entries()) {
     const boxEntries = (order.order_entries || []).filter(entry =>
@@ -246,14 +247,27 @@ async function expandOrderRowsWithBoxContents(orderFilePath, options = {}) {
     );
 
     for (const boxEntry of boxEntries) {
+      const boxKey = `${orderId}|${normalizeId(boxEntry.product)}`;
+      if (!consumedParentRowIndexesByBoxKey.has(boxKey)) {
+        consumedParentRowIndexesByBoxKey.set(boxKey, new Set());
+      }
+      const consumedParentRowIndexes = consumedParentRowIndexesByBoxKey.get(boxKey);
       const parentRowIndexes = rows
         .map((row, index) => ({ row, index }))
         .filter(({ row }) => isMatchingParentRow(row, orderId, boxEntry));
 
-      for (const { row, index } of parentRowIndexes) {
+      for (const { index } of parentRowIndexes) {
         parentRowsToReplace.add(index);
+      }
+
+      const parentRowMatch =
+        parentRowIndexes.find(({ index }) => !consumedParentRowIndexes.has(index)) ||
+        parentRowIndexes[0];
+
+      if (parentRowMatch) {
+        consumedParentRowIndexes.add(parentRowMatch.index);
         for (const subEntry of boxEntry.sub_order_entries) {
-          componentRows.push(buildComponentRow(row, boxEntry, subEntry, catalog));
+          componentRows.push(buildComponentRow(parentRowMatch.row, boxEntry, subEntry, catalog));
         }
       }
 
