@@ -167,7 +167,7 @@ async function pollStatus(id, accessToken) {
     let pollingStartTime = Date.now();
 
     const pollInterval = 5000; // 5 seconds
-    const maxPollingTime = 90000; // 1.5 minutes
+    const maxPollingTime = 120000; // 2 minutes
 
     while (status !== "COMPLETE") {
         const data = await checkRequestId(id, accessToken);
@@ -180,8 +180,8 @@ async function pollStatus(id, accessToken) {
         }
 
         if (Date.now() - pollingStartTime >= maxPollingTime) {
-            console.error("Status not COMPLETE after 1 minute. Stopping polling.");
-            throw new Error("Status not COMPLETE after 1 minute. Stopping polling.")
+            console.error("Status not COMPLETE after 2 minutes. Stopping polling.");
+            throw new Error("Status not COMPLETE after 2 minutes. Stopping polling.")
         }
 
         await new Promise((resolve) => setTimeout(resolve, pollInterval));
