@@ -77,6 +77,10 @@ function formatPhoneNumber(phoneNumber) {
   return `(${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6)}`;
 }
 
+function isEnvEnabled(value) {
+  return ['1', 'true', 'yes', 'y'].includes(String(value || '').trim().toLowerCase());
+}
+
 // Writes data to an XLSX file and returns a Promise
 async function writeXLSX(rows, outputPath) {
   const workbook = new ExcelJS.Workbook();
@@ -297,7 +301,9 @@ async function optimaroute(fullfillmentDateObject, testing = false) {
       testing
     );
 
-    const overwriteExisting = false;
+    // OptimaRoute should reflect the latest orders at route-generation time.
+    // Other reports may have downloaded this same fulfillment CSV earlier.
+    const overwriteExisting = true;
 
     // Use the shared helper to get orders CSV
     const deliveryOrderPath = await utilities.downloadOrdersCsv(
@@ -323,6 +329,11 @@ async function optimaroute(fullfillmentDateObject, testing = false) {
 
     const xlsxFile = await writeOptimarouteXLSX(deliveryOrderPath);
 
+    if (isEnvEnabled(process.env.SKIP_EMAIL || process.env.LL_SKIP_EMAIL)) {
+      console.log('[optimaroute] SKIP_EMAIL enabled; not sending email.');
+      return xlsxFile;
+    }
+
     sendEmail(
       xlsxFile,
       'optimaroute.xlsx',
@@ -346,9 +357,19 @@ async function optimaroute(fullfillmentDateObject, testing = false) {
 //   "1017951": "Frozen"
 // }
 
-const fullfillmentDateObject = utilities.getConfiguredFullfillmentDate();
+if (require.main === module) {
+  const fullfillmentDateObject = utilities.getConfiguredFullfillmentDate();
 
-// 👉 flip this to false when ready to send to full recipients
-const TESTING = utilities.getTestingMode(false);
+  // 👉 flip this to false when ready to send to full recipients
+  const TESTING = utilities.getTestingMode(false);
 
-optimaroute(fullfillmentDateObject, TESTING);
+  optimaroute(fullfillmentDateObject, TESTING);
+}
+
+module.exports = {
+  computeDispositionForRow,
+  flattenCustomerGroups,
+  groupOrdersByCustomer,
+  optimaroute,
+  writeOptimarouteXLSX,
+};
