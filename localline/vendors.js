@@ -8,6 +8,9 @@ const utilities = require('./utilities');
 
 const FULL_FARM_VENDOR = 'Full Farm CSA';
 const FULL_FARM_EMAIL = 'fullfarmcsa@deckfamilyfarm.com';
+const VENDOR_EMAIL_FALLBACK_FIELDS = {
+  'Falk Farm': ['Internal Email']
+};
 const BOX_CONTENT_CATEGORY = 'Box Contents';
 const BOX_COMPONENT_SOURCE = 'full_farm_box_component';
 
@@ -41,6 +44,20 @@ function normalizeText(value) {
 function toPositiveNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) && number > 0 ? number : fallback;
+}
+
+function getVendorEmail(row) {
+  const vendor = normalizeText(row['Vendor']);
+  const primaryEmail = normalizeText(row['Email']);
+  if (primaryEmail) return primaryEmail;
+
+  const fallbackFields = VENDOR_EMAIL_FALLBACK_FIELDS[vendor] || [];
+  for (const field of fallbackFields) {
+    const fallbackEmail = normalizeText(row[field]);
+    if (fallbackEmail) return fallbackEmail;
+  }
+
+  return '';
 }
 
 function getOrderId(row) {
@@ -126,8 +143,10 @@ async function readVendorsCSV(filePath) {
     fs.createReadStream(filePath)
       .pipe(fastcsv.parse({ headers: true }))
       .on('data', row => {
-        if (row['Vendor'] && row['Email']) {
-          vendors[row['Vendor']] = row['Email'];
+        const vendor = normalizeText(row['Vendor']);
+        const email = getVendorEmail(row);
+        if (vendor && email) {
+          vendors[vendor] = email;
         }
       })
       .on('end', () => resolve(vendors))
