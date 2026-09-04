@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const fastcsv = require('fast-csv');
 const PDFDocument = require('pdfkit');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const utilities = require('./utilities');
-require('dotenv').config();
 
 async function fetchAllOrdersForMonth(month, year) {
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
