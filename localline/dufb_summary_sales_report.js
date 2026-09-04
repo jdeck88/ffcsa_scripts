@@ -7,6 +7,26 @@ const PDFDocument = require('pdfkit');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const utilities = require('./utilities');
 
+const REPORT_START_DATE = '2024-01-01';
+const REPORT_END_DATE = '2025-06-18';
+const REPORT_START_LABEL = 'January 1, 2024';
+const REPORT_END_LABEL = 'June 18, 2025';
+
+function parseOrderDate(value) {
+  const dateValue = value?.split('T')[0]?.trim();
+  if (!dateValue) return null;
+
+  const ymd = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const parsed = ymd
+    ? new Date(Number(ymd[1]), Number(ymd[2]) - 1, Number(ymd[3]))
+    : new Date(dateValue);
+
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  parsed.setHours(0, 0, 0, 0);
+  return parsed;
+}
+
 async function fetchAllOrdersForMonth(month, year) {
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
   const endDate = new Date(year, month, 0).toISOString().split('T')[0];
@@ -38,6 +58,8 @@ async function fetchAllOrdersForMonth(month, year) {
 
 async function generateReportFromCSV() {
   const filepath = path.join(__dirname, 'data', 'snap_data.csv');
+  const reportStartDate = parseOrderDate(REPORT_START_DATE);
+  const reportEndDate = parseOrderDate(REPORT_END_DATE);
 
   const sheetRows = await new Promise((resolve, reject) => {
     const rows = [];
@@ -90,11 +112,11 @@ async function generateReportFromCSV() {
 
       const qty = parseFloat(order['Quantity']) || 0;
       const date = order['Date']?.split('T')[0] || 'Unknown Date';
-      const orderDate = new Date(date);
-      const isBeforeMarch2025 = orderDate < new Date('2025-03-01');
+      const orderDate = parseOrderDate(order['Date']);
+      if (reportStartDate && orderDate && orderDate < reportStartDate) continue;
+      if (reportEndDate && orderDate && orderDate > reportEndDate) continue;
 
       const basePrice = parseFloat(order['Product Subtotal']) || 0;
-      //const price = isBeforeMarch2025 ? basePrice * 1.13 : basePrice;
       const price = basePrice;
       //const date = order['Date']?.split('T')[0] || 'Unknown Date';
 
@@ -121,7 +143,7 @@ async function generateReportFromCSV() {
   doc.pipe(stream);
 
   //doc.font('Helvetica-Bold').fontSize(16).text(`SNAP / DUFB Purchase Summary`, { align: 'center' });
-  doc.font('Helvetica-Bold').fontSize(16).text(`Members with SNAP / DUFB Subscription Purchase Summary\nJanuary 1, 2024 to June 18, 2025`, { align: 'center' });
+  doc.font('Helvetica-Bold').fontSize(16).text(`Members with SNAP / DUFB Subscription Purchase Summary\n${REPORT_START_LABEL} to ${REPORT_END_LABEL}`, { align: 'center' });
   doc.font('Helvetica').fontSize(11).text(`Generated on ${dateStr}`, { align: 'center' }).moveDown(1);
 
   let totalVeg = 0, totalDufb = 0;
