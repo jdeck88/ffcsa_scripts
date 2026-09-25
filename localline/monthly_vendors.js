@@ -1,10 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const fastcsv = require('fast-csv');
-const ExcelJS = require('exceljs');
 const PDFDocument = require('pdfkit-table');
 const utilities = require('./utilities');
+const { aggregateVendorSummaryFromOrders, writeVendorSummaryCsv } = require('./order_pricing');
 
 /* ------------------------------------------------
  * Date helpers
@@ -82,248 +81,6 @@ async function downloadMonthlyOrdersCsv(fulfillmentDateStart, fulfillmentDateEnd
   } else {
     throw new Error('Orders export URL empty or undefined');
   }
-}
-
-async function downloadProductsExcel(accessToken, fulfillmentDateEnd) {
-  // Ensure data directory exists
-  if (!fs.existsSync("data")) {
-    fs.mkdirSync("data", { recursive: true });
-  }
-
-  const productsFile = `data/products_${fulfillmentDateEnd}.xlsx`;
-
-  const cachedPath = utilities.getFreshCachedFilePath(productsFile, 'products file');
-  if (cachedPath) {
-    return cachedPath;
-  }
-
-  // Otherwise, proceed with download
-  await utilities.downloadBinaryData(
-    "https://localline.ca/api/backoffice/v2/products/export/?direct=true",
-    productsFile,
-    accessToken
-  );
-
-  console.log(`✅ Products Excel saved to ${productsFile}`);
-  return productsFile;
-}
-
-/* ------------------------------------------------
- * Product price helpers (Package ID join)
- * ------------------------------------------------ */
-
-function normalizePackageId(value) {
-  if (value === null || value === undefined) return null;
-
-  // Try numeric first so that 695001.0 → "695001"
-  const num = Number(value);
-  if (!Number.isNaN(num)) {
-    return String(Math.trunc(num));
-  }
-
-  return String(value).trim();
-}
-
-/**
- * Build a map: packageIdStr -> packagePrice
- * using the "Packages and pricing" tab.
- */
-async function buildPackagePriceMap(filePath) {
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile(filePath);
-
-  // Prefer by name, fall back to index 2
-  const ws =
-    workbook.getWorksheet('Packages and pricing') ||
-    workbook.getWorksheet(2);
-
-  if (!ws) {
-    throw new Error('Could not find "Packages and pricing" worksheet');
-  }
-
-  const headerRow = ws.getRow(1).values;
-
-  // Build a lookup: normalized header -> original header text
-  const headerMap = {};
-  for (let j = 1; j < headerRow.length; j++) {
-    const raw = headerRow[j];
-    if (!raw) continue;
-    const norm = String(raw).toLowerCase().replace(/\s+/g, '');
-    headerMap[norm] = raw;
-  }
-
-  const packageIdHeader = headerMap['packageid'];
-  const packagePriceHeader = headerMap['packageprice'];
-
-  if (!packageIdHeader || !packagePriceHeader) {
-    throw new Error(
-      `Could not find "Package ID" or "Package Price" headers. Found headers: ${Object.values(headerMap).join(', ')}`
-    );
-  }
-
-  const map = {};
-  let rowCount = 0;
-
-  for (let i = 2; i <= ws.actualRowCount; i++) {
-    const row = ws.getRow(i).values;
-    const obj = {};
-
-    for (let j = 1; j < headerRow.length; j++) {
-      obj[headerRow[j]] = row[j];
-    }
-
-    const rawId = obj[packageIdHeader];
-    const price = obj[packagePriceHeader];
-
-    const key = normalizePackageId(rawId);
-    if (!key || price === null || price === undefined || price === '') continue;
-
-    const numPrice = Number(price);
-    if (Number.isNaN(numPrice)) continue;
-
-    map[key] = numPrice;
-    rowCount++;
-  }
-
-  console.log(
-    `🔎 Built packagePriceMap with ${Object.keys(map).length} entries (rows processed: ${rowCount})`
-  );
-  return map;
-}
-
-/* ------------------------------------------------
- * Aggregation: vendor-level summary
- * ------------------------------------------------ */
-
-function computeEffectiveQuantity(row) {
-  // Start from Quantity
-  let quantity = Number(row['Quantity']);
-  if (Number.isNaN(quantity)) quantity = 0;
-
-  // Round to avoid 1.00000001 cases
-  quantity = Math.round(quantity);
-
-  // Look at # of Items as a *fix* for the weird 1 vs N case
-  let numItems = Number(row['# of Items']);
-  if (Number.isNaN(numItems)) numItems = 0;
-  numItems = Math.round(numItems);
-
-  // Your original logic: if # of Items > 1 and quantity == 1, trust # of Items
-  if (numItems > 1 && quantity === 1) {
-    quantity = numItems;
-  }
-
-  return quantity;
-}
-
-/**
- * Read the monthly orders CSV, and aggregate by vendor:
- * - RetailSales: sum of "Product Subtotal"
- * - PurchaseCost: sum of (Package Price * effective quantity)
- */
-async function aggregateMonthlyVendorData(ordersCsvPath, packagePriceMap) {
-  return new Promise((resolve, reject) => {
-    const summaryByVendor = {};
-    let matchedLines = 0;
-    let unmatchedLines = 0;
-
-    fs.createReadStream(ordersCsvPath)
-      .pipe(fastcsv.parse({ headers: true }))
-      .on('data', row => {
-        try {
-          const vendor = row['Vendor'];
-          if (!vendor) return;
-
-          if (row['Category'] === 'Membership') return;
-
-          if (!summaryByVendor[vendor]) {
-            summaryByVendor[vendor] = {
-              vendor,
-              retailSales: 0,
-              purchaseCost: 0
-            };
-          }
-
-          const effectiveQty = computeEffectiveQuantity(row);
-          if (!effectiveQty || effectiveQty <= 0) return;
-
-          // Retail: Product Subtotal
-          const retailTotal = Number(row['Product Subtotal'] || 0) || 0;
-
-          // Purchase: Package Price from map
-          const packageId = normalizePackageId(row['Package ID']);
-          const purchaseUnitPrice = packageId ? packagePriceMap[packageId] || 0 : 0;
-          const purchaseTotal = purchaseUnitPrice * effectiveQty;
-
-          if (purchaseUnitPrice > 0) {
-            matchedLines++;
-          } else {
-            unmatchedLines++;
-          }
-
-          summaryByVendor[vendor].retailSales += retailTotal;
-          summaryByVendor[vendor].purchaseCost += purchaseTotal;
-        } catch (e) {
-          console.error('Row parse error:', e.message);
-        }
-      })
-      .on('end', () => {
-        console.log(`ℹ️ Lines with matched package price: ${matchedLines}`);
-        console.log(`ℹ️ Lines with NO package price match: ${unmatchedLines}`);
-
-        const results = Object.values(summaryByVendor).map(v => {
-          const markupAmount = v.retailSales - v.purchaseCost;
-          const markupPercent =
-            v.purchaseCost > 0 ? (markupAmount / v.purchaseCost) * 100 : 0;
-
-          return {
-            vendor: v.vendor,
-            retailSales: v.retailSales,
-            purchaseCost: v.purchaseCost,
-            markupAmount,
-            markupPercent
-          };
-        });
-
-        // Sort by largest retail sales first, then vendor name
-        results.sort((a, b) => {
-          if (b.retailSales !== a.retailSales) {
-            return b.retailSales - a.retailSales;
-          }
-          return a.vendor.localeCompare(b.vendor);
-        });
-
-        resolve(results);
-      })
-      .on('error', reject);
-  });
-}
-
-/* ------------------------------------------------
- * CSV + PDF output
- * ------------------------------------------------ */
-
-async function writeVendorSummaryCsv(summary, outFile) {
-  return new Promise((resolve, reject) => {
-    const ws = fs.createWriteStream(outFile);
-    const csvStream = fastcsv.format({ headers: true });
-
-    csvStream.pipe(ws)
-      .on('finish', resolve)
-      .on('error', reject);
-
-    for (const row of summary) {
-      csvStream.write({
-        Vendor: row.vendor,
-        RetailSales: row.retailSales.toFixed(2),
-        PurchaseCost: row.purchaseCost.toFixed(2),
-        MarkupAmount: row.markupAmount.toFixed(2),
-        MarkupPercent: row.markupPercent.toFixed(2)
-      });
-    }
-
-    csvStream.end();
-  });
 }
 
 async function generateSummaryPDF(summary, pdfPath, startStr, endStr) {
@@ -417,7 +174,7 @@ async function emailSummaryPdf(pdfPath, startStr, endStr) {
  * ------------------------------------------------ */
 
 async function main() {
-  const refDateStr = process.argv[2]; // optional YYYY-MM-DD
+  const refDateStr = process.argv.slice(2).find(arg => !arg.startsWith('--')); // optional YYYY-MM-DD
   const { start, end, startStr, endStr } = getLastFullMonthRange(refDateStr);
 
   console.log(`📆 Monthly vendor summary for last full month: ${startStr} to ${endStr}`);
@@ -425,13 +182,8 @@ async function main() {
   try {
     const token = JSON.parse(await utilities.getAccessToken()).access;
 
-    const [productsFile, ordersCsvPath] = await Promise.all([
-      downloadProductsExcel(token, endStr),
-      downloadMonthlyOrdersCsv(startStr, endStr, token)
-    ]);
-
-    const packagePriceMap = await buildPackagePriceMap(productsFile);
-    const summary = await aggregateMonthlyVendorData(ordersCsvPath, packagePriceMap);
+    const ordersCsvPath = await downloadMonthlyOrdersCsv(startStr, endStr, token);
+    const summary = await aggregateVendorSummaryFromOrders(ordersCsvPath, token);
 
     if (!summary.length) {
       console.log('⚠️ No vendor orders found for that month range.');
@@ -450,12 +202,13 @@ async function main() {
     );
     await generateSummaryPDF(summary, pdfPath, startStr, endStr);
 
-    await emailSummaryPdf(pdfPath, startStr, endStr);
+    if (!process.argv.includes('--dry-run')) await emailSummaryPdf(pdfPath, startStr, endStr);
 
     console.log('✅ Done. Example row:', summary[0]);
   } catch (err) {
+    process.exitCode = 1;
     console.error('❌ Error during vendor monthly summary:', err);
-    if (utilities && typeof utilities.sendErrorEmail === 'function') {
+    if (!process.argv.includes('--dry-run') && utilities && typeof utilities.sendErrorEmail === 'function') {
       utilities.sendErrorEmail(
         `Monthly Vendor summary failed:\n\n${err.stack || err.message || err}`
       );
@@ -464,11 +217,11 @@ async function main() {
 }
 
 /* CLI entrypoint */
-main()
+if (require.main === module) main()
   .then(() => {
     console.log('✅ Monthly vendor summary completed.');
     // Give stdout a brief chance to flush, then exit
-    setTimeout(() => process.exit(0), 100);
+    setTimeout(() => process.exit(process.exitCode || 0), 100);
   })
   .catch(err => {
     console.error('❌ Fatal error in vendor monthly summary:', err);

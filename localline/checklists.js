@@ -31,6 +31,14 @@ function debugLog(...args) {
   }
 }
 
+function isEnvEnabled(value) {
+  return ['1', 'true', 'yes', 'y'].includes(String(value || '').trim().toLowerCase());
+}
+
+function shouldSkipEmail() {
+  return isEnvEnabled(process.env.SKIP_EMAIL) || isEnvEnabled(process.env.LL_SKIP_EMAIL);
+}
+
 function formatFulfillmentWindowDisplay(fulfillmentDate) {
   const start = utilities.formatFulfillmentDateDisplay(fulfillmentDate.start);
   const end = utilities.formatFulfillmentDateDisplay(fulfillmentDate.end);
@@ -756,6 +764,15 @@ async function checklist(fullfillmentDate, testing = false, manualDispositions =
     );
     debugLog('[checklist] Packlists PDF ready at:', packlists_pdf);
 
+    if (shouldSkipEmail()) {
+      console.log('[checklist] SKIP_EMAIL enabled; not sending emails.');
+      return {
+        checklist_pdf,
+        packlists_pdf,
+        operational_order_file_path,
+      };
+    }
+
     debugLog('[checklist] about to call sendEmail for manifests');
     sendEmail(
       checklist_pdf,
@@ -794,4 +811,16 @@ let fullfillmentDateObject = utilities.getConfiguredFullfillmentDate();
 // 👉 flip this to false when ready to send to full recipients
 TESTING = utilities.getTestingMode(false);
 
-checklist(fullfillmentDateObject, TESTING, MANUAL_DISPOSITIONS);
+if (require.main === module) {
+  checklist(fullfillmentDateObject, TESTING, MANUAL_DISPOSITIONS);
+}
+
+module.exports = {
+  buildLowercaseMap,
+  checklist,
+  computeDispositionForRow,
+  findManualDisposition,
+  productSpecificPackList,
+  writeChecklistPDF,
+  writePacklistsPDF,
+};

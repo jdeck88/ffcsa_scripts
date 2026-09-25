@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const fastcsv = require('fast-csv');
+const { aggregateVendorSummaryFromOrders, writeVendorSummaryCsv, readOrderRows, isHistoricalSummary } = require('./order_pricing');
 const XLSX = require('xlsx');
 const crypto = require('crypto');
 const { isBecomeAMemberSubscription } = require('./subscription_price_lists');
@@ -60,35 +61,27 @@ function loadWeeklyKpiMap() {
   return map;
 }
 
-function parseVendorWeeklySummary(filePath) {
-  const wb = XLSX.readFile(filePath, { raw: false });
-  const ws = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
-  if (rows.length < 2) return { purchaseCost: 0, retailSales: 0 };
-  const header = rows[0];
-  const purchaseIdx = header.indexOf('PurchaseCost');
-  const retailIdx = header.indexOf('RetailSales');
-  let purchaseCost = 0;
-  let retailSales = 0;
-
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i] || [];
-    const p = Number(row[purchaseIdx] || 0);
-    const r = Number(row[retailIdx] || 0);
-    if (Number.isFinite(p)) purchaseCost += p;
-    if (Number.isFinite(r)) retailSales += r;
+async function parseVendorWeeklySummary(filePath) {
+  const rows = await readOrderRows(filePath);
+  if (!isHistoricalSummary(rows)) {
+    console.warn(`Vendor summary needs rebuilding with --backfill-vendor-weeks: ${filePath}`);
+    return null;
   }
-  return { purchaseCost, retailSales };
+  return rows.reduce((totals, row) => ({
+    purchaseCost: totals.purchaseCost + Number(row.PurchaseCost),
+    retailSales: totals.retailSales + Number(row.RetailSales),
+  }), { purchaseCost: 0, retailSales: 0 });
 }
 
-function buildVendorWeeklyMap() {
+async function buildVendorWeeklyMap() {
   const map = {};
   if (!fs.existsSync(DATA_DIR)) return map;
   const files = fs.readdirSync(DATA_DIR);
   for (const file of files) {
     const m = file.match(/^vendor_weekly_summary_(\d{4}-\d{2}-\d{2})_to_(\d{4}-\d{2}-\d{2})\.csv$/);
     if (!m) continue;
-    map[m[1]] = parseVendorWeeklySummary(path.join(DATA_DIR, file));
+    const info = await parseVendorWeeklySummary(path.join(DATA_DIR, file));
+    if (info) map[m[1]] = info;
   }
   return map;
 }
@@ -322,155 +315,10 @@ async function downloadUrlToFile(url, outPath, headers = {}) {
 async function ensureWeeklyOrdersCsv(accessToken, weekStart, weekEnd) {
   const fileName = `orders_list_${weekStart}_to_${weekEnd}.csv`;
   const outPath = path.join(DATA_DIR, fileName);
-  if (fs.existsSync(outPath)) {
-    return outPath;
-  }
   const exportId = await requestLocallineOrdersExportId(accessToken, weekStart, weekEnd);
   const filePath = await pollLocallineExportFilePath(accessToken, exportId);
   await downloadUrlToFile(filePath, outPath);
   return outPath;
-}
-
-async function ensureProductsWorkbook(accessToken, weekEnd) {
-  const outPath = path.join(DATA_DIR, `products_${weekEnd}.xlsx`);
-  if (fs.existsSync(outPath)) {
-    return outPath;
-  }
-  await downloadUrlToFile(
-    'https://localline.ca/api/backoffice/v2/products/export/?direct=true',
-    outPath,
-    { Authorization: `Bearer ${accessToken}` }
-  );
-  return outPath;
-}
-
-function normalizePackageId(value) {
-  if (value === null || value === undefined) return null;
-  const num = Number(value);
-  if (!Number.isNaN(num)) {
-    return String(Math.trunc(num));
-  }
-  const trimmed = String(value).trim();
-  return trimmed || null;
-}
-
-function computeEffectiveQuantity(row) {
-  let quantity = Number(row['Quantity']);
-  if (Number.isNaN(quantity)) quantity = 0;
-  quantity = Math.round(quantity);
-
-  let numItems = Number(row['# of Items']);
-  if (Number.isNaN(numItems)) numItems = 0;
-  numItems = Math.round(numItems);
-
-  if (numItems > 1 && quantity === 1) {
-    quantity = numItems;
-  }
-  return quantity;
-}
-
-function buildPackagePriceMap(productsPath) {
-  const wb = XLSX.readFile(productsPath, { raw: true });
-  const ws =
-    wb.Sheets['Packages and pricing'] ||
-    wb.Sheets[wb.SheetNames[1]] ||
-    wb.Sheets[wb.SheetNames[0]];
-  if (!ws) {
-    throw new Error(`No worksheets found in ${productsPath}`);
-  }
-
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
-  if (!rows.length) {
-    return {};
-  }
-
-  const header = rows[0].map((h) => String(h || '').toLowerCase().replace(/\s+/g, ''));
-  const idIdx = header.indexOf('packageid');
-  const priceIdx = header.indexOf('packageprice');
-  if (idIdx === -1 || priceIdx === -1) {
-    throw new Error(`Package ID / Package Price columns not found in ${productsPath}`);
-  }
-
-  const map = {};
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i] || [];
-    const key = normalizePackageId(row[idIdx]);
-    if (!key) continue;
-    const price = Number(row[priceIdx]);
-    if (Number.isNaN(price)) continue;
-    map[key] = price;
-  }
-  return map;
-}
-
-async function aggregateVendorSummaryFromOrders(ordersCsvPath, packagePriceMap) {
-  return new Promise((resolve, reject) => {
-    const summaryByVendor = {};
-    fs.createReadStream(ordersCsvPath)
-      .pipe(fastcsv.parse({ headers: true }))
-      .on('data', (row) => {
-        try {
-          const vendor = row['Vendor'];
-          if (!vendor) return;
-          if (row['Category'] === 'Membership') return;
-
-          if (!summaryByVendor[vendor]) {
-            summaryByVendor[vendor] = {
-              vendor,
-              retailSales: 0,
-              purchaseCost: 0,
-            };
-          }
-
-          const quantity = computeEffectiveQuantity(row);
-          if (!quantity || quantity <= 0) return;
-
-          const retailTotal = Number(row['Product Subtotal'] || 0) || 0;
-          const packageId = normalizePackageId(row['Package ID']);
-          const purchaseUnitPrice = packageId ? packagePriceMap[packageId] || 0 : 0;
-          const purchaseTotal = purchaseUnitPrice * quantity;
-
-          summaryByVendor[vendor].retailSales += retailTotal;
-          summaryByVendor[vendor].purchaseCost += purchaseTotal;
-        } catch (_err) {
-          // continue on malformed rows
-        }
-      })
-      .on('end', () => {
-        const summary = Object.values(summaryByVendor).map((v) => {
-          const markupAmount = v.retailSales - v.purchaseCost;
-          const markupPercent = v.purchaseCost > 0 ? (markupAmount / v.purchaseCost) * 100 : 0;
-          return {
-            vendor: v.vendor,
-            retailSales: v.retailSales,
-            purchaseCost: v.purchaseCost,
-            markupAmount,
-            markupPercent,
-          };
-        });
-        summary.sort((a, b) => b.retailSales - a.retailSales || a.vendor.localeCompare(b.vendor));
-        resolve(summary);
-      })
-      .on('error', reject);
-  });
-}
-
-async function writeVendorSummaryCsv(summary, outPath) {
-  return new Promise((resolve, reject) => {
-    const ws = fs.createWriteStream(outPath);
-    const csvStream = fastcsv.format({ headers: true });
-    csvStream.pipe(ws).on('finish', resolve).on('error', reject);
-    for (const row of summary) {
-      csvStream.write({
-        Vendor: row.vendor,
-        RetailSales: row.retailSales.toFixed(2),
-        PurchaseCost: row.purchaseCost.toFixed(2),
-        MarkupAmount: row.markupAmount.toFixed(2),
-        MarkupPercent: row.markupPercent.toFixed(2),
-      });
-    }
-    csvStream.end();
-  });
 }
 
 async function backfillMissingVendorWeeklySummaries(weeks, currentMap = {}) {
@@ -480,21 +328,12 @@ async function backfillMissingVendorWeeklySummaries(weeks, currentMap = {}) {
   }
 
   const accessToken = await getLocallineAccessToken();
-  const packageMapCache = new Map();
   let created = 0;
 
   for (const week of missingPastWeeks) {
     console.log(`Backfilling vendor summary: ${week.start}..${week.end}`);
     const ordersCsvPath = await ensureWeeklyOrdersCsv(accessToken, week.start, week.end);
-    const productsPath = await ensureProductsWorkbook(accessToken, week.end);
-
-    let packagePriceMap = packageMapCache.get(productsPath);
-    if (!packagePriceMap) {
-      packagePriceMap = buildPackagePriceMap(productsPath);
-      packageMapCache.set(productsPath, packagePriceMap);
-    }
-
-    const summary = await aggregateVendorSummaryFromOrders(ordersCsvPath, packagePriceMap);
+    const summary = await aggregateVendorSummaryFromOrders(ordersCsvPath, accessToken);
     const outCsv = path.join(
       DATA_DIR,
       `vendor_weekly_summary_${week.start}_to_${week.end}.csv`
@@ -1073,7 +912,11 @@ async function main() {
   }
 
   const weeklyKpiMap = loadWeeklyKpiMap();
-  const vendorWeeklyMap = buildVendorWeeklyMap();
+  let vendorWeeklyMap = await buildVendorWeeklyMap();
+  if (process.argv.includes('--backfill-vendor-weeks')) {
+    await backfillMissingVendorWeeklySummaries(weeks, vendorWeeklyMap);
+    vendorWeeklyMap = await buildVendorWeeklyMap();
+  }
   const { map: timesheetWeeklyMap, status: timesheetStatus } =
     await buildTimesheetWeeklyMap(weeks);
   const subscriberWeeklyMap = await buildSubscriberWeeklyMap(weeks);
@@ -1102,10 +945,12 @@ async function main() {
   console.log(`✅ Wrote dashboard to Google Sheet tab "${TARGET_SHEET_TITLE}"`);
 }
 
-main().catch((err) => {
+if (require.main === module) main().catch((err) => {
   console.error('❌ Failed to publish Dashboard-auto-26:', err.message || err);
   if (err.response?.status) {
     console.error(`❌ HTTP ${err.response.status}:`, JSON.stringify(err.response.data));
   }
   process.exit(1);
 });
+
+module.exports = { parseVendorWeeklySummary, backfillMissingVendorWeeklySummaries };

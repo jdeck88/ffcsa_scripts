@@ -7,6 +7,73 @@ Important notes
 - Run `delivery_orders.js` first when running a batch manually; it downloads the orders CSV used by other reports.
 - Most scripts rely on `utilities.js` for Local Line auth, downloads, and email sending.
 
+Historical vendor prices
+------------------------
+`order_pricing.js` supplies vendor costing to `vendors.js`, `monthly_vendors.js`,
+`weekly_report.js`, and `publish_dashboard_auto26.js`. It fetches each selected
+order once and uses the order entry's saved `package_unit_price` multiplied by
+`quantity_to_charge`. It does not look up current catalog prices, round weights
+to whole units, or substitute customer prices for missing vendor prices.
+
+For example, three salamis ordered at a $20 base price and two ordered at $15
+cost $90. The vendor PDF lists the two prices separately. Customer sales remain
+the saved order totals, including their price-list adjustments. Price changes
+to the catalog do not reprice earlier orders. Explicit edits to an order are
+reflected on the next run.
+
+For Full Farm CSA boxes, the fulfillment sheets use the saved base price on each
+component. Local Line's component `price` is the component total **per box**, not
+the unit price. The existing report scopes are retained: fulfillment sheets add
+component quantities for source vendors, while monthly/weekly sales summaries
+cost the parent order lines. This change does not reallocate bundle sales or
+replace parent box costs with component costs in those summaries.
+
+Order exports and fetched order details are checked for matching product/package
+subtotals. Missing historical prices, unavailable component charge quantities,
+API failures, or mismatched exports stop priced reports before sending them.
+Details appear in `<orders-file>_pricing_review.csv` alongside the input CSV.
+A saved price of $0 is valid. Weighted box components without an explicit charge
+quantity require review; their cost is not guessed from the customer price.
+Packing and customer balance/spending reports retain their existing behavior.
+
+Each fetched order's pricing data is preserved in `data/order_price_history/`
+as an immutable version identified by its contents. These files exclude customer
+contact information. Correcting an order creates another version; rerunning an
+unchanged order leaves its version intact. Keep this directory in server backups.
+The reports no longer refresh dated `products_YYYY-MM-DD.xlsx` files for costing.
+Existing product snapshots are left in place. `vendors.js` still uses a current
+product export to resolve component vendor names, not prices.
+
+New summary CSVs include `PricingBasis=order-package-unit-price-v1`. Weekly report
+and dashboard readers flag older summaries and leave those costs unavailable
+until rebuilt. Replaced summary CSVs are archived in `data/vendor_summary_history/`.
+Already emailed PDFs and already published Sheets are not changed automatically.
+
+Run from this folder:
+
+```sh
+# Run regression tests without network access or email.
+node --test order_pricing.test.js
+
+# Generate local vendor artifacts without sending email.
+node vendors.js --dry-run
+
+# Rebuild August 2026 monthly artifacts without email (date selects prior month).
+node monthly_vendors.js 2026-09-01 --dry-run
+
+# Rebuild missing/legacy weekly summaries and make a local PDF.
+node weekly_report.js /tmp/sales_kpi26.csv /tmp/weekly_report.pdf --backfill-vendor-weeks
+
+# Rebuild missing/legacy weekly summaries and preview the dashboard locally.
+node publish_dashboard_auto26.js --backfill-vendor-weeks --dry-run
+```
+
+These reporting commands make read-only Local Line API requests. The two
+`--dry-run` report modes still write local exports and reports. Rebuilding many
+weeks takes longer because saved order details are fetched individually, with
+at most four order requests in flight. Existing order-selection filters (such
+as `status=OPEN`) remain in effect when rebuilding historical periods.
+
 Manual dispositions (Frozen/Dairy/Tote overrides)
 - File: `localline/manual_dispositions.json`
 - Keys: Product ID or Product name (from the orders CSV `Product` column). Matching is case-insensitive and uses substring matching.
