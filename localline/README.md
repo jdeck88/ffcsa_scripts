@@ -29,9 +29,12 @@ cost the parent order lines. This change does not reallocate bundle sales or
 replace parent box costs with component costs in those summaries.
 
 Order exports and fetched order details are checked for matching product/package
-subtotals. Missing historical prices, unavailable component charge quantities,
+subtotals. Missing vendor assignments, missing historical prices, unavailable component charge quantities,
 API failures, or mismatched exports stop priced reports before sending them.
 Details appear in `<orders-file>_pricing_review.csv` alongside the input CSV.
+The vendor failure email also lists each issue with its product and order IDs.
+For a missing vendor assignment, assign the product's vendor in Local Line,
+then rerun `vendors.js`; it downloads fresh orders automatically.
 A saved price of $0 is valid. Weighted box components without an explicit charge
 quantity require review; their cost is not guessed from the customer price.
 Packing and customer balance/spending reports retain their existing behavior.
@@ -57,6 +60,12 @@ node --test order_pricing.test.js
 
 # Generate local vendor artifacts without sending email.
 node vendors.js --dry-run
+
+# Preview a specific Tuesday/Wednesday fulfillment window after correcting an issue.
+FULFILLMENT_DATE_START=2026-09-29 FULFILLMENT_DATE_END=2026-09-30 node vendors.js --dry-run
+
+# Send the vendor reports for that same window.
+FULFILLMENT_DATE_START=2026-09-29 FULFILLMENT_DATE_END=2026-09-30 node vendors.js
 
 # Rebuild August 2026 monthly artifacts without email (date selects prior month).
 node monthly_vendors.js 2026-09-01 --dry-run

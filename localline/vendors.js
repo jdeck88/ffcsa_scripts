@@ -852,7 +852,8 @@ async function runVendorReports(fulfillmentDate, testing = false) {
     await utilities.sendEmail(summaryMail);
   } catch (err) {
     console.error('Error during vendor report generation:', err);
-    if (!process.argv.includes('--dry-run')) utilities.sendErrorEmail(`Vendor report failed:\n\n${err.stack || err.message || err}`);
+    const details = err.issues ? err.message : (err.stack || err.message || err);
+    if (!process.argv.includes('--dry-run')) utilities.sendErrorEmail(`Vendor report failed:\n\n${details}`);
     process.exitCode = 1;
   }
 }

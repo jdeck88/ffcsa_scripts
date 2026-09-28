@@ -157,9 +157,20 @@ function csvCell(value) {
 
 function throwPricingReview(issues, csvPath) {
   const reviewPath = csvPath.replace(/\.csv$/i, '') + '_pricing_review.csv';
-  const content = [['Order', 'Entry', 'Product', 'Reason'], ...issues.map(i => [i.orderId, i.entryId, i.product, i.reason])];
+  const content = [['Order', 'Entry', 'Product', 'Reason', 'Product ID'], ...issues.map(i => [i.orderId, i.entryId, i.product, i.reason, i.productId])];
   fs.writeFileSync(reviewPath, content.map(row => row.map(csvCell).join(',')).join('\n') + '\n');
-  const error = new Error(`Vendor pricing needs review (${issues.length} issue(s)). No priced report generated. See ${reviewPath}`);
+  const details = issues.map(issue => {
+    const context = [
+      issue.orderId && `Order ${issue.orderId}`,
+      issue.productId && `Product ID ${issue.productId}`,
+      !issue.entryId && issue.product,
+    ].filter(Boolean).join(', ');
+    return `- ${context ? `${context}: ` : ''}${issue.reason}`;
+  }).join('\n');
+  const error = new Error(
+    `Vendor report data needs review (${issues.length} issue(s)). No priced report generated.\n\n` +
+    `${details}\n\nReview CSV: ${reviewPath}`
+  );
   error.issues = issues;
   error.reviewPath = reviewPath;
   throw error;
@@ -172,7 +183,7 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
   for (const row of rows) {
     const id = normalizeId(row.Order);
     if (!id) {
-      issues.push({ product: row.Product, reason: 'Missing order ID in export' });
+      issues.push({ product: row.Product, productId: normalizeId(row['Product ID']), reason: 'Missing order ID in export' });
       continue;
     }
     if (!rowsByOrder.has(id)) rowsByOrder.set(id, []);
@@ -197,7 +208,9 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
           if (isMembership(entry.category)) continue;
           try {
             const priced = priceOrderEntry(entry);
-            if (!String(entry.vendor_name || '').trim()) throw pricingError(entry, 'missing vendor name');
+            if (!String(entry.vendor_name || '').trim()) {
+              throw pricingError(entry, 'missing vendor assignment in Local Line. Assign a vendor to this product in Local Line, then rerun the report.');
+            }
             if (entry.is_box && entry.vendor_name === 'Full Farm CSA') {
               for (const component of entry.sub_order_entries || []) priceBoxComponent(component, priced.quantity);
             }
@@ -210,7 +223,7 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
               priceSource: PRICING_BASIS,
             });
           } catch (error) {
-            issues.push({ orderId: id, entryId: entry.id, product: entry.product_name, reason: error.message });
+            issues.push({ orderId: id, entryId: entry.id, product: entry.product_name, productId: normalizeId(entry.product), reason: error.message });
           }
         }
       } catch (error) {
