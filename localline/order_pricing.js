@@ -28,6 +28,13 @@ function pricingError(entry, message) {
   return new Error(`${entry.product_name || 'Unnamed product'} (entry ${entry.id ?? 'unknown'}): ${message}`);
 }
 
+function resolveOrderVendor(entry, productVendorMap = {}) {
+  // Catalog edits do not update vendor names saved on existing order entries.
+  // Only fill missing names; saved prices and existing vendor assignments win.
+  return String(entry.vendor_name || '').trim() ||
+    String(productVendorMap[normalizeId(entry.product)] || '').trim();
+}
+
 function historicalUnitPrice(entry) {
   const price = numberOrNull(entry.package_unit_price);
   if (price === null || price < 0) {
@@ -208,15 +215,16 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
           if (isMembership(entry.category)) continue;
           try {
             const priced = priceOrderEntry(entry);
-            if (!String(entry.vendor_name || '').trim()) {
-              throw pricingError(entry, 'missing vendor assignment in Local Line. Assign a vendor to this product in Local Line, then rerun the report.');
+            const vendor = resolveOrderVendor(entry, options.productVendorMap);
+            if (!vendor) {
+              throw pricingError(entry, 'missing vendor assignment on the saved order; no product vendor was resolved. Assign a vendor to this product in Local Line, then rerun the report with a fresh product export.');
             }
-            if (entry.is_box && entry.vendor_name === 'Full Farm CSA') {
+            if (entry.is_box && vendor === 'Full Farm CSA') {
               for (const component of entry.sub_order_entries || []) priceBoxComponent(component, priced.quantity);
             }
             lines.push({
               ...priced, orderId: id, entryId: entry.id, entry,
-              vendor: entry.vendor_name, category: entry.category || 'Uncategorized',
+              vendor, category: entry.category || 'Uncategorized',
               productId: normalizeId(entry.product), packageName: entry.package_name || '',
               sourceProductName: entry.product_name,
               product: [entry.charge_unit, entry.product_name].filter(Boolean).join(', ') + (entry.package_name ? ` - ${entry.package_name}` : ''),
@@ -290,7 +298,7 @@ function isHistoricalSummary(rows) {
 }
 
 module.exports = {
-  PRICING_BASIS, historicalUnitPrice, chargeQuantity, priceOrderEntry, priceBoxComponent,
+  PRICING_BASIS, resolveOrderVendor, historicalUnitPrice, chargeQuantity, priceOrderEntry, priceBoxComponent,
   readOrderRows, reconcileOrder, preserveOrderPrices, loadOrderPricing, summarizeVendorLines,
   aggregateVendorSummaryFromOrders, writeVendorSummaryCsv, isHistoricalSummary,
 };

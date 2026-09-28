@@ -5,7 +5,7 @@ const PDFDocument = require('pdfkit-table');
 const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
-const { loadOrderPricing, historicalUnitPrice, chargeQuantity, priceBoxComponent } = require('./order_pricing');
+const { loadOrderPricing, resolveOrderVendor, historicalUnitPrice, chargeQuantity, priceBoxComponent } = require('./order_pricing');
 
 const FULL_FARM_VENDOR = 'Full Farm CSA';
 const FULL_FARM_EMAIL = 'fullfarmcsa@deckfamilyfarm.com';
@@ -219,7 +219,7 @@ async function buildFullFarmBundleDetails(items, orderDetails, productVendorMap)
     ].filter(Boolean).join(' ');
 
     for (const entry of order.order_entries || []) {
-      if (entry.vendor_name !== FULL_FARM_VENDOR || !entry.is_box || !entry.sub_order_entries?.length) {
+      if (resolveOrderVendor(entry, productVendorMap) !== FULL_FARM_VENDOR || !entry.is_box || !entry.sub_order_entries?.length) {
         continue;
       }
 
@@ -812,7 +812,7 @@ async function runVendorReports(fulfillmentDate, testing = false) {
 
     const vendorEmails = await readVendorsCSV(vendorsFile);
     const productVendorMap = await readProductVendorMapExcel(productsFile);
-    const pricing = await loadOrderPricing(orderFile, token);
+    const pricing = await loadOrderPricing(orderFile, token, { productVendorMap });
     const vendorOrders = groupOrdersByVendor(pricing, fulfillmentDate.date);
     const bundleDetails = await buildFullFarmBundleDetails(
       vendorOrders[FULL_FARM_VENDOR] || [],

@@ -34,7 +34,11 @@ API failures, or mismatched exports stop priced reports before sending them.
 Details appear in `<orders-file>_pricing_review.csv` alongside the input CSV.
 The vendor failure email also lists each issue with its product and order IDs.
 For a missing vendor assignment, assign the product's vendor in Local Line,
-then rerun `vendors.js`; it downloads fresh orders automatically.
+then rerun `vendors.js`; it downloads fresh orders and products automatically.
+Local Line can retain a blank vendor on an existing order after its product is
+corrected. When the saved order vendor is blank, `vendors.js` uses the vendor
+from the fresh product export, matched by product ID. Existing order vendor
+assignments and saved prices are preserved. Unresolved vendors still stop the report.
 A saved price of $0 is valid. Weighted box components without an explicit charge
 quantity require review; their cost is not guessed from the customer price.
 Packing and customer balance/spending reports retain their existing behavior.
@@ -44,8 +48,8 @@ as an immutable version identified by its contents. These files exclude customer
 contact information. Correcting an order creates another version; rerunning an
 unchanged order leaves its version intact. Keep this directory in server backups.
 The reports no longer refresh dated `products_YYYY-MM-DD.xlsx` files for costing.
-Existing product snapshots are left in place. `vendors.js` still uses a current
-product export to resolve component vendor names, not prices.
+Existing product snapshots are left in place. `vendors.js` uses a current product
+export to resolve component vendor names and missing order vendor names, not prices.
 
 New summary CSVs include `PricingBasis=order-package-unit-price-v1`. Weekly report
 and dashboard readers flag older summaries and leave those costs unavailable

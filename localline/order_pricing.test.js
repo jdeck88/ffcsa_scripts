@@ -87,6 +87,55 @@ test('missing historical prices write a review file and reject the whole priced 
   });
 });
 
+test('fresh product vendors fill blank order vendors without replacing saved assignments or prices', async t => {
+  const orders = [order(1, [entry({ vendor_name: null })]),
+    order(2, [entry({ id: 101, product: 11, package_unit_price: 15 })])];
+  const f = await fixture(t, orders);
+  const data = await pricing.loadOrderPricing(f.csvPath, 'unused', {
+    ...f.options, productVendorMap: { '10': 'Deck Family Farm', '11': 'Changed Vendor' },
+  });
+  assert.deepEqual(data.lines.map(line => [line.vendor, line.price, line.totalPrice]),
+    [['Deck Family Farm', 20, 60], ['Example Farm', 15, 45]]);
+  assert.equal(data.orders.get('1').order_entries[0].vendor_name, null);
+  const snapshot = fs.readdirSync(f.options.historyDir).find(file => file.startsWith('1-'));
+  assert.equal(JSON.parse(fs.readFileSync(path.join(f.options.historyDir, snapshot))).entries[0].vendor_name, null);
+
+  orders[0].order_entries[0].package_unit_price = null;
+  await assert.rejects(pricing.loadOrderPricing(f.csvPath, 'unused', {
+    ...f.options, productVendorMap: { '10': 'Deck Family Farm' },
+  }), error => error.issues.some(issue => /package_unit_price/.test(issue.reason)));
+});
+
+test('missing vendors still block reporting when the fresh catalog cannot resolve the product ID', async t => {
+  const f = await fixture(t, [order(1, [entry({ vendor_name: ' ' })])]);
+  await assert.rejects(pricing.loadOrderPricing(f.csvPath, 'unused', {
+    ...f.options, productVendorMap: { '11': 'Deck Family Farm', '10': ' ' },
+  }), error => {
+    assert.match(error.message, /Order 1, Product ID 10: Salami/);
+    assert.match(error.message, /no product vendor was resolved/);
+    assert.match(error.message, /Assign a vendor to this product in Local Line/);
+    return true;
+  });
+});
+
+test('a box with a recovered vendor still validates and includes its components', async t => {
+  const component = { id: 20, product: 30, product_name: 'Ground Beef', charge_type: 'package', unit_quantity: 2, package_unit_price: 6, price: 12 };
+  const orders = [order(1, [entry({ vendor_name: null, is_box: true, sub_order_entries: [component] })])];
+  const f = await fixture(t, orders);
+  const productVendorMap = { '10': 'Full Farm CSA', '30': 'Deck Family Farm' };
+  const data = await pricing.loadOrderPricing(f.csvPath, 'unused', { ...f.options, productVendorMap });
+  const grouped = vendors.groupOrdersByVendor(data, '2026-09-30');
+  const details = await vendors.buildFullFarmBundleDetails(grouped['Full Farm CSA'], data.orders, productVendorMap);
+  assert.equal(details.length, 1);
+  assert.equal(details[0].components[0].sourceVendor, 'Deck Family Farm');
+  assert.equal(details[0].components[0].quantity, 6);
+  assert.equal(details[0].vendorCostTotal, 36);
+
+  component.charge_type = 'weight';
+  await assert.rejects(pricing.loadOrderPricing(f.csvPath, 'unused', { ...f.options, productVendorMap }),
+    error => error.issues.some(issue => /weighted box component needs review/.test(issue.reason)));
+});
+
 test('API failure, cancelled orders and invalid responses cannot become zero cost', async t => {
   const f = await fixture(t, [order(1, [entry()])]);
   for (const getOrder of [async () => { throw new Error('HTTP unavailable'); }, async () => ({}), async () => ({ ...order(1, [entry()]), status: 'CANCELLED' })]) {
