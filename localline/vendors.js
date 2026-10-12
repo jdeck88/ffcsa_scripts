@@ -12,6 +12,10 @@ const FULL_FARM_EMAIL = 'fullfarmcsa@deckfamilyfarm.com';
 const VENDOR_EMAIL_FALLBACK_FIELDS = {
   'Falk Farm': ['Internal Email']
 };
+// Confirmed contacts take precedence over the refreshed Local Line export.
+const VENDOR_EMAIL_OVERRIDES = {
+  "Cook-Books Bakin'": 'cookbooksbakin@gmail.com'
+};
 const BOX_CONTENT_CATEGORY = 'Box Contents';
 const BOX_COMPONENT_SOURCE = 'full_farm_box_component';
 
@@ -44,6 +48,7 @@ function normalizeText(value) {
 
 function getVendorEmail(row) {
   const vendor = normalizeText(row['Vendor']);
+  if (VENDOR_EMAIL_OVERRIDES[vendor]) return VENDOR_EMAIL_OVERRIDES[vendor];
   const primaryEmail = normalizeText(row['Email']);
   if (primaryEmail) return primaryEmail;
 
@@ -130,7 +135,7 @@ function groupByCategoryWithSubtotals(items) {
 
 // Load vendor emails from CSV
 async function readVendorsCSV(filePath) {
-  const vendors = {};
+  const vendors = { ...VENDOR_EMAIL_OVERRIDES };
   return new Promise((resolve, reject) => {
     fs.createReadStream(filePath)
       .pipe(fastcsv.parse({ headers: true }))
