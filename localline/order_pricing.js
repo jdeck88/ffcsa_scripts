@@ -24,6 +24,19 @@ function isMembership(category) {
   return String(category || '').trim().toLowerCase() === 'membership';
 }
 
+function isSideEntry(entry) {
+  return /\bsides?\b/i.test(String(entry.product_name || '')) ||
+    /^(?:meat\s+)?sides?$/i.test(String(entry.category || '').trim());
+}
+
+function isSideRelatedEntry(entry, orderEntries = []) {
+  if (isSideEntry(entry)) return true;
+  // Some side orders use these generic labels. Only exclude them when the
+  // same order explicitly contains a side; unrelated order lines still price normally.
+  const name = String(entry.product_name || '').trim().replace(/\s+/g, ' ');
+  return /^(?:delivery fee|split payments)$/i.test(name) && orderEntries.some(isSideEntry);
+}
+
 function pricingError(entry, message) {
   return new Error(`${entry.product_name || 'Unnamed product'} (entry ${entry.id ?? 'unknown'}): ${message}`);
 }
@@ -162,25 +175,26 @@ function csvCell(value) {
   return '"' + String(value ?? '').replace(/"/g, '""') + '"';
 }
 
-function throwPricingReview(issues, csvPath) {
+function pricingReviewError(issues, csvPath, outcome = 'No priced report generated.') {
   const reviewPath = csvPath.replace(/\.csv$/i, '') + '_pricing_review.csv';
-  const content = [['Order', 'Entry', 'Product', 'Reason', 'Product ID'], ...issues.map(i => [i.orderId, i.entryId, i.product, i.reason, i.productId])];
+  const content = [['Order', 'Entry', 'Product', 'Reason', 'Product ID', 'Vendor'], ...issues.map(i => [i.orderId, i.entryId, i.product, i.reason, i.productId, i.vendor])];
   fs.writeFileSync(reviewPath, content.map(row => row.map(csvCell).join(',')).join('\n') + '\n');
   const details = issues.map(issue => {
     const context = [
       issue.orderId && `Order ${issue.orderId}`,
+      issue.vendor && `Vendor ${issue.vendor}`,
       issue.productId && `Product ID ${issue.productId}`,
       !issue.entryId && issue.product,
     ].filter(Boolean).join(', ');
     return `- ${context ? `${context}: ` : ''}${issue.reason}`;
   }).join('\n');
   const error = new Error(
-    `Vendor report data needs review (${issues.length} issue(s)). No priced report generated.\n\n` +
+    `Vendor report data needs review (${issues.length} issue(s)). ${outcome}\n\n` +
     `${details}\n\nReview CSV: ${reviewPath}`
   );
   error.issues = issues;
   error.reviewPath = reviewPath;
-  throw error;
+  return error;
 }
 
 async function loadOrderPricing(csvPath, accessToken, options = {}) {
@@ -198,6 +212,16 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
   }
   const orders = new Map();
   const lines = [];
+  const excludedSideEntries = [];
+  // Box parent and source-vendor reports share quantities. If one is withheld,
+  // withhold linked reports too so nobody receives an incomplete fulfillment sheet.
+  const vendorDependencies = new Map();
+  function linkVendors(a, b) {
+    if (!vendorDependencies.has(a)) vendorDependencies.set(a, new Set());
+    if (!vendorDependencies.has(b)) vendorDependencies.set(b, new Set());
+    vendorDependencies.get(a).add(b);
+    vendorDependencies.get(b).add(a);
+  }
   const pending = [...rowsByOrder.keys()];
   const getOrder = options.fetchOrder || fetchOrder;
   const historyDir = options.historyDir === undefined ? DEFAULT_HISTORY_DIR : options.historyDir;
@@ -213,14 +237,28 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
         orders.set(id, order);
         for (const entry of order.order_entries) {
           if (isMembership(entry.category)) continue;
+          if (isSideRelatedEntry(entry, order.order_entries)) {
+            excludedSideEntries.push({ orderId: id, entryId: entry.id, product: entry.product_name });
+            continue;
+          }
+          const vendor = resolveOrderVendor(entry, options.productVendorMap);
+          if (entry.is_box && vendor === 'Full Farm CSA') {
+            for (const component of entry.sub_order_entries || []) {
+              linkVendors(vendor, resolveOrderVendor(component, options.productVendorMap));
+            }
+          }
           try {
             const priced = priceOrderEntry(entry);
-            const vendor = resolveOrderVendor(entry, options.productVendorMap);
             if (!vendor) {
               throw pricingError(entry, 'missing vendor assignment on the saved order; no product vendor was resolved. Assign a vendor to this product in Local Line, then rerun the report with a fresh product export.');
             }
             if (entry.is_box && vendor === 'Full Farm CSA') {
-              for (const component of entry.sub_order_entries || []) priceBoxComponent(component, priced.quantity);
+              for (const component of entry.sub_order_entries || []) {
+                priceBoxComponent(component, priced.quantity);
+                if (options.allowPartialVendors && !resolveOrderVendor(component, options.productVendorMap)) {
+                  throw pricingError(component, 'missing box component vendor assignment');
+                }
+              }
             }
             lines.push({
               ...priced, orderId: id, entryId: entry.id, entry,
@@ -231,7 +269,7 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
               priceSource: PRICING_BASIS,
             });
           } catch (error) {
-            issues.push({ orderId: id, entryId: entry.id, product: entry.product_name, productId: normalizeId(entry.product), reason: error.message });
+            issues.push({ orderId: id, entryId: entry.id, product: entry.product_name, productId: normalizeId(entry.product), vendor, reason: error.message });
           }
         }
       } catch (error) {
@@ -241,9 +279,23 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
     }
   }
   await Promise.all(Array.from({ length: Math.min(4, pending.length) }, worker));
-  if (issues.length) throwPricingReview(issues, csvPath);
+  const blockedVendors = new Set(issues.map(issue => issue.vendor || ''));
+  for (const vendor of blockedVendors) {
+    for (const dependency of vendorDependencies.get(vendor) || []) blockedVendors.add(dependency);
+  }
+  let review = null;
+  if (issues.length) {
+    // An unknown vendor, API failure, or mismatched export leaves the affected
+    // vendors uncertain. Do not assume any fulfillment sheet is complete.
+    if (!options.allowPartialVendors || blockedVendors.has('')) {
+      throw pricingReviewError(issues, csvPath);
+    }
+    review = pricingReviewError(issues, csvPath,
+      `Reports withheld for: ${[...blockedVendors].sort().join(', ')}. Unaffected vendors can proceed.`);
+  }
   lines.sort((a, b) => a.vendor.localeCompare(b.vendor) || a.orderId.localeCompare(b.orderId) || a.entryId - b.entryId);
-  return { orders, lines };
+  return { orders, lines: lines.filter(line => !blockedVendors.has(line.vendor)), excludedSideEntries,
+    issues, blockedVendors: [...blockedVendors].sort(), reviewPath: review?.reviewPath, reviewMessage: review?.message };
 }
 
 function summarizeVendorLines(lines) {
@@ -262,7 +314,7 @@ function summarizeVendorLines(lines) {
 }
 
 async function aggregateVendorSummaryFromOrders(csvPath, accessToken, options) {
-  return summarizeVendorLines((await loadOrderPricing(csvPath, accessToken, options)).lines);
+  return summarizeVendorLines((await loadOrderPricing(csvPath, accessToken, { ...options, allowPartialVendors: false })).lines);
 }
 
 async function writeVendorSummaryCsv(summary, filePath) {
@@ -298,7 +350,7 @@ function isHistoricalSummary(rows) {
 }
 
 module.exports = {
-  PRICING_BASIS, resolveOrderVendor, historicalUnitPrice, chargeQuantity, priceOrderEntry, priceBoxComponent,
+  PRICING_BASIS, isSideRelatedEntry, resolveOrderVendor, historicalUnitPrice, chargeQuantity, priceOrderEntry, priceBoxComponent,
   readOrderRows, reconcileOrder, preserveOrderPrices, loadOrderPricing, summarizeVendorLines,
   aggregateVendorSummaryFromOrders, writeVendorSummaryCsv, isHistoricalSummary,
 };

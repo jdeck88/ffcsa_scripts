@@ -5,7 +5,7 @@ const PDFDocument = require('pdfkit-table');
 const fastcsv = require('fast-csv');
 const ExcelJS = require('exceljs');
 const utilities = require('./utilities');
-const { loadOrderPricing, resolveOrderVendor, historicalUnitPrice, chargeQuantity, priceBoxComponent } = require('./order_pricing');
+const { loadOrderPricing, isSideRelatedEntry, resolveOrderVendor, historicalUnitPrice, chargeQuantity, priceBoxComponent } = require('./order_pricing');
 
 const FULL_FARM_VENDOR = 'Full Farm CSA';
 const FULL_FARM_EMAIL = 'fullfarmcsa@deckfamilyfarm.com';
@@ -224,6 +224,7 @@ async function buildFullFarmBundleDetails(items, orderDetails, productVendorMap)
     ].filter(Boolean).join(' ');
 
     for (const entry of order.order_entries || []) {
+      if (isSideRelatedEntry(entry, order.order_entries)) continue;
       if (resolveOrderVendor(entry, productVendorMap) !== FULL_FARM_VENDOR || !entry.is_box || !entry.sub_order_entries?.length) {
         continue;
       }
@@ -628,7 +629,7 @@ function addBoxContentAuditToPdf(doc, boxContentReport) {
 }
 
 // Generate summary PDF
-async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = null) {
+async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = null, runNotice = '') {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument();
     const stream = fs.createWriteStream(outputFile);
@@ -661,6 +662,13 @@ async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = n
 
     doc.on('pageAdded', drawPageHeader);
     drawPageHeader();
+
+    if (runNotice) {
+      doc.fontSize(14).text('Vendor report status');
+      doc.moveDown(0.5);
+      doc.fontSize(10).text(runNotice);
+      if (vendorNames.length) doc.addPage();
+    }
 
     vendorNames.forEach((vendor, i) => {
       const items = vendorOrders[vendor];
@@ -708,8 +716,10 @@ async function sendVendorEmails(
   vendorEmails,
   fulfillmentDate,
   testing = false,
-  boxContentReport = null
+  boxContentReport = null,
+  { delayMs = 3000 } = {}
 ) {
+  const result = { sent: [], failed: [] };
   for (const [vendor, items] of Object.entries(vendorOrders)) {
     let email = vendorEmails[vendor];
     if (vendor === FULL_FARM_VENDOR) {
@@ -718,77 +728,96 @@ async function sendVendorEmails(
     if (!items.length) continue;
 
     // In normal mode, skip vendors without an email
-    if (!email && !testing) continue;
-
-    const doc = new PDFDocument();
-    doc.fontSize(16).text('Fulfillment Sheet for Full Farm CSA, LLC', { align: 'right' });
-    doc.fontSize(16).text(utilities.getToday(), { align: 'right' });
-    doc.fontSize(16).text(vendor, { bold: true });
-
-    const rows = groupByCategoryWithSubtotals(items);
-    const table = {
-      headers: ['Product', 'Quantity', 'Price', 'Total Price'],
-      rows
-    };
-
-    const sumTotal = items.reduce((sum, item) => sum + item.totalPrice, 0);
-    doc.table(table);
-    doc.text('Total Price ' + sumTotal.toFixed(2), { align: 'right', bold: true });
-
-    const vendorBoxAdditions = getBoxContentAdditionsForVendor(boxContentReport, vendor);
-    if (vendorBoxAdditions.length && vendor !== FULL_FARM_VENDOR) {
-      doc.moveDown(0.4);
-      doc.fontSize(10).text(
-        `Box Contents note: ${vendorBoxAdditions.length} line(s) in this report were added from Full Farm CSA box orders.`
-      );
+    if (!email && !testing) {
+      result.failed.push({ vendor, reason: 'No vendor email address on file' });
+      continue;
     }
-
-    const bundleDetails = boxContentReport ? boxContentReport.bundleDetails : [];
-    if (vendor === FULL_FARM_VENDOR && bundleDetails.length) {
-      addFullFarmNotesToPdf(doc, bundleDetails);
-    }
-
-    // 🔹 Testing mode: send ONLY to jdeck88@gmail.com
-    const toAddress = testing ? 'jdeck88@gmail.com' : email;
-    const fromAddress = testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com';
-    const ccAddress =
-      testing || toAddress === FULL_FARM_EMAIL ? undefined : FULL_FARM_EMAIL;
-
-    let messageText = testing
-      ? `TESTING MODE: This fulfillment report would normally go to ${email || '(no email on file)'} for vendor "${vendor}".`
-      : 'The attached PDF contains the Full Farm CSA Order for the next fulfillment cycle. Please reply with questions.';
-
-    if (vendor === FULL_FARM_VENDOR && bundleDetails.length) {
-      messageText += '\n\nBundle component details are included in the FFCSA notes section of the attached PDF.';
-    }
-    if (vendorBoxAdditions.length && vendor !== FULL_FARM_VENDOR) {
-      messageText += `\n\nThis fulfillment report includes ${vendorBoxAdditions.length} line(s) added from Full Farm CSA box contents. These are grouped under Box Contents in the attached PDF.`;
-    }
-
-    const mailOptions = {
-      from: fromAddress,
-      to: toAddress,
-      cc: ccAddress,
-      bcc: testing ? undefined : 'jdeck88@gmail.com',
-      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: Vendor Fulfillments for ${vendor} - ${utilities.getToday()}`,
-      text: messageText
-    };
 
     try {
+      const doc = new PDFDocument();
+      doc.fontSize(16).text('Fulfillment Sheet for Full Farm CSA, LLC', { align: 'right' });
+      doc.fontSize(16).text(utilities.getToday(), { align: 'right' });
+      doc.fontSize(16).text(vendor, { bold: true });
+
+      const rows = groupByCategoryWithSubtotals(items);
+      const table = {
+        headers: ['Product', 'Quantity', 'Price', 'Total Price'],
+        rows
+      };
+
+      const sumTotal = items.reduce((sum, item) => sum + item.totalPrice, 0);
+      doc.table(table);
+      doc.text('Total Price ' + sumTotal.toFixed(2), { align: 'right', bold: true });
+
+      const vendorBoxAdditions = getBoxContentAdditionsForVendor(boxContentReport, vendor);
+      if (vendorBoxAdditions.length && vendor !== FULL_FARM_VENDOR) {
+        doc.moveDown(0.4);
+        doc.fontSize(10).text(
+          `Box Contents note: ${vendorBoxAdditions.length} line(s) in this report were added from Full Farm CSA box orders.`
+        );
+      }
+
+      const bundleDetails = boxContentReport ? boxContentReport.bundleDetails : [];
+      if (vendor === FULL_FARM_VENDOR && bundleDetails.length) {
+        addFullFarmNotesToPdf(doc, bundleDetails);
+      }
+
+      // 🔹 Testing mode: send ONLY to jdeck88@gmail.com
+      const toAddress = testing ? 'jdeck88@gmail.com' : email;
+      const fromAddress = testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com';
+      const ccAddress =
+        testing || toAddress === FULL_FARM_EMAIL ? undefined : FULL_FARM_EMAIL;
+
+      let messageText = testing
+        ? `TESTING MODE: This fulfillment report would normally go to ${email || '(no email on file)'} for vendor "${vendor}".`
+        : 'The attached PDF contains the Full Farm CSA Order for the next fulfillment cycle. Please reply with questions.';
+
+      if (vendor === FULL_FARM_VENDOR && bundleDetails.length) {
+        messageText += '\n\nBundle component details are included in the FFCSA notes section of the attached PDF.';
+      }
+      if (vendorBoxAdditions.length && vendor !== FULL_FARM_VENDOR) {
+        messageText += `\n\nThis fulfillment report includes ${vendorBoxAdditions.length} line(s) added from Full Farm CSA box contents. These are grouped under Box Contents in the attached PDF.`;
+      }
+
+      const mailOptions = {
+        from: fromAddress,
+        to: toAddress,
+        cc: ccAddress,
+        bcc: testing ? undefined : 'jdeck88@gmail.com',
+        subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: Vendor Fulfillments for ${vendor} - ${utilities.getToday()}`,
+        text: messageText
+      };
+
       await utilities.mailADocument(doc, mailOptions, 'vendor_fulfillment.pdf');
+      result.sent.push(vendor);
     } catch (err) {
       console.error(`Failed to send to ${vendor}:`, err.message);
+      result.failed.push({ vendor, reason: err.message });
     }
 
-    await new Promise(res => setTimeout(res, 3000)); // delay between sends
+    if (delayMs > 0) await new Promise(res => setTimeout(res, delayMs));
   }
+  return result;
+}
+
+function formatVendorRunSummary(pricing, delivery = null) {
+  const parts = [];
+  if (pricing.blockedVendors.length) {
+    parts.push(`PARTIAL REPORT: Vendor reports withheld for ${pricing.blockedVendors.join(', ')}. Entire vendor reports are withheld, including otherwise valid lines. Box-related vendors may also be withheld to avoid incomplete quantities.`);
+  }
+  if (delivery) {
+    parts.push(`Vendor emails sent: ${delivery.sent.join(', ') || 'none'}.`);
+    if (delivery.failed.length) parts.push('Vendor email failures:\n' + delivery.failed.map(item => `- ${item.vendor}: ${item.reason}`).join('\n'));
+  }
+  if (pricing.reviewMessage) parts.push(pricing.reviewMessage);
+  return parts.join('\n\n');
 }
 
 // Main
-async function runVendorReports(fulfillmentDate, testing = false) {
-  const productsFile = 'data/products.xlsx';
-  const vendorsFile = 'data/vendors.csv';
-  const pdfFile = 'data/vendors.pdf';
+async function runVendorReports(fulfillmentDate, testing = false, { dataDir = 'data', emailDelayMs = 3000 } = {}) {
+  const productsFile = path.join(dataDir, 'products.xlsx');
+  const vendorsFile = path.join(dataDir, 'vendors.csv');
+  const pdfFile = path.join(dataDir, 'vendors.pdf');
 
   try {
     // Refresh selection before fetching the saved prices on those orders.
@@ -817,7 +846,12 @@ async function runVendorReports(fulfillmentDate, testing = false) {
 
     const vendorEmails = await readVendorsCSV(vendorsFile);
     const productVendorMap = await readProductVendorMapExcel(productsFile);
-    const pricing = await loadOrderPricing(orderFile, token, { productVendorMap });
+    const pricing = await loadOrderPricing(orderFile, token, {
+      productVendorMap, allowPartialVendors: true, historyDir: path.join(dataDir, 'order_price_history')
+    });
+    if (pricing.excludedSideEntries.length) {
+      console.log(`Excluded ${pricing.excludedSideEntries.length} side purchase/payment/fee line(s) from vendor costing (no vendor cost).`);
+    }
     const vendorOrders = groupOrdersByVendor(pricing, fulfillmentDate.date);
     const bundleDetails = await buildFullFarmBundleDetails(
       vendorOrders[FULL_FARM_VENDOR] || [],
@@ -827,31 +861,42 @@ async function runVendorReports(fulfillmentDate, testing = false) {
     const boxContentReport = buildBoxContentReport(bundleDetails, vendorEmails, fulfillmentDate.date);
     addBoxContentAdditionsToVendorOrders(vendorOrders, boxContentReport.additions);
     console.log(formatBoxContentEmailSummary(boxContentReport));
+    const reviewNotice = formatVendorRunSummary(pricing);
+    if (reviewNotice) console.warn(reviewNotice);
+    if (pricing.issues.length) process.exitCode = 1;
 
     if (process.argv.includes('--dry-run')) {
-      await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport);
+      await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport, reviewNotice);
       console.log(`Dry run: wrote ${pdfFile}; no emails sent.`);
       return;
     }
 
-    await sendVendorEmails(
+    const delivery = await sendVendorEmails(
       vendorOrders,
       vendorEmails,
       fulfillmentDate.date,
       testing,
-      boxContentReport
+      boxContentReport,
+      { delayMs: emailDelayMs }
     );
-    const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport);
+    const runSummary = formatVendorRunSummary(pricing, delivery);
+    console.log(runSummary);
+    if (delivery.failed.length) process.exitCode = 1;
+    const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport, runSummary);
+    const partial = pricing.issues.length > 0 || delivery.failed.length > 0;
 
     const summaryMail = {
       from: 'jdeck88@gmail.com',
       to: testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com',
       cc: testing ? undefined : 'jdeck88@gmail.com',
-      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: All Vendor Data for ${fulfillmentDate.date}`,
+      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: ${partial ? 'PARTIAL Vendor Report' : 'All Vendor Data'} for ${fulfillmentDate.date}`,
       text: `${testing
         ? 'TESTING MODE: This is the consolidated vendor report. In production this would go to fullfarmcsa@deckfamilyfarm.com.'
-        : 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.'}\n\n${formatBoxContentEmailSummary(boxContentReport)}`,
-      attachments: [{ filename: 'vendors.pdf', content: fs.readFileSync(summaryPDF) }]
+        : 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.'}\n\n${runSummary}\n\n${formatBoxContentEmailSummary(boxContentReport)}`,
+      attachments: [
+        { filename: 'vendors.pdf', content: fs.readFileSync(summaryPDF) },
+        ...(pricing.reviewPath ? [{ filename: path.basename(pricing.reviewPath), content: fs.readFileSync(pricing.reviewPath) }] : [])
+      ]
     };
 
     await utilities.sendEmail(summaryMail);
@@ -869,4 +914,4 @@ if (require.main === module) {
 }
 
 module.exports = { groupOrdersByVendor, groupByCategoryWithSubtotals, buildFullFarmBundleDetails,
-  buildBoxContentReport, addBoxContentAdditionsToVendorOrders, generateSummaryPDF };
+  buildBoxContentReport, addBoxContentAdditionsToVendorOrders, generateSummaryPDF, sendVendorEmails, formatVendorRunSummary, runVendorReports };

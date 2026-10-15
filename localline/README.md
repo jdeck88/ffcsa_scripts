@@ -29,10 +29,20 @@ cost the parent order lines. This change does not reallocate bundle sales or
 replace parent box costs with component costs in those summaries.
 
 Order exports and fetched order details are checked for matching product/package
-subtotals. Missing vendor assignments, missing historical prices, unavailable component charge quantities,
-API failures, or mismatched exports stop priced reports before sending them.
-Details appear in `<orders-file>_pricing_review.csv` alongside the input CSV.
-The vendor failure email also lists each issue with its product and order IDs.
+subtotals. In `vendors.js`, a missing historical price or invalid quantity withholds
+the affected vendor's entire report; unaffected vendors still receive theirs.
+Full Farm CSA boxes link the parent vendor and component suppliers: linked
+vendors are withheld together so no fulfillment sheet has incomplete quantities.
+Unknown vendors, API failures, and mismatched exports still stop the entire run
+because the affected vendors cannot be established reliably. Monthly/weekly
+financial summaries and dashboard backfills remain all-or-nothing.
+Details appear in `<orders-file>_pricing_review.csv`, including the affected vendor.
+The consolidated email and PDF identify withheld vendors and delivery failures,
+list successful vendor emails, and label an incomplete run as partial. The review
+CSV is attached to the consolidated email. Individual email failures do not
+prevent later vendors from receiving their reports. Any incomplete run sets a
+nonzero Node exit code; `--dry-run` writes artifacts without sending emails.
+Rerunning sends all eligible vendors again, including prior successes.
 For a missing vendor assignment, assign the product's vendor in Local Line,
 then rerun `vendors.js`; it downloads fresh orders and products automatically.
 Local Line can retain a blank vendor on an existing order after its product is
@@ -41,6 +51,15 @@ from the fresh product export, matched by product ID. Existing order vendor
 assignments and saved prices are preserved. Unresolved vendors still stop the report.
 A saved price of $0 is valid. Weighted box components without an explicit charge
 quantity require review; their cost is not guessed from the customer price.
+Meat sides, side deposits, side delivery fees, and side payments have no vendor
+cost and are excluded from vendor fulfillment sheets and vendor sales/cost
+summaries. Entries are identified by the whole word `side` or `sides` in their
+product name, or a category of `Side`, `Sides`, `Meat Side`, or `Meat Sides`.
+Generic `Delivery Fee` and `Split payments` entries are also excluded when the
+same order contains an explicitly identified side entry. Other products in a
+mixed order retain normal vendor-price validation. Excluded entries remain in
+the order exports, reconciliation checks, and pricing snapshots; their customer
+charges are not substituted for vendor costs. Vendor runs log the excluded count.
 Packing and customer balance/spending reports retain their existing behavior.
 
 Each fetched order's pricing data is preserved in `data/order_price_history/`
