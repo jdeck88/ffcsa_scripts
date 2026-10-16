@@ -100,6 +100,11 @@ node weekly_report.js /tmp/sales_kpi26.csv /tmp/weekly_report.pdf --backfill-ven
 node publish_dashboard_auto26.js --backfill-vendor-weeks --dry-run
 ```
 
+The monthly report downloads a fresh product table to fill missing vendor names
+on saved orders. Existing order vendor names and historical prices are preserved.
+The PDF ends with NOTES listing any recovered vendor assignments. The date
+argument selects the prior month; use `2026-10-01` for September 2026.
+
 These reporting commands make read-only Local Line API requests. The two
 `--dry-run` report modes still write local exports and reports. Rebuilding many
 weeks takes longer because saved order details are fetched individually, with

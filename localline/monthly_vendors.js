@@ -3,7 +3,8 @@ const path = require('path');
 require('dotenv').config();
 const PDFDocument = require('pdfkit-table');
 const utilities = require('./utilities');
-const { aggregateVendorSummaryFromOrders, writeVendorSummaryCsv } = require('./order_pricing');
+const { loadOrderPricing, summarizeVendorLines, writeVendorSummaryCsv } = require('./order_pricing');
+const { readProductVendorMapExcel } = require('./vendors');
 
 /* ------------------------------------------------
  * Date helpers
@@ -83,10 +84,33 @@ async function downloadMonthlyOrdersCsv(fulfillmentDateStart, fulfillmentDateEnd
   }
 }
 
-async function generateSummaryPDF(summary, pdfPath, startStr, endStr) {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 30 });
-    const stream = fs.createWriteStream(pdfPath);
+function buildReportNotes(lines) {
+  const notes = [
+    'Orders are selected by fulfillment date. Vendor costs use saved order prices and quantities; current catalog prices are not used.',
+    'Missing vendor names on saved orders are filled from the fresh Local Line product export. Existing order vendor assignments are preserved.'
+  ];
+  const recovered = new Map();
+  for (const line of lines) {
+    if (String(line.entry.vendor_name || '').trim()) continue;
+    const key = JSON.stringify([line.productId, line.vendor]);
+    if (!recovered.has(key)) recovered.set(key, { line, orders: new Set() });
+    recovered.get(key).orders.add(line.orderId);
+  }
+  for (const { line, orders } of recovered.values()) {
+    notes.push(`${line.sourceProductName} (product ${line.productId}): ${line.vendor}; filled missing vendor on order(s) ${[...orders].sort().join(', ')}.`);
+  }
+  return notes;
+}
+
+async function generateSummaryPDF(summary, pdfPath, startStr, endStr, notes = []) {
+  const doc = new PDFDocument({ margin: 30 });
+  const stream = fs.createWriteStream(pdfPath);
+  const finished = new Promise((resolve, reject) => {
+    stream.on('finish', () => resolve(pdfPath));
+    stream.on('error', reject);
+    doc.on('error', reject);
+  });
+  try {
 
     doc.pipe(stream);
 
@@ -134,16 +158,25 @@ async function generateSummaryPDF(summary, pdfPath, startStr, endStr) {
       rows
     };
 
-    doc.table(table);
+    await doc.table(table);
+
+    doc.moveDown();
+    doc.fontSize(12).text('NOTES');
+    doc.moveDown(0.5);
+    for (const note of notes) {
+      doc.fontSize(9).text(note);
+      doc.moveDown(0.5);
+    }
 
     doc.end();
 
-    stream.on('finish', () => {
-      console.log(`✅ Wrote PDF summary: ${pdfPath}`);
-      resolve(pdfPath);
-    });
-    stream.on('error', reject);
-  });
+  } catch (error) {
+    doc.destroy(error);
+    stream.destroy(error);
+  }
+  await finished;
+  console.log(`✅ Wrote PDF summary: ${pdfPath}`);
+  return pdfPath;
 }
 
 /* ------------------------------------------------
@@ -183,7 +216,16 @@ async function main() {
     const token = JSON.parse(await utilities.getAccessToken()).access;
 
     const ordersCsvPath = await downloadMonthlyOrdersCsv(startStr, endStr, token);
-    const summary = await aggregateVendorSummaryFromOrders(ordersCsvPath, token);
+    const productsFile = path.join('data', `products_monthly_${startStr}_to_${endStr}.xlsx`);
+    await utilities.downloadBinaryData(
+      'https://localline.ca/api/backoffice/v2/products/export/?direct=true',
+      productsFile,
+      token
+    );
+    const productVendorMap = await readProductVendorMapExcel(productsFile);
+    const pricing = await loadOrderPricing(ordersCsvPath, token, { productVendorMap, allowPartialVendors: false });
+    const summary = summarizeVendorLines(pricing.lines);
+    const notes = buildReportNotes(pricing.lines);
 
     if (!summary.length) {
       console.log('⚠️ No vendor orders found for that month range.');
@@ -200,7 +242,7 @@ async function main() {
       'data',
       `vendor_monthly_summary_${startStr}_to_${endStr}.pdf`
     );
-    await generateSummaryPDF(summary, pdfPath, startStr, endStr);
+    await generateSummaryPDF(summary, pdfPath, startStr, endStr, notes);
 
     if (!process.argv.includes('--dry-run')) await emailSummaryPdf(pdfPath, startStr, endStr);
 
@@ -227,3 +269,5 @@ if (require.main === module) main()
     console.error('❌ Fatal error in vendor monthly summary:', err);
     setTimeout(() => process.exit(1), 100);
   });
+
+module.exports = { buildReportNotes, generateSummaryPDF };

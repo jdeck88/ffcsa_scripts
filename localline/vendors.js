@@ -913,5 +913,5 @@ if (require.main === module) {
   runVendorReports(utilities.getConfiguredFullfillmentDate(), testing);
 }
 
-module.exports = { groupOrdersByVendor, groupByCategoryWithSubtotals, buildFullFarmBundleDetails,
+module.exports = { readProductVendorMapExcel, groupOrdersByVendor, groupByCategoryWithSubtotals, buildFullFarmBundleDetails,
   buildBoxContentReport, addBoxContentAdditionsToVendorOrders, generateSummaryPDF, sendVendorEmails, formatVendorRunSummary, runVendorReports };

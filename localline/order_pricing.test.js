@@ -8,6 +8,8 @@ const pricing = require('./order_pricing');
 const vendors = require('./vendors');
 const weekly = require('./weekly_report');
 const dashboard = require('./publish_dashboard_auto26');
+const monthly = require('./monthly_vendors');
+const ExcelJS = require('exceljs');
 
 function entry(overrides = {}) {
   return {
@@ -104,6 +106,28 @@ test('fresh product vendors fill blank order vendors without replacing saved ass
   await assert.rejects(pricing.loadOrderPricing(f.csvPath, 'unused', {
     ...f.options, productVendorMap: { '10': 'Deck Family Farm' },
   }), error => error.issues.some(issue => /package_unit_price/.test(issue.reason)));
+});
+
+test('monthly report uses refreshed product vendors and notes only recovered assignments', async t => {
+  const f = await fixture(t, [order(1, [entry({ vendor_name: null })]),
+    order(2, [entry({ id: 101, vendor_name: '' })]),
+    order(3, [entry({ id: 102, product: 11 })])]);
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet('Availability');
+  sheet.addRows([['Local Line Product ID', 'Vendor'], [10, 'Deck Family Farm'], [11, 'Changed Vendor']]);
+  const productsFile = path.join(f.dir, 'products.xlsx');
+  await workbook.xlsx.writeFile(productsFile);
+  const productVendorMap = await vendors.readProductVendorMapExcel(productsFile);
+  const data = await pricing.loadOrderPricing(f.csvPath, 'unused', { ...f.options, productVendorMap });
+  const notes = monthly.buildReportNotes(data.lines);
+  assert.equal(notes.length, 3);
+  assert.match(notes[2], /Salami \(product 10\): Deck Family Farm; filled missing vendor on order\(s\) 1, 2/);
+  assert.ok(!notes.join('\n').includes('Changed Vendor'));
+  const summary = pricing.summarizeVendorLines(data.lines);
+  assert.equal(summary.reduce((sum, row) => sum + row.purchaseCost, 0), 180);
+  const pdf = path.join(f.dir, 'monthly.pdf');
+  await monthly.generateSummaryPDF(summary, pdf, '2026-09-01', '2026-09-30', notes);
+  assert.ok(fs.statSync(pdf).size > 0);
 });
 
 test('missing vendors still block reporting when the fresh catalog cannot resolve the product ID', async t => {
