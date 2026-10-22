@@ -628,86 +628,115 @@ function addBoxContentAuditToPdf(doc, boxContentReport) {
   }
 }
 
-// Generate summary PDF
-async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = null, runNotice = '') {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument();
-    const stream = fs.createWriteStream(outputFile);
+const EMAIL_STATUS_LEGEND = 'Reports marked “Emailed” have been emailed directly to the vendors. Reports without an “Emailed” label have not been emailed.';
 
-    doc.pipe(stream);
+function vendorReportTitle(fulfillmentDate) {
+  return `FFCSA Reports: All Vendor Data for ${fulfillmentDate}`;
+}
 
-    const vendorNames = Object.keys(vendorOrders).filter(vendor => vendorOrders[vendor].length > 0);
-    const fulfillmentDate = vendorNames.length
-      ? vendorOrders[vendorNames[0]][0].fulfillmentDate
-      : null;
-
-    const drawPageHeader = () => {
-      if (!fulfillmentDate) return;
-      const previousFontSize = doc._fontSize || 12;
-      const previousX = doc.x;
-      const previousY = doc.y;
-      const headerFontSize = 16;
-
-      doc.fontSize(headerFontSize);
-      const headerHeight = doc.currentLineHeight();
-      const headerY = Math.max(0, doc.page.margins.top - headerHeight);
-      const headerX = doc.page.margins.left;
-      const headerWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-
-      doc.text(fulfillmentDate, headerX, headerY, { align: 'right', width: headerWidth });
-      doc.fontSize(previousFontSize);
-      doc.x = previousX;
-      doc.y = previousY;
-    };
-
-    doc.on('pageAdded', drawPageHeader);
-    drawPageHeader();
+// Successful delivery, rather than the presence of an address, earns an Emailed badge.
+async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = null, runNotice = '', {
+  title, delivery = null, blockedVendors = [], fulfillmentDate: configuredDate = '', testing = false
+} = {}) {
+  const fulfillmentDate = configuredDate || Object.values(vendorOrders).find(items => items.length)?.[0].fulfillmentDate || utilities.getToday();
+  title = title || vendorReportTitle(fulfillmentDate);
+  const doc = new PDFDocument({ bufferPages: true, margin: 48, info: { Title: title } });
+  const stream = fs.createWriteStream(outputFile);
+  const finished = new Promise((resolve, reject) => {
+    stream.on('finish', resolve);
+    stream.on('error', reject);
+    doc.on('error', reject);
+  });
+  // Handle stream errors even if they arrive before rendering finishes.
+  finished.catch(() => {});
+  doc.pipe(stream);
+  try {
+    const vendorNames = Object.keys(vendorOrders).filter(vendor => vendorOrders[vendor].length > 0)
+      .sort((a, b) => a.localeCompare(b));
+    const allVendors = [...new Set([...vendorNames, ...blockedVendors])].sort((a, b) => a.localeCompare(b));
+    const sent = new Set(testing ? [] : delivery?.sent || []);
+    const pageNumbers = new Map();
+    const contentsPages = [];
+    let rows = [];
+    let rowY = 145;
+    doc.font('Helvetica').fontSize(10);
+    for (const vendor of allVendors) {
+      const height = Math.max(22, doc.heightOfString(vendor, { width: 345 }) + 8);
+      if (rowY + height > 678 && rows.length) {
+        contentsPages.push(rows);
+        rows = [];
+        rowY = 145;
+      }
+      rows.push({ vendor, y: rowY, height });
+      rowY += height;
+    }
+    contentsPages.push(rows);
+    for (let i = 1; i < contentsPages.length; i++) doc.addPage();
 
     if (runNotice) {
-      doc.fontSize(14).text('Vendor report status');
+      doc.addPage();
+      doc.font('Helvetica-Bold').fontSize(20).text('Reports needing review');
       doc.moveDown(0.5);
-      doc.fontSize(10).text(runNotice);
-      if (vendorNames.length) doc.addPage();
+      doc.font('Helvetica').fontSize(10).text(runNotice);
     }
 
-    vendorNames.forEach((vendor, i) => {
+    for (const vendor of vendorNames) {
+      doc.addPage();
+      pageNumbers.set(vendor, doc.bufferedPageRange().count);
       const items = vendorOrders[vendor];
-      if (!items || items.length === 0) return;
-
-      doc.fontSize(16).text(vendor, { bold: true });
-
-      const rows = groupByCategoryWithSubtotals(items);
-
-      const table = {
+      doc.font('Helvetica-Bold').fontSize(18).text(vendor);
+      doc.moveDown(0.5);
+      await doc.table({
         headers: ['Product', 'Quantity', 'Price', 'Total Price'],
-        rows: rows
-      };
-
-      // Generate the table and total
-      doc.table(table);
+        rows: groupByCategoryWithSubtotals(items)
+      });
       const total = items.reduce((sum, item) => sum + item.totalPrice, 0);
-      doc.text('Total Price ' + total.toFixed(2), { align: 'right', bold: true });
-
-      // Only add a new page if it's not the last vendor
-      if (i < vendorNames.length - 1) {
-        doc.addPage();
-      }
-    });
-
+      doc.font('Helvetica-Bold').fontSize(11).text('Total Price ' + total.toFixed(2), { align: 'right' });
+    }
     addBoxContentAuditToPdf(doc, boxContentReport);
 
+    // Fill the reserved contents pages after the order sheets establish their page numbers.
+    contentsPages.forEach((entries, index) => {
+      doc.switchToPage(index);
+      doc.font('Helvetica-Bold').fontSize(21).fillColor('#234C3A').text(title, 48, 48, { width: 516 });
+      doc.font('Helvetica').fontSize(10).fillColor('#444444').text(`Fulfillment: ${fulfillmentDate || 'See order sheets'}`, 48, 103);
+      doc.font('Helvetica-Bold').fontSize(11).text(index ? 'Contents (continued)' : 'Contents', 48, 126);
+      doc.text('Page', 526, 126, { width: 38, align: 'right' });
+      entries.forEach(({ vendor, y, height }, rowIndex) => {
+        if (rowIndex % 2 === 0) doc.rect(44, y - 3, 524, height).fill('#F2F5F2');
+        doc.font('Helvetica').fontSize(10).fillColor('#222222').text(vendor, 48, y, { width: 345 });
+        if (sent.has(vendor)) {
+          doc.roundedRect(419, y - 1, 64, 17, 4).fill('#DCEFE2');
+          doc.font('Helvetica-Bold').fontSize(9).fillColor('#245339').text('Emailed', 419, y + 3, { width: 64, align: 'center' });
+        }
+        doc.font('Helvetica').fontSize(10).fillColor('#222222').text(String(pageNumbers.get(vendor) || '—'), 526, y, { width: 38, align: 'right' });
+      });
+      const bottom = entries.length ? entries.at(-1).y + entries.at(-1).height : 156;
+      doc.font('Helvetica').fontSize(10).fillColor('#444444').text(EMAIL_STATUS_LEGEND, 48, bottom + 12, { width: 516 });
+      if (!allVendors.length) doc.text('No vendor order sheets are available for this run.');
+      if (blockedVendors.length) doc.text('A dash in the Page column means the report was withheld. See the review details that follow.');
+    });
+
+    const pageCount = doc.bufferedPageRange().count;
+    for (let page = 0; page < pageCount; page++) {
+      doc.switchToPage(page);
+      if (page >= contentsPages.length) {
+        doc.font('Helvetica').fontSize(9).fillColor('#555555').text(`Fulfillment: ${fulfillmentDate}`, 48, 26, { width: 516, align: 'right' });
+      }
+      const bottomMargin = doc.page.margins.bottom;
+      doc.page.margins.bottom = 0;
+      doc.font('Helvetica').fontSize(9).fillColor('#555555').text(`${page + 1} / ${pageCount}`, 48, 755, { width: 516, align: 'center', lineBreak: false });
+      doc.page.margins.bottom = bottomMargin;
+    }
     doc.end();
-
-    stream.on('finish', () => {
-      console.log("✅ PDF generation complete.");
-      resolve(outputFile);
-    });
-
-    stream.on('error', err => {
-      console.error("❌ PDF generation error:", err);
-      reject(err);
-    });
-  });
+    await finished;
+    console.log('✅ PDF generation complete.');
+    return outputFile;
+  } catch (error) {
+    doc.destroy();
+    stream.destroy();
+    throw error;
+  }
 }
 
 // Send vendor-specific emails
@@ -818,6 +847,7 @@ async function runVendorReports(fulfillmentDate, testing = false, { dataDir = 'd
   const productsFile = path.join(dataDir, 'products.xlsx');
   const vendorsFile = path.join(dataDir, 'vendors.csv');
   const pdfFile = path.join(dataDir, 'vendors.pdf');
+  const title = vendorReportTitle(fulfillmentDate.date);
 
   try {
     // Refresh selection before fetching the saved prices on those orders.
@@ -866,7 +896,9 @@ async function runVendorReports(fulfillmentDate, testing = false, { dataDir = 'd
     if (pricing.issues.length) process.exitCode = 1;
 
     if (process.argv.includes('--dry-run')) {
-      await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport, reviewNotice);
+      await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport, reviewNotice, {
+        title, blockedVendors: pricing.blockedVendors, fulfillmentDate: fulfillmentDate.date, testing: true
+      });
       console.log(`Dry run: wrote ${pdfFile}; no emails sent.`);
       return;
     }
@@ -882,17 +914,16 @@ async function runVendorReports(fulfillmentDate, testing = false, { dataDir = 'd
     const runSummary = formatVendorRunSummary(pricing, delivery);
     console.log(runSummary);
     if (delivery.failed.length) process.exitCode = 1;
-    const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport, runSummary);
-    const partial = pricing.issues.length > 0 || delivery.failed.length > 0;
+    const summaryPDF = await generateSummaryPDF(vendorOrders, pdfFile, boxContentReport, reviewNotice, {
+      title, delivery, blockedVendors: pricing.blockedVendors, fulfillmentDate: fulfillmentDate.date, testing
+    });
 
     const summaryMail = {
       from: 'jdeck88@gmail.com',
       to: testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com',
       cc: testing ? undefined : 'jdeck88@gmail.com',
-      subject: `${testing ? '[TEST] ' : ''}FFCSA Reports: ${partial ? 'PARTIAL Vendor Report' : 'All Vendor Data'} for ${fulfillmentDate.date}`,
-      text: `${testing
-        ? 'TESTING MODE: This is the consolidated vendor report. In production this would go to fullfarmcsa@deckfamilyfarm.com.'
-        : 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.'}\n\n${runSummary}\n\n${formatBoxContentEmailSummary(boxContentReport)}`,
+      subject: `${testing ? '[TEST] ' : ''}${title}`,
+      text: 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.',
       attachments: [
         { filename: 'vendors.pdf', content: fs.readFileSync(summaryPDF) },
         ...(pricing.reviewPath ? [{ filename: path.basename(pricing.reviewPath), content: fs.readFileSync(pricing.reviewPath) }] : [])
@@ -914,4 +945,4 @@ if (require.main === module) {
 }
 
 module.exports = { readProductVendorMapExcel, groupOrdersByVendor, groupByCategoryWithSubtotals, buildFullFarmBundleDetails,
-  buildBoxContentReport, addBoxContentAdditionsToVendorOrders, generateSummaryPDF, sendVendorEmails, formatVendorRunSummary, runVendorReports };
+  buildBoxContentReport, addBoxContentAdditionsToVendorOrders, generateSummaryPDF, sendVendorEmails, formatVendorRunSummary, runVendorReports, vendorReportTitle };

@@ -37,8 +37,18 @@ Unknown vendors, API failures, and mismatched exports still stop the entire run
 because the affected vendors cannot be established reliably. Monthly/weekly
 financial summaries and dashboard backfills remain all-or-nothing.
 Details appear in `<orders-file>_pricing_review.csv`, including the affected vendor.
-The consolidated email and PDF identify withheld vendors and delivery failures,
-list successful vendor emails, and label an incomplete run as partial. The review
+The consolidated email and PDF use the consistent title
+"FFCSA Reports: All Vendor Data for YYYY-MM-DD", using the fulfillment date.
+The PDF starts with an alphabetical table of contents,
+page numbers, and a highlighted "Emailed" badge only for reports successfully
+sent directly to vendors. Unsent reports have a blank email-status column.
+An explanation appears below the contents. There is no separate page listing
+reports not emailed; delivery problems remain in the run log. Withheld reports appear
+in the contents with a dash for their page number; available vendor sheets remain
+included regardless of email status. Pricing review details appear on a separate
+page only when needed. Test and dry runs do not earn Emailed badges.
+The email body is simply: "Please see the attached file. Reports are generated
+twice per week in advance of fulfillment dates." The review
 CSV is attached to the consolidated email. Individual email failures do not
 prevent later vendors from receiving their reports. Any incomplete run sets a
 nonzero Node exit code; `--dry-run` writes artifacts without sending emails.

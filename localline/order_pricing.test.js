@@ -437,9 +437,8 @@ test('vendor run sends good reports and an administrator summary with withheld v
   assert.deepEqual(recipients, ['good@example.invalid']);
   assert.deepEqual(errors, []);
   assert.equal(summaries.length, 1);
-  assert.match(summaries[0].subject, /PARTIAL Vendor Report/);
-  assert.match(summaries[0].text, /reports withheld for Bad Farm/);
-  assert.match(summaries[0].text, /Vendor emails sent: Good Farm/);
+  assert.equal(summaries[0].subject, 'FFCSA Reports: All Vendor Data for 2026-10-17');
+  assert.equal(summaries[0].text, 'Please see the attached file. Reports are generated twice per week in advance of fulfillment dates.');
   assert.deepEqual(summaries[0].attachments.map(a => a.filename), ['vendors.pdf', 'orders_pricing_review.csv']);
   assert.equal(process.exitCode, 1);
 
