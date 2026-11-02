@@ -1,3 +1,4 @@
+process.env.VENDOR_COST_CORRECTIONS_FILE = require('path').join(__dirname, 'vendor_cost_corrections.fixture.json');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');

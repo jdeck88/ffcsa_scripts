@@ -15,3 +15,7 @@ scripts/~$customers_export.sql.xlsx
 scripts/~$product_export.sql.xlsx
 timesheets/
 ~$FFCSA Member Budgets_10.25.23.xlsx
+
+# Reviewed vendor prices are deployed privately, never published to GitHub.
+localline/vendor_cost_corrections.json
+localline/data/*.private.json

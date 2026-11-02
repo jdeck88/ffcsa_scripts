@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 const fastcsv = require('fast-csv');
 
-const PRICING_BASIS = 'order-package-unit-price-v1';
+const { PRICING_BASIS, resolveVendorCost } = require('./vendor_cost_corrections');
 const DEFAULT_HISTORY_DIR = path.join(__dirname, 'data', 'order_price_history');
 
 function normalizeId(value) {
@@ -48,13 +48,15 @@ function resolveOrderVendor(entry, productVendorMap = {}) {
     String(productVendorMap[normalizeId(entry.product)] || '').trim();
 }
 
-function historicalUnitPrice(entry) {
+function historicalCost(entry) {
   const price = numberOrNull(entry.package_unit_price);
   if (price === null || price < 0) {
     throw pricingError(entry, 'missing or invalid saved package_unit_price; historical vendor price needs review');
   }
-  return price; // Zero is a valid saved price; never substitute a retail/catalog price.
+  return resolveVendorCost(entry, price); // Raw order snapshots remain unchanged.
 }
+
+function historicalUnitPrice(entry) { return historicalCost(entry).price; }
 
 function chargeQuantity(entry) {
   const quantity = numberOrNull(entry.quantity_to_charge);
@@ -65,16 +67,16 @@ function chargeQuantity(entry) {
 }
 
 function priceOrderEntry(entry) {
-  const price = historicalUnitPrice(entry);
+  const { price, correction } = historicalCost(entry);
   const quantity = chargeQuantity(entry);
   const retailTotal = numberOrNull(entry.total_price);
   if (retailTotal === null || retailTotal < 0) throw pricingError(entry, 'missing or invalid saved total_price');
-  return { price, quantity, totalPrice: price * quantity, retailTotal };
+  return { price, quantity, totalPrice: price * quantity, retailTotal, costCorrection: correction };
 }
 
 // SubOrderEntry.price is the component's TOTAL per box, not its unit price.
 function priceBoxComponent(entry, boxQuantity) {
-  const price = historicalUnitPrice(entry);
+  const { price, correction } = historicalCost(entry);
   let perBoxQuantity = numberOrNull(entry.quantity_to_charge);
   if (perBoxQuantity === null && entry.charge_type === 'package') {
     perBoxQuantity = numberOrNull(entry.unit_quantity);
@@ -91,6 +93,7 @@ function priceBoxComponent(entry, boxQuantity) {
     price,
     quantity,
     totalPrice: price * quantity,
+    costCorrection: correction,
     boxUnitPrice: perBoxQuantity > 0 ? boxValue / perBoxQuantity : 0,
     boxTotalPrice: boxValue * boxQuantity,
   };
@@ -344,8 +347,13 @@ async function writeVendorSummaryCsv(summary, filePath) {
   fs.writeFileSync(filePath, csv + '\n');
 }
 
-function isHistoricalSummary(rows) {
-  return rows.length > 0 && rows.every(row => row.PricingBasis === PRICING_BASIS &&
+function isHistoricalSummary(rows, savedAt = null) {
+  // Summaries written before the first bad publication cannot contain this incident.
+  // Later v1 caches must be rebuilt; new caches include the correction-ledger hash.
+  const predatesIncident = savedAt instanceof Date && Number.isFinite(savedAt.getTime()) &&
+    savedAt.getTime() < Date.parse('2026-10-29T22:28:55Z');
+  return rows.length > 0 && rows.every(row => (row.PricingBasis === PRICING_BASIS ||
+    (predatesIncident && row.PricingBasis === 'order-package-unit-price-v1')) &&
     numberOrNull(row.PurchaseCost) !== null && numberOrNull(row.RetailSales) !== null);
 }
 

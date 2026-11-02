@@ -1,3 +1,4 @@
+process.env.VENDOR_COST_CORRECTIONS_FILE = require('path').join(__dirname, 'vendor_cost_corrections.fixture.json');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
@@ -453,4 +454,35 @@ test('vendor run sends good reports and an administrator summary with withheld v
   assert.deepEqual(summaries, []);
   assert.deepEqual(errors, []);
   assert.ok(fs.statSync(path.join(f.dir, 'vendors.pdf')).size > 0);
+});
+
+test('incident correction restores mixed Arugula costs in vendor and dashboard data without rewriting snapshots', async t => {
+  const base = { product: 900123, product_name: 'Arugula', package_name: '1/2 lb bag', vendor_name: 'Example Farm', category: 'Produce', price: 8.5 };
+  const orders = [order(1, [entry({ ...base, id: 9001, created_at: '2026-10-28T12:00:00Z', package_unit_price: 4.25, quantity_to_charge: 1, total_price: 8.5 })]),
+    order(2, [entry({ ...base, id: 9002, created_at: '2026-10-31T12:00:00Z', package_unit_price: 8.5, quantity_to_charge: 12, total_price: 102 })])];
+  const f = await fixture(t, orders);
+  const data = await pricing.loadOrderPricing(f.csvPath, 'unused', f.options);
+  assert.deepEqual(data.lines.map(l => l.price), [4.25, 4.25]);
+  assert.equal(data.lines[1].entry.package_unit_price, 8.5);
+  assert.equal(data.lines[1].costCorrection.savedUnitPrice, 8.5);
+  const summary = pricing.summarizeVendorLines(data.lines)[0];
+  assert.equal(summary.purchaseCost, 55.25);
+  assert.equal(summary.retailSales, 110.5);
+  assert.equal(pricing.isHistoricalSummary([{ PricingBasis: 'order-package-unit-price-v1', PurchaseCost: '106.25', RetailSales: '110.50' }]), false);
+  const component = { ...orders[1].order_entries[0], price: 102 };
+  const box = pricing.priceBoxComponent(component, 2);
+  assert.equal(box.totalPrice, 102);
+  assert.equal(box.boxTotalPrice, 204);
+  const summaries = path.join(f.dir, 'corrected.csv');
+  await pricing.writeVendorSummaryCsv([summary], summaries);
+  assert.deepEqual(await weekly.readVendorSummary(summaries), { purchaseCost: 55.25, retailSales: 110.5 });
+  assert.deepEqual(await dashboard.parseVendorWeeklySummary(summaries), { purchaseCost: 55.25, retailSales: 110.5 });
+});
+
+test('only summaries saved before the incident retain compatibility with v1', () => {
+  const rows = [{ PricingBasis: 'order-package-unit-price-v1', PurchaseCost: '10', RetailSales: '15' }];
+  assert.equal(pricing.isHistoricalSummary(rows, new Date('2026-10-28T12:00:00Z')), true);
+  assert.equal(pricing.isHistoricalSummary(rows, new Date('2026-10-30T12:00:00Z')), false);
+  assert.equal(pricing.isHistoricalSummary(rows), false);
+  assert.equal(pricing.isHistoricalSummary(rows, new Date('invalid')), false);
 });

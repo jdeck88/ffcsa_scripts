@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "incident": "Synthetic regression fixture",
+  "rules": [
+    {
+      "productId": 900123,
+      "packageId": 900456,
+      "packageName": "1/2 lb bag",
+      "vendor": "Example Farm",
+      "erroneousCents": 850,
+      "costCents": 425,
+      "startAt": "2026-10-30T00:00:00Z",
+      "endAt": "2026-11-03T00:00:00Z",
+      "chargeType": "package",
+      "chargeUnits": [],
+      "actionId": 123,
+      "revisionId": 456
+    }
+  ]
+}

@@ -111,7 +111,7 @@ function readCsvRows(filePath) {
 
 async function readVendorSummary(filePath) {
   const rows = await readOrderRows(filePath);
-  if (!isHistoricalSummary(rows)) {
+  if (!isHistoricalSummary(rows, fs.statSync(filePath).mtime)) {
     console.warn(`Vendor summary needs rebuilding with --backfill-vendor-weeks: ${filePath}`);
     return null;
   }
