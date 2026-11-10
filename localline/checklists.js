@@ -549,14 +549,21 @@ function productSpecificPackList(doc, dropsitesAll, disposition, pageNumbering, 
     doc.y = headerY + titleHeight + 6;
     doc.font('Helvetica').fontSize(11);
     const headerLineY = doc.y;
+    const countColumnWidth = 140;
+    const countColumnX = doc.page.width - doc.page.margins.right - countColumnWidth;
     if (disposition === 'frozen') {
       doc.text('# of bags in cooler:', doc.page.margins.left, headerLineY, { align: 'left' });
-      doc.text(`# of orders: ${orderCount}`, doc.page.margins.left, headerLineY, { align: 'right' });
+      doc.text(`# of orders: ${orderCount}`, countColumnX, headerLineY, { width: countColumnWidth });
     } else {
       doc.text(`# of orders: ${orderCount}`, doc.page.margins.left, headerLineY, { align: 'left' });
     }
     doc.moveDown(0.2);
-    doc.text('Packed By:');
+    const packedByY = doc.y;
+    doc.text('Packed By:', doc.page.margins.left, packedByY, { width: lineWidth });
+    if (disposition === 'frozen') {
+      doc.text('# of coolers:', countColumnX, packedByY, { width: countColumnWidth });
+      doc.x = doc.page.margins.left;
+    }
     doc.moveDown(0.6);
   };
 

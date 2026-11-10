@@ -133,6 +133,22 @@ function groupByCategoryWithSubtotals(items) {
   return finalRows;
 }
 
+function buildVendorTable(doc, items) {
+  const width = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  return {
+    headers: [
+      { label: 'Product', width: width - 180 },
+      { label: 'Quantity', width: 55, align: 'right', headerAlign: 'right' },
+      { label: 'Price', width: 55, align: 'right', headerAlign: 'right' },
+      { label: 'Total Price', width: 70, align: 'right', headerAlign: 'right' }
+    ],
+    rows: groupByCategoryWithSubtotals(items).map(row => row[0]
+      ? [row[0], formatQuantity(row[1]), formatMoney(row[2]), row[3]]
+      : [`${row[2].trim()} subtotal`, '', '', row[3]]),
+    options: { padding: [0, 5, 0, 5] }
+  };
+}
+
 // Load vendor emails from CSV
 async function readVendorsCSV(filePath) {
   const vendors = { ...VENDOR_EMAIL_OVERRIDES };
@@ -686,10 +702,8 @@ async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = n
       const items = vendorOrders[vendor];
       doc.font('Helvetica-Bold').fontSize(18).text(vendor);
       doc.moveDown(0.5);
-      await doc.table({
-        headers: ['Product', 'Quantity', 'Price', 'Total Price'],
-        rows: groupByCategoryWithSubtotals(items)
-      });
+      const table = buildVendorTable(doc, items);
+      await doc.table(table, table.options);
       const total = items.reduce((sum, item) => sum + item.totalPrice, 0);
       doc.font('Helvetica-Bold').fontSize(11).text('Total Price ' + total.toFixed(2), { align: 'right' });
     }
@@ -768,14 +782,10 @@ async function sendVendorEmails(
       doc.fontSize(16).text(utilities.getToday(), { align: 'right' });
       doc.fontSize(16).text(vendor, { bold: true });
 
-      const rows = groupByCategoryWithSubtotals(items);
-      const table = {
-        headers: ['Product', 'Quantity', 'Price', 'Total Price'],
-        rows
-      };
+      const table = buildVendorTable(doc, items);
 
       const sumTotal = items.reduce((sum, item) => sum + item.totalPrice, 0);
-      doc.table(table);
+      await doc.table(table, table.options);
       doc.text('Total Price ' + sumTotal.toFixed(2), { align: 'right', bold: true });
 
       const vendorBoxAdditions = getBoxContentAdditionsForVendor(boxContentReport, vendor);
