@@ -5,7 +5,41 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
-const { generateSummaryPDF, vendorReportTitle } = require('./vendors');
+const { generateSummaryPDF, vendorReportTitle, groupByCategoryWithSubtotals } = require('./vendors');
+
+test('matching Red Ranger chickens combine across saved category labels', () => {
+  const product = 'ea, Red Ranger Roasting Chicken, Medium - Medium, 4.01 - 5.00 lbs';
+  const line = { productId: '123', product, packageName: 'Medium, 4.01 - 5.00 lbs',
+    quantity: 1, price: 24.37, totalPrice: 24.37 };
+  const items = [
+    { ...line, category: 'Pasture - raised Poultry, Specials and Bundles' },
+    { ...line, category: 'Pasture - raised Poultry' }
+  ];
+  const expected = [
+    [product, 2, 24.37, '48.74'],
+    ['', '', ' Pasture - raised Poultry', '48.74']
+  ];
+  assert.deepEqual(groupByCategoryWithSubtotals(items), expected);
+  assert.deepEqual(groupByCategoryWithSubtotals([...items].reverse()), expected);
+});
+
+test('category merging preserves distinct products, packages, prices and bundle sections', () => {
+  const line = { productId: '123', product: 'Red Ranger Chicken - Medium', packageName: 'Medium',
+    quantity: 1, price: 24.37, totalPrice: 24.37, category: 'Poultry' };
+  const items = [
+    line,
+    { ...line, category: 'Poultry, Specials and Bundles', price: 20, totalPrice: 20 },
+    { ...line, product: 'Red Ranger Chicken - Large', packageName: 'Large' },
+    { ...line, productId: '456' },
+    { ...line, product: 'Box content: Red Ranger Chicken - Medium', category: 'Box Contents - Bundle A' },
+    { ...line, product: 'Box content: Red Ranger Chicken - Medium', category: 'Box Contents - Bundle B' }
+  ];
+  const rows = groupByCategoryWithSubtotals(items);
+  const products = rows.filter(row => row[0]);
+  assert.equal(products.length, 6);
+  assert.ok(products.every(row => row[1] === 1));
+  assert.equal(products.reduce((sum, row) => sum + Number(row[3]), 0).toFixed(2), '141.85');
+});
 
 test('report titles use the fulfillment date in the fixed format', () => {
   assert.equal(vendorReportTitle('2026-10-24'), 'FFCSA Reports: All Vendor Data for 2026-10-24');

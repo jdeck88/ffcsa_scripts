@@ -77,17 +77,28 @@ function groupByCategoryWithSubtotals(items) {
       .replace(/\s*-\s*/g, ' - ')               // normalize spaces around hyphen
       .trim();
 
-    item.category = category || 'Uncategorized';
+    category = category || 'Uncategorized';
 
-    const key = JSON.stringify([item.productId, item.product, item.category, item.price]);
+    // Category changes on saved orders must not split the same fulfillment item.
+    // Keep explicitly labeled box contents in their bundle sections.
+    const boxCategory = category.startsWith(`${BOX_CONTENT_CATEGORY} - `) ? category : null;
+    const key = JSON.stringify([item.productId, item.product, item.packageName, item.price, boxCategory]);
     if (!merged[key]) {
       merged[key] = {
         product: item.product,
         quantity: 0,
         price: item.price,
         totalPrice: 0,
-        category: item.category
+        category
       };
+    }
+    // Prefer the plain category over an extended label such as
+    // "Poultry, Specials and Bundles", regardless of order arrival.
+    const previousCategory = merged[key].category;
+    if (category !== 'Uncategorized' && (previousCategory === 'Uncategorized' ||
+        category.length < previousCategory.length ||
+        (category.length === previousCategory.length && category.localeCompare(previousCategory) < 0))) {
+      merged[key].category = category;
     }
     merged[key].quantity += item.quantity;
     merged[key].totalPrice += item.totalPrice;
@@ -131,22 +142,6 @@ function groupByCategoryWithSubtotals(items) {
   }
 
   return finalRows;
-}
-
-function buildVendorTable(doc, items) {
-  const width = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-  return {
-    headers: [
-      { label: 'Product', width: width - 180 },
-      { label: 'Quantity', width: 55, align: 'right', headerAlign: 'right' },
-      { label: 'Price', width: 55, align: 'right', headerAlign: 'right' },
-      { label: 'Total Price', width: 70, align: 'right', headerAlign: 'right' }
-    ],
-    rows: groupByCategoryWithSubtotals(items).map(row => row[0]
-      ? [row[0], formatQuantity(row[1]), formatMoney(row[2]), row[3]]
-      : [`${row[2].trim()} subtotal`, '', '', row[3]]),
-    options: { padding: [0, 5, 0, 5] }
-  };
 }
 
 // Load vendor emails from CSV
@@ -702,8 +697,10 @@ async function generateSummaryPDF(vendorOrders, outputFile, boxContentReport = n
       const items = vendorOrders[vendor];
       doc.font('Helvetica-Bold').fontSize(18).text(vendor);
       doc.moveDown(0.5);
-      const table = buildVendorTable(doc, items);
-      await doc.table(table, table.options);
+      await doc.table({
+        headers: ['Product', 'Quantity', 'Price', 'Total Price'],
+        rows: groupByCategoryWithSubtotals(items)
+      });
       const total = items.reduce((sum, item) => sum + item.totalPrice, 0);
       doc.font('Helvetica-Bold').fontSize(11).text('Total Price ' + total.toFixed(2), { align: 'right' });
     }
@@ -782,10 +779,13 @@ async function sendVendorEmails(
       doc.fontSize(16).text(utilities.getToday(), { align: 'right' });
       doc.fontSize(16).text(vendor, { bold: true });
 
-      const table = buildVendorTable(doc, items);
+      const table = {
+        headers: ['Product', 'Quantity', 'Price', 'Total Price'],
+        rows: groupByCategoryWithSubtotals(items)
+      };
 
       const sumTotal = items.reduce((sum, item) => sum + item.totalPrice, 0);
-      await doc.table(table, table.options);
+      await doc.table(table);
       doc.text('Total Price ' + sumTotal.toFixed(2), { align: 'right', bold: true });
 
       const vendorBoxAdditions = getBoxContentAdditionsForVendor(boxContentReport, vendor);
