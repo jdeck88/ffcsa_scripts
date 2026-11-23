@@ -803,7 +803,6 @@ async function sendVendorEmails(
 
       // 🔹 Testing mode: send ONLY to jdeck88@gmail.com
       const toAddress = testing ? 'jdeck88@gmail.com' : email;
-      const fromAddress = testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com';
       const ccAddress =
         testing || toAddress === FULL_FARM_EMAIL ? undefined : FULL_FARM_EMAIL;
 
@@ -819,7 +818,6 @@ async function sendVendorEmails(
       }
 
       const mailOptions = {
-        from: fromAddress,
         to: toAddress,
         cc: ccAddress,
         bcc: testing ? undefined : 'jdeck88@gmail.com',
@@ -929,7 +927,6 @@ async function runVendorReports(fulfillmentDate, testing = false, { dataDir = 'd
     });
 
     const summaryMail = {
-      from: 'jdeck88@gmail.com',
       to: testing ? 'jdeck88@gmail.com' : 'fullfarmcsa@deckfamilyfarm.com',
       cc: testing ? undefined : 'jdeck88@gmail.com',
       subject: `${testing ? '[TEST] ' : ''}${title}`,

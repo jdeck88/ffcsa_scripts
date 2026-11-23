@@ -114,13 +114,11 @@ async function customers(today, yesterday) {
     yesterday
   );
 
-  // Email — do NOT set `from` here; let utilities.sendEmail use the verified sender.
   const emailOptions = {
     // adjust recipients as desired:
     to: 'jdeck88@gmail.com',
     // to: 'fullfarmcsa@deckfamilyfarm.com',
     // cc: 'mhobart@bworcpas.com',
-    replyTo: 'fullfarmcsa@deckfamilyfarm.com',
     subject: `FFCSA Reports: Monthly Customer Balance Report for ${yesterday}`,
     text: `Total Member Balance as of ${yesterday} = $${totalBalanceStr}`,
     attachments: [

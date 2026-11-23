@@ -5,6 +5,7 @@ const axios = require('axios');
 const nodemailer = require("nodemailer");
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
+const FULL_FARM_SENDER = 'fullfarm@deckfamilyfarm.com';
 // --- Shared pooled transporter (Gmail) ---
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -417,7 +418,8 @@ async function sendErrorEmail(error) {
     });
 
     const emailOptions = {
-        from: "jdeck88@gmail.com",
+        from: FULL_FARM_SENDER,
+        replyTo: FULL_FARM_SENDER,
         to: "jdeck88@gmail.com",
         subject: `FFCSA Reports: Error in ${callerScript}`,
         text: `Script: ${callerScript}\n\nError Message:\n${error}`,
@@ -432,15 +434,11 @@ async function sendErrorEmail(error) {
     });
 }
 
-/*
-sendEmail passes in emailOptions as argument
-*/
 async function sendEmail(emailOptions) {
-  const from = process.env.MAIL_FROM || process.env.MAIL_USER; // prefer a verified alias or the Gmail user
   const mailData = {
-    from,                            // keep From aligned with the authenticated account/alias
-    replyTo: emailOptions.replyTo || 'fullfarmcsa@deckfamilyfarm.com',
     ...emailOptions,
+    from: FULL_FARM_SENDER,
+    replyTo: emailOptions.replyTo || FULL_FARM_SENDER,
   };
   return sendWithRetry(mailData);
 }

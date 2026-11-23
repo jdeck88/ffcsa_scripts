@@ -1229,7 +1229,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
       const customer_note_pdf = await writeCustomerNotePDF(operational_orders_file_path, fullfillmentDateEnd);
 
       const emailOptions = {
-        from: "jdeck88@gmail.com",
         to: "fullfarmcsa@deckfamilyfarm.com",
         cc: "jdeck88@gmail.com, deckfamilyfarm@gmail.com",
         subject: 'FFCSA Reports: Customer Notes for ' + fullfillmentDateEnd,
@@ -1259,7 +1258,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
       const delivery_order_pdf = await writeDeliveryOrderPDF(operational_orders_file_path, fullfillmentDateEnd);
 
       const emailOptions = {
-        from: "jdeck88@gmail.com",
         to: "fullfarmcsa@deckfamilyfarm.com",
         cc: "jdeck88@gmail.com",
         subject: 'FFCSA Reports: Delivery Orders for ' + fullfillmentDateEnd,
@@ -1288,7 +1286,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
       const setup_pdf = await writeSetupPDF(operational_orders_file_path, fullfillmentDateEnd);
 
       const emailOptions = {
-        from: "jdeck88@gmail.com",
         to: "fullfarmcsa@deckfamilyfarm.com",
         cc: "jdeck88@gmail.com",
         subject: 'FFCSA Reports: Setup Instructions for ' + fullfillmentDateEnd,
@@ -1318,7 +1315,6 @@ async function delivery_order(fullfillmentDateStart, fullfillmentDateEnd, testin
       const labelPdfPath = await writeLabelPDF(operational_orders_file_path);
 
       const emailOptions = {
-        from: "jdeck88@gmail.com",
         to: "fullfarmcsa@deckfamilyfarm.com",
         cc: "jdeck88@gmail.com",
         subject: 'FFCSA Reports: Labels for ' + fullfillmentDateEnd,

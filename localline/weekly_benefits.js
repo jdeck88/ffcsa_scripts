@@ -162,7 +162,6 @@ async function run(start, end) {
 		subjectString = "FFCSA Report: Weekly Benefit Accounting for Fulfmillment Dates " + start + " to " + end;
         setTimeout(() => {
             const emailOptions = {
-                from: "jdeck88@gmail.com",
                 to: "fullfarmcsa@deckfamilyfarm.com",
                 cc: "jdeck88@gmail.com",
                 subject: subjectString,

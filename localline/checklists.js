@@ -688,7 +688,6 @@ function sendEmail(file_location, filename, subject, testing = false) {
   const finalSubject = testing ? `[TEST] ${subject}` : subject;
 
   const emailOptions = {
-    from: 'jdeck88@gmail.com',
     subject: finalSubject,
     text: 'Please see the attached file.  Reports are generated twice per week in advance of fullfillment dates.',
     attachments: [

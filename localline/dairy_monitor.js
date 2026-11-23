@@ -321,7 +321,6 @@ async function runDairyMonitor(fulfillmentDate, testing = false) {
   );
 
   const emailOptions = {
-    from: 'jdeck88@gmail.com',
     to: testing ? TEST_TO_EMAIL : PROD_TO_EMAIL,
     cc: testing ? undefined : PROD_CC_EMAIL,
     subject: `${testing ? '[TEST] ' : ''}FFCSA Report: Dairy Monitor for ${fulfillmentDate.end}`,

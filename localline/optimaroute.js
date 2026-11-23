@@ -253,7 +253,6 @@ function flattenCustomerGroups(customerGroups) {
 
 function sendEmail(filePath, filename, subject, testing = false) {
   const emailOptions = {
-    from: 'fullfarmcsa@deckfamilyfarm.com',
     subject,
     text:
       'Please see the attached file for OptimaRoute. This is a new file that contains individual orders for each dropsite.',

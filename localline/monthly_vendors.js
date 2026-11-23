@@ -185,7 +185,6 @@ async function generateSummaryPDF(summary, pdfPath, startStr, endStr, notes = []
 
 async function emailSummaryPdf(pdfPath, startStr, endStr) {
   const mailOptions = {
-    from: 'fullfarmcsa@deckfamilyfarm.com',
     to: 'jan.deckfamilyfarm@gmail.com',
     cc: 'jdeck88@gmail.com',
     subject: `FFCSA Vendor Monthly Summary ${startStr} to ${endStr}`,

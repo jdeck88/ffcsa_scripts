@@ -255,7 +255,6 @@ async function run(start, end) {
 			//console.log(salesResults)
 			//console.log(subjectString);
 			const emailOptions = {
-				from: "jdeck88@gmail.com",
 				to: "fullfarmcsa@deckfamilyfarm.com",
 				cc: "jdeck88@gmail.com",
 				subject: subjectString,

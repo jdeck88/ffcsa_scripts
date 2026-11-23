@@ -144,7 +144,6 @@ Cancelled plans:
 `;
 
 	const emailOptions = {
-		from: "jdeck88@gmail.com",
 		to: "fullfarmcsa@deckfamilyfarm.com",
 		cc: "jdeck88@gmail.com",
 		subject: subjectString,

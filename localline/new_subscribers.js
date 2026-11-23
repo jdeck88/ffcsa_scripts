@@ -91,7 +91,6 @@ async function new_subscribers(today) {
                                     if (text.num_subscribers > 0) {
                                         responsetext = text.return_text
                                         const emailOptions = {
-                                            from: "jdeck88@gmail.com",
                                             //to: "fullfarmcsa@deckfamilyfarm.com",
                                             to: "jdeck88@gmail.com",
                                             subject: 'FFCSA Reports: Daily New Members Report ' + today,
@@ -101,7 +100,6 @@ async function new_subscribers(today) {
                                     } else {
                                         responsetext = "no new members today"
                                         const emailOptions = {
-                                            from: "jdeck88@gmail.com",
                                             //to: "fullfarmcsa@deckfamilyfarm.com",
                                             to: "jdeck88@gmail.com",
                                             subject: 'FFCSA Reports: Daily New Members Report ' + today,

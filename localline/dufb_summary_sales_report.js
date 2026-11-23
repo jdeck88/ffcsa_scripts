@@ -200,7 +200,6 @@ async function generateReportFromCSV() {
 
   stream.on('finish', () => {
     const emailOptions = {
-      from: "fullfarmcsa@deckfamilyfarm.com",
       to: "jdeck88@gmail.com",
       subject: `FFCSA DUFB Purchase Summary PDF (${dateStr})`,
       text: [
