@@ -885,10 +885,14 @@ async function runVendorReports(fulfillmentDate, testing = false, { dataDir = 'd
     const vendorEmails = await readVendorsCSV(vendorsFile);
     const productVendorMap = await readProductVendorMapExcel(productsFile);
     const pricing = await loadOrderPricing(orderFile, token, {
-      productVendorMap, allowPartialVendors: true, historyDir: path.join(dataDir, 'order_price_history')
+      productVendorMap, allowPartialVendors: true, excludeNonProductCredits: true,
+      historyDir: path.join(dataDir, 'order_price_history')
     });
     if (pricing.excludedSideEntries.length) {
       console.log(`Excluded ${pricing.excludedSideEntries.length} side purchase/payment/fee line(s) from vendor costing (no vendor cost).`);
+    }
+    for (const credit of pricing.excludedCreditEntries) {
+      console.log(`Excluded non-product credit from vendor fulfillment: order ${credit.orderId}, entry ${credit.entryId}, ${credit.product}, $${credit.amount.toFixed(2)}.`);
     }
     const vendorOrders = groupOrdersByVendor(pricing, fulfillmentDate.date);
     const bundleDetails = await buildFullFarmBundleDetails(

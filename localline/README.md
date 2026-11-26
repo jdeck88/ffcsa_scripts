@@ -72,6 +72,13 @@ the order exports, reconciliation checks, and pricing snapshots; their customer
 charges are not substituted for vendor costs. Vendor runs log the excluded count.
 Packing and customer balance/spending reports retain their existing behavior.
 
+Vendor fulfillment sheets exclude negative custom credits that have no product,
+package, vendor assignment, or saved vendor cost. These financial adjustments stay
+in the raw order export, reconciliation, and immutable pricing snapshots. The run
+log identifies every excluded credit; actual replacement products remain on the
+vendor sheets. Monthly and weekly financial reporting retain their existing
+validation of these entries.
+
 Each fetched order's pricing data is preserved in `data/order_price_history/`
 as an immutable version identified by its contents. These files exclude customer
 contact information. Correcting an order creates another version; rerunning an

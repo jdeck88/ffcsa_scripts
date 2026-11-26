@@ -90,6 +90,45 @@ test('missing historical prices write a review file and reject the whole priced 
   });
 });
 
+test('fulfillment reports exclude a non-product credit while retaining the replacement item and raw evidence', async t => {
+  const replacement = entry({ id: 33062784, product: 816241, product_name: 'Pork Spare Ribs',
+    vendor_name: 'Deck Family Farm', package_unit_price: 19.63,
+    unit_quantity: 1, quantity_to_charge: 1, price: 32.63, total_price: 32.63 });
+  const credit = entry({ id: 33062785, product: null, package_name: null, vendor_name: null,
+    category: null, product_name: 'Replacement for bones shards in last ribs',
+    package_unit_price: null, unit_quantity: 1, quantity_to_charge: 1,
+    charge_type: null, price: -32.63, total_price: -32.63 });
+  const orders = [order(10852995, [replacement, credit])];
+  const f = await fixture(t, orders);
+  const options = { ...f.options, allowPartialVendors: true, excludeNonProductCredits: true };
+  const data = await pricing.loadOrderPricing(f.csvPath, 'unused', options);
+  assert.equal(data.issues.length, 0);
+  assert.deepEqual(data.lines.map(line => [line.entryId, line.vendor, line.quantity, line.totalPrice]),
+    [[33062784, 'Deck Family Farm', 1, 19.63]]);
+  assert.deepEqual(data.excludedCreditEntries, [{ orderId: '10852995', entryId: 33062785,
+    product: credit.product_name, amount: -32.63 }]);
+  assert.equal(data.orders.get('10852995').order_entries.length, 2);
+  const snapshot = JSON.parse(fs.readFileSync(path.join(f.options.historyDir, fs.readdirSync(f.options.historyDir)[0])));
+  assert.equal(snapshot.entries.find(item => item.id === 33062785).total_price, -32.63);
+  await assert.rejects(pricing.loadOrderPricing(f.csvPath, 'unused', f.options), /package_unit_price/);
+  credit.total_price = -30;
+  await assert.rejects(pricing.loadOrderPricing(f.csvPath, 'unused', options), /refresh the orders export/);
+});
+
+test('credit exclusions do not hide unpriced merchandise, positive custom charges, or vendor-associated adjustments', async t => {
+  const candidates = [
+    entry({ package_unit_price: null, total_price: -20 }),
+    entry({ product: null, vendor_name: null, package_unit_price: null, total_price: 20 }),
+    entry({ product: null, vendor_name: null, vendor_id: 3153, package_unit_price: null, total_price: -20 }),
+  ];
+  for (const candidate of candidates) {
+    const f = await fixture(t, [order(1, [candidate])]);
+    await assert.rejects(pricing.loadOrderPricing(f.csvPath, 'unused', {
+      ...f.options, excludeNonProductCredits: true,
+    }), /package_unit_price/);
+  }
+});
+
 test('fresh product vendors fill blank order vendors without replacing saved assignments or prices', async t => {
   const orders = [order(1, [entry({ vendor_name: null })]),
     order(2, [entry({ id: 101, product: 11, package_unit_price: 15 })])];

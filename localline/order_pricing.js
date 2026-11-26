@@ -37,6 +37,17 @@ function isSideRelatedEntry(entry, orderEntries = []) {
   return /^(?:delivery fee|split payments)$/i.test(name) && orderEntries.some(isSideEntry);
 }
 
+function isNonProductCredit(entry) {
+  const total = numberOrNull(entry.total_price);
+  return total !== null && total < 0 &&
+    !normalizeId(entry.product) && !normalizeId(entry.product_package) &&
+    !normalizeId(entry.package_price_list_entry) &&
+    !normalizeId(entry.vendor) && !normalizeId(entry.vendor_id) &&
+    !String(entry.vendor_name || '').trim() &&
+    numberOrNull(entry.package_unit_price) === null &&
+    !entry.is_box && !entry.sub_order_entries?.length;
+}
+
 function pricingError(entry, message) {
   return new Error(`${entry.product_name || 'Unnamed product'} (entry ${entry.id ?? 'unknown'}): ${message}`);
 }
@@ -216,6 +227,7 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
   const orders = new Map();
   const lines = [];
   const excludedSideEntries = [];
+  const excludedCreditEntries = [];
   // Box parent and source-vendor reports share quantities. If one is withheld,
   // withhold linked reports too so nobody receives an incomplete fulfillment sheet.
   const vendorDependencies = new Map();
@@ -242,6 +254,13 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
           if (isMembership(entry.category)) continue;
           if (isSideRelatedEntry(entry, order.order_entries)) {
             excludedSideEntries.push({ orderId: id, entryId: entry.id, product: entry.product_name });
+            continue;
+          }
+          // Reconciliation and the immutable snapshot above retain the credit.
+          // Only fulfillment reports opt out of treating it as merchandise.
+          if (options.excludeNonProductCredits && isNonProductCredit(entry)) {
+            excludedCreditEntries.push({ orderId: id, entryId: entry.id,
+              product: entry.product_name, amount: numberOrNull(entry.total_price) });
             continue;
           }
           const vendor = resolveOrderVendor(entry, options.productVendorMap);
@@ -297,7 +316,7 @@ async function loadOrderPricing(csvPath, accessToken, options = {}) {
       `Reports withheld for: ${[...blockedVendors].sort().join(', ')}. Unaffected vendors can proceed.`);
   }
   lines.sort((a, b) => a.vendor.localeCompare(b.vendor) || a.orderId.localeCompare(b.orderId) || a.entryId - b.entryId);
-  return { orders, lines: lines.filter(line => !blockedVendors.has(line.vendor)), excludedSideEntries,
+  return { orders, lines: lines.filter(line => !blockedVendors.has(line.vendor)), excludedSideEntries, excludedCreditEntries,
     issues, blockedVendors: [...blockedVendors].sort(), reviewPath: review?.reviewPath, reviewMessage: review?.message };
 }
 
